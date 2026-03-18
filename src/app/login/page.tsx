@@ -107,15 +107,18 @@ export default function LoginPage() {
         <div className="text-center mb-12">
           <Link
             href="/"
-            className="inline-block mb-8 hover:scale-105 transition-transform"
+            className="inline-flex justify-center w-full mb-10 group"
           >
-            <Image
-              src="/logo.png"
-              alt="Southern Spices"
-              width={180}
-              height={60}
-              className="h-12 w-auto object-contain mx-auto"
-            />
+            <motion.div whileHover={{ scale: 1.05 }} transition={{ type: "spring", stiffness: 400, damping: 10 }}>
+              <Image
+                src="/logo.png"
+                alt="Southern Spices Logo"
+                width={250}
+                height={80}
+                priority
+                className="w-auto h-20 md:h-24 object-contain drop-shadow-sm"
+              />
+            </motion.div>
           </Link>
           <h1 className="text-4xl font-heading font-black text-slate-900 leading-tight">
             Welcome <span className="text-primary italic">Back</span>

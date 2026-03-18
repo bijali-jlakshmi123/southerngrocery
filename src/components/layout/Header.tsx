@@ -65,7 +65,7 @@ export default function Header() {
             <span className="flex items-center gap-1.5 opacity-90">
               <Phone size={14} className="text-primary-light" /> +44 XXXX XXXXXX
             </span>
-            <span className="flex items-center gap-1.5 opacity-90 sm:flex hidden">
+            <span className="hidden sm:flex items-center gap-1.5 opacity-90">
               <MapPin size={14} className="text-primary-light" /> Fast Delivery
               Across UK
             </span>
@@ -118,22 +118,23 @@ export default function Header() {
         <div className="max-w-7xl mx-auto px-6">
           <div className="flex items-center justify-between gap-8">
             {/* Logo */}
+
             <Link
               href="/"
               className="flex items-center gap-2 group flex-shrink-0"
             >
               <motion.div
                 whileHover={{ scale: 1.05 }}
-                className="relative select-none"
+                transition={{ type: "spring", stiffness: 400, damping: 10 }}
               >
-                  <Image
-                    src="/logo.png"
-                    alt="Southern Spices Logo"
-                    width={400}
-                    height={120}
-                    className="h-14 lg:h-24 w-auto object-contain"
-                    priority
-                  />
+                <Image
+                  src="/logo.png"
+                  alt="Southern Spices Logo"
+                  width={220}
+                  height={60}
+                  priority
+                  className="object-contain drop-shadow-sm"
+                />
               </motion.div>
             </Link>
 

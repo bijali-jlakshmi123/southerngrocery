@@ -59,17 +59,21 @@ export default function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-12 lg:gap-16 mb-20 text-center md:text-left">
           {/* Logo & Info */}
           <div className="lg:col-span-2 space-y-8">
-            <Link href="/" className="inline-block group">
+            <Link
+              href="/"
+              className="flex items-center gap-2 group flex-shrink-0"
+            >
               <motion.div
                 whileHover={{ scale: 1.05 }}
-                className="relative select-none"
+                transition={{ type: "spring", stiffness: 400, damping: 10 }}
               >
                 <Image
                   src="/logo.png"
                   alt="Southern Spices Logo"
-                  width={400}
-                  height={120}
-                  className="h-16 lg:h-24 w-auto object-contain"
+                  width={220}
+                  height={60}
+                  priority
+                  className="object-contain"
                 />
               </motion.div>
             </Link>

@@ -116,17 +116,18 @@ export default function RegisterPage() {
         className="w-full max-w-2xl bg-white/70 backdrop-blur-3xl rounded-6xl p-8 md:p-14 border border-white shadow-2xl relative z-10 grid md:grid-cols-12 gap-12"
       >
         <div className="md:col-span-full text-center">
-          <Link
-            href="/"
-            className="inline-block mb-10 hover:scale-110 transition-transform"
-          >
-            <Image
-              src="/logo.png"
-              alt="Southern Spices"
-              width={180}
-              height={60}
-              className="h-12 w-auto object-contain mx-auto"
-            />
+          {/* Logo */}
+          <Link href="/" className="inline-flex justify-center w-full mb-10 group">
+            <motion.div whileHover={{ scale: 1.05 }} transition={{ type: "spring", stiffness: 400, damping: 10 }}>
+              <Image
+                src="/logo.png"
+                alt="Southern Spices Logo"
+                width={250}
+                height={80}
+                priority
+                className="w-auto h-20 md:h-24 object-contain drop-shadow-sm"
+              />
+            </motion.div>
           </Link>
           <h1 className="text-4xl font-heading font-black text-slate-900 leading-tight">
             Join <span className="text-primary italic">Southern Spices</span>
