@@ -1,42 +1,77 @@
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
-@media (prefers-color-scheme: dark) {
+@layer base {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    --background: #FFFFFF;
+    --foreground: #0F172A;
+    --glass: rgba(255, 255, 255, 0.7);
+    --glass-border: rgba(255, 255, 255, 0.3);
+  }
+
+  [data-theme='dark'] {
+    --background: #0F172A;
+    --foreground: #F8FAFC;
+    --glass: rgba(15, 23, 42, 0.7);
+  }
+
+  * {
+    @apply border-slate-200 select-none;
+  }
+
+  body {
+    @apply bg-background text-foreground font-body antialiased selection:bg-primary selection:text-white transition-colors duration-300;
+    font-family: var(--font-inter), sans-serif;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-heading font-black tracking-tight leading-tight;
+    font-family: var(--font-outfit), sans-serif;
   }
 }
 
-html,
-body {
-  max-width: 100vw;
-  overflow-x: hidden;
+@layer components {
+  .btn-base {
+    @apply flex items-center justify-center gap-2 px-8 py-3 rounded-2xl font-heading font-bold transition-all duration-300 transform active:scale-95;
+  }
+
+  .btn-primary {
+    @apply bg-primary hover:bg-primary-dark text-white shadow-premium hover:shadow-glow hover:-translate-y-1;
+  }
+
+  .btn-outline {
+    @apply border-2 border-primary text-primary hover:bg-primary hover:text-white;
+  }
+
+  .glass-card {
+    @apply bg-white/70 backdrop-blur-xl border border-white/30 shadow-premium;
+  }
+
+  .section-container {
+    @apply max-w-7xl mx-auto px-6 py-16 md:py-24;
+  }
 }
 
-body {
-  color: var(--foreground);
-  background: var(--background);
-  font-family: Arial, Helvetica, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
+@layer utilities {
+  .text-glow {
+    text-shadow: 0 0 20px rgba(239, 108, 0, 0.3);
+  }
+  
+  .bg-gradient-grocery {
+    @apply bg-gradient-to-br from-primary via-[#FFB74D] to-[#FFCCBC];
+  }
 
-* {
-  box-sizing: border-box;
-  padding: 0;
-  margin: 0;
-}
+  /* Custom Scrollbar */
+  ::-webkit-scrollbar {
+    width: 10px;
+  }
 
-a {
-  color: inherit;
-  text-decoration: none;
-}
+  ::-webkit-scrollbar-track {
+    @apply bg-slate-50;
+  }
 
-@media (prefers-color-scheme: dark) {
-  html {
-    color-scheme: dark;
+  ::-webkit-scrollbar-thumb {
+    @apply bg-slate-200 rounded-full hover:bg-primary transition-colors;
   }
 }
