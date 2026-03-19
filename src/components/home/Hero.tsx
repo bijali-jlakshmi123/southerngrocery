@@ -14,7 +14,7 @@ import {
 
 export default function Hero() {
   return (
-    <section className="relative min-h-[85vh] flex items-center overflow-hidden bg-slate-50 py-16 lg:py-24 px-6">
+    <section className="relative min-h-[75vh] flex items-center overflow-hidden bg-slate-50 py-12 lg:py-16 px-6">
       {/* Subtle Background Accent */}
       <div className="absolute top-0 right-0 w-1/2 h-full bg-primary/5 -z-10 skew-x-[-12deg] translate-x-1/4" />
       
@@ -24,7 +24,7 @@ export default function Hero() {
           initial={{ opacity: 0, x: -30 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.8 }}
-          className="space-y-10"
+          className="space-y-8"
         >
           <div className="space-y-6">
             <motion.div
@@ -36,7 +36,7 @@ export default function Hero() {
               <Sparkles size={16} /> UK's #1 Kerala Store
             </motion.div>
 
-            <h1 className="text-5xl md:text-7xl lg:text-8xl font-heading font-black text-slate-900 leading-[1.1]">
+            <h1 className="text-4xl md:text-6xl lg:text-7xl font-heading font-black text-slate-900 leading-[1.1]">
               Kerala & Indian <br />
               <span className="text-primary italic">Groceries</span> <br />
               Delivered Across <span className="text-secondary underline decoration-primary/20 underline-offset-8">UK</span>
@@ -48,13 +48,13 @@ export default function Hero() {
           </div>
 
           {/* Exact Offers Requested */}
-          <div className="space-y-4">
-             <div className="flex items-center gap-3 text-xl font-heading font-black text-slate-800">
-                <span className="w-10 h-10 bg-success/10 rounded-xl flex items-center justify-center text-success"><CheckCircle size={20} /></span>
+          <div className="space-y-3">
+             <div className="flex items-center gap-3 text-lg font-heading font-black text-slate-800">
+                <span className="w-9 h-9 bg-success/10 rounded-xl flex items-center justify-center text-success"><CheckCircle size={18} /></span>
                 👉 Free delivery above £50
              </div>
-             <div className="flex items-center gap-3 text-xl font-heading font-black text-slate-800">
-                <span className="w-10 h-10 bg-secondary/10 rounded-xl flex items-center justify-center text-secondary"><Tag size={20} /></span>
+             <div className="flex items-center gap-3 text-lg font-heading font-black text-slate-800">
+                <span className="w-9 h-9 bg-secondary/10 rounded-xl flex items-center justify-center text-secondary"><Tag size={18} /></span>
                 👉 Weekly offers
              </div>
           </div>
@@ -63,7 +63,7 @@ export default function Hero() {
           <div className="flex flex-col sm:flex-row gap-5 pt-6">
             <Link
               href="/category/rice"
-              className="btn-base btn-primary !py-5 !px-10 text-xl group relative overflow-hidden"
+              className="btn-base btn-primary !py-4 !px-8 text-lg group relative overflow-hidden"
             >
               <span className="relative z-10 flex items-center gap-2">
                 ✅ Shop Rice <ShoppingBag size={24} className="group-hover:rotate-12 transition-transform" />
@@ -71,7 +71,7 @@ export default function Hero() {
             </Link>
             <Link
               href="/category/snacks"
-              className="btn-base btn-outline !py-5 !px-10 text-xl group bg-white/80"
+              className="btn-base btn-outline !py-4 !px-8 text-lg group bg-white/80"
             >
               ✅ Shop Snacks <ChevronRight size={24} className="group-hover:translate-x-2 transition-transform" />
             </Link>
@@ -85,7 +85,7 @@ export default function Hero() {
           transition={{ duration: 1, delay: 0.2 }}
           className="relative group hidden lg:block"
         >
-          <div className="relative z-10 w-full h-[600px] flex items-center justify-center">
+          <div className="relative z-10 w-full h-[500px] flex items-center justify-center">
             <motion.div
               animate={{ y: [0, -15, 0] }}
               transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}

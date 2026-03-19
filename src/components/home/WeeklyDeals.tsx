@@ -14,21 +14,21 @@ const deals = [
 
 export default function WeeklyDeals() {
   return (
-    <section className="py-24 bg-surface-muted relative overflow-hidden">
+    <section className="py-16 bg-surface-muted relative overflow-hidden">
       <div className="max-w-7xl mx-auto px-6">
-        <div className="flex flex-col lg:flex-row justify-between items-end mb-16 gap-8">
-           <div className="space-y-6">
+        <div className="flex flex-col lg:flex-row justify-between items-end mb-12 gap-8">
+           <div className="space-y-4">
               <motion.div 
                 animate={{ scale: [1, 1.05, 1] }}
                 transition={{ repeat: Infinity, duration: 2 }}
-                className="inline-flex items-center gap-2 text-secondary font-black text-xs uppercase tracking-[0.2em] bg-secondary/5 px-5 py-2.5 rounded-full border border-secondary/10 shadow-sm"
+                className="inline-flex items-center gap-2 text-secondary font-black text-[10px] uppercase tracking-[0.2em] bg-secondary/5 px-4 py-2 rounded-full border border-secondary/10 shadow-sm"
               >
-                 <Timer size={16} /> Deals Ending Soon!
+                 <Timer size={14} /> Deals Ending Soon!
               </motion.div>
-              <h2 className="text-4xl md:text-5xl font-heading font-black text-slate-900 leading-tight">
+              <h2 className="text-3xl md:text-4xl font-heading font-black text-slate-900 leading-tight">
                 Weekly <span className="text-secondary italic">Deals</span> & Offers
               </h2>
-              <p className="text-slate-500 font-medium text-lg max-w-xl">Save big on your favorite authentic Indian brands Every Single Week.</p>
+              <p className="text-slate-500 font-medium text-base max-w-xl">Save big on your favorite authentic Indian brands Every Single Week.</p>
            </div>
            
            <motion.button 

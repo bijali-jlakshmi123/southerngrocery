@@ -71,9 +71,9 @@ export default function ProductCard({ id, name, price, originalPrice, category, 
   return (
     <motion.div 
       whileHover={{ y: -8 }}
-      className="group bg-white rounded-5xl p-5 shadow-sm hover:shadow-premium transition-all duration-500 border border-slate-100 flex flex-col h-full relative"
+      className="group bg-white rounded-3xl p-4 shadow-sm hover:shadow-premium transition-all duration-500 border border-slate-100 flex flex-col h-full relative"
     >
-      <div className="relative aspect-square bg-slate-50 rounded-4xl overflow-hidden mb-6 flex items-center justify-center group/img">
+      <div className="relative aspect-square bg-slate-50 rounded-2xl overflow-hidden mb-4 flex items-center justify-center group/img">
         {discount > 0 && (
           <div className="absolute top-4 left-4 bg-secondary text-white text-[11px] font-black px-3 py-1 rounded-full z-10 shadow-lg">
             -{discount}% OFF
@@ -116,12 +116,11 @@ export default function ProductCard({ id, name, price, originalPrice, category, 
       </div>
 
       <div className="flex flex-col flex-1 px-1">
-         <div className="text-[10px] font-black text-accent uppercase tracking-widest mb-2">{category}</div>
-         <h3 className="text-sm md:text-base font-heading font-black text-slate-900 leading-tight mb-3 line-clamp-2">
-           {name}
-         </h3>
-         
-         <div className="mt-auto pt-4 flex items-center justify-between border-t border-slate-50">
+          <div className="text-[9px] font-black text-accent uppercase tracking-widest mb-1">{category}</div>
+          <h3 className="text-sm font-heading font-black text-slate-900 leading-tight mb-2 line-clamp-2">
+            {name}
+          </h3>
+                  <div className="mt-auto pt-3 flex items-center justify-between border-t border-slate-50">
             <div className="flex flex-col">
                {originalPrice && (
                  <span className="text-slate-300 text-[10px] line-through font-bold">£{originalPrice.toFixed(2)}</span>
