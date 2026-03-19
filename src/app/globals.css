@@ -25,7 +25,12 @@
     font-family: var(--font-inter), sans-serif;
   }
 
-  h1, h2, h3, h4, h5, h6 {
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
     @apply font-heading font-black tracking-tight leading-tight;
     font-family: var(--font-outfit), sans-serif;
   }
@@ -57,7 +62,7 @@
   .text-glow {
     text-shadow: 0 0 20px rgba(239, 108, 0, 0.3);
   }
-  
+
   .bg-gradient-grocery {
     @apply bg-gradient-to-br from-primary via-[#FFB74D] to-[#FFCCBC];
   }
