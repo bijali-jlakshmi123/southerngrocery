@@ -3,6 +3,7 @@
 import ProductCard from "../common/ProductCard";
 import { Tag, Timer, Sparkles } from "lucide-react";
 import { motion } from "framer-motion";
+import Link from "next/link";
 
 const deals = [
   {
@@ -54,45 +55,32 @@ const deals = [
 
 export default function WeeklyDeals() {
   return (
-    <section className="py-16 bg-surface-muted relative overflow-hidden">
-      <div className="max-w-7xl mx-auto px-6">
+    <section className="py-[80px] bg-[#f8f8f8] border-t border-gray-100 relative overflow-hidden">
+      <div className="max-w-8xl mx-auto px-6">
         <div className="flex flex-col lg:flex-row justify-between items-end mb-12 gap-8">
-          <div className="space-y-4">
-            <motion.div
-              animate={{ scale: [1, 1.05, 1] }}
-              transition={{ repeat: Infinity, duration: 2 }}
-              className="inline-flex items-center gap-2 text-secondary font-black text-[10px] uppercase tracking-[0.2em] bg-secondary/5 px-4 py-2 rounded-full border border-secondary/10 shadow-sm"
-            >
-              <Timer size={14} /> Deals Ending Soon!
-            </motion.div>
-            <h2 className="text-3xl md:text-4xl font-heading font-black text-slate-900 leading-tight">
-              Weekly <span className="text-secondary italic">Deals</span> &
-              Offers
+          <div className="space-y-3">
+            <h2 className="text-2xl md:text-3xl font-bold text-secondary uppercase tracking-tight">
+              Weekly Offers
             </h2>
-            <p className="text-slate-500 font-medium text-base max-w-xl">
-              Save big on your favorite authentic Indian brands Every Single
-              Week.
+            <div className="h-1 w-20 bg-primary rounded-full"></div>
+            <p className="text-gray-500 font-medium text-sm max-w-xl pt-2">
+              Save big on your favorite authentic Indian brands Every Single Week.
             </p>
           </div>
 
-          <motion.button
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-            className="btn-base bg-secondary hover:bg-secondary-dark text-white shadow-premium group"
+          <Link
+            href="/offers"
+            className="text-primary font-bold hover:underline underline-offset-8 decoration-2 flex items-center gap-2 group text-sm uppercase tracking-wider"
           >
-            View All Offers{" "}
-            <Tag
-              size={18}
-              className="group-hover:rotate-12 transition-transform"
-            />
-          </motion.button>
+            All Offers <motion.span whileHover={{ x: 5 }}>→</motion.span>
+          </Link>
         </div>
 
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6"
+          className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-8"
         >
           {deals.map((deal) => (
             <ProductCard key={deal.id} {...deal} />

@@ -21,8 +21,8 @@
   }
 
   body {
-    @apply bg-background text-foreground font-body antialiased selection:bg-primary selection:text-white transition-colors duration-300;
-    font-family: var(--font-inter), sans-serif;
+    @apply bg-background text-foreground antialiased selection:bg-primary selection:text-white transition-colors duration-300;
+    font-family: var(--font-roboto), sans-serif;
   }
 
   h1,
@@ -31,18 +31,18 @@
   h4,
   h5,
   h6 {
-    @apply font-heading font-black tracking-tight leading-tight;
-    font-family: var(--font-outfit), sans-serif;
+    @apply font-heading font-bold tracking-tight leading-tight;
+    font-family: var(--font-roboto), sans-serif;
   }
 }
 
 @layer components {
   .btn-base {
-    @apply flex items-center justify-center gap-2 px-8 py-3 rounded-2xl font-heading font-bold transition-all duration-300 transform active:scale-95;
+    @apply flex items-center justify-center gap-2 px-8 py-3 rounded-xl font-heading font-medium transition-all duration-300 transform active:scale-95;
   }
 
   .btn-primary {
-    @apply bg-primary hover:bg-primary-dark text-white shadow-premium hover:shadow-glow hover:-translate-y-1;
+    @apply bg-primary hover:bg-primary-dark text-white shadow-premium hover:-translate-y-0.5;
   }
 
   .btn-outline {
@@ -54,13 +54,13 @@
   }
 
   .section-container {
-    @apply max-w-7xl mx-auto px-6 py-12 md:py-16;
+    @apply max-w-8xl mx-auto px-6 py-12 md:py-20;
   }
 }
 
 @layer utilities {
   .text-glow {
-    text-shadow: 0 0 20px rgba(239, 108, 0, 0.3);
+    text-shadow: 0 0 20px rgba(1, 146, 103, 0.2);
   }
 
   .bg-gradient-grocery {

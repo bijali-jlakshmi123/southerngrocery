@@ -39,30 +39,27 @@ export default function FeaturedProducts({
 }: FeaturedProductsProps) {
   return (
     <section
-      className={`py-16 ${bgColor} border-t border-slate-50 relative overflow-hidden`}
+      className={`py-[80px] ${bgColor} border-t border-gray-100 relative overflow-hidden`}
     >
-      <div className="max-w-7xl mx-auto px-6">
+      <div className="max-w-8xl mx-auto px-6 font-body">
         <div className="flex flex-col md:flex-row justify-between items-end mb-12 gap-8">
-          <div className="space-y-3">
-            <h2 className="text-3xl md:text-4xl font-heading font-black text-slate-900 leading-[1.1]">
+          <div className="space-y-2">
+            <h2 className="text-2xl md:text-3xl font-bold text-secondary uppercase tracking-tight">
               {title.split(" ")[0]}{" "}
-              <span className={accentColor}>
+              <span className="text-primary">
                 {title.split(" ").slice(1).join(" ")}
               </span>
             </h2>
-            <p className="text-slate-500 font-medium text-base max-w-xl">
+            <div className="h-1 w-20 bg-primary rounded-full"></div>
+            <p className="text-gray-500 font-medium text-sm max-w-xl pt-2">
               {subtitle}
             </p>
           </div>
           <Link
             href={`/category/${category}`}
-            className="btn-base btn-outline !rounded-2xl !px-10 group whitespace-nowrap"
+            className="text-primary font-bold hover:underline underline-offset-8 decoration-2 flex items-center gap-2 group text-sm uppercase tracking-wider"
           >
-            Explore All{" "}
-            <ChevronRight
-              size={20}
-              className="group-hover:translate-x-1.5 transition-transform"
-            />
+            Explore More <motion.span whileHover={{ x: 5 }}>→</motion.span>
           </Link>
         </div>
 

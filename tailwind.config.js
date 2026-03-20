@@ -9,24 +9,28 @@ module.exports = {
     extend: {
       colors: {
         primary: {
-          DEFAULT: '#EF6C00',
-          light: '#FFB74D',
-          dark: '#E65100',
+          DEFAULT: '#019267', // Forest Green
+          light: '#02b17c',
+          dark: '#017351',
         },
         secondary: {
-          DEFAULT: '#D32F2F',
-          light: '#FF5252',
-          dark: '#B71C1C',
+          DEFAULT: '#111111', // Black/Dark Gray for headings
+          light: '#333333',
+          dark: '#000000',
         },
         accent: {
-          DEFAULT: '#1976D2',
-          light: '#42A5F5',
-          dark: '#0D47A1',
+          DEFAULT: '#019267', // Using primary as accent too
+          light: '#DEEFDC', // Pale Mint
+          dark: '#017351',
+        },
+        muted: {
+          DEFAULT: '#666666', // Gray for body text
+          light: '#999999',
         },
         success: {
-          DEFAULT: '#388E3C',
-          light: '#66BB6A',
-          dark: '#1B5E20',
+          DEFAULT: '#019267',
+          light: '#DEEFDC',
+          dark: '#017351',
         },
         surface: {
           DEFAULT: '#FFFFFF',
@@ -35,12 +39,25 @@ module.exports = {
         },
         background: 'var(--background)',
         foreground: 'var(--foreground)',
+        // Reference Site Pastel Backgrounds
+        peach: '#F5E9E2',
+        mint: '#DEEFDC',
+        sky: '#E2EAF5',
+        cream: '#EBF2D5',
       },
       fontFamily: {
-        heading: ['var(--font-outfit)', 'sans-serif'],
-        body: ['var(--font-inter)', 'sans-serif'],
+        heading: ['Roboto', 'sans-serif'],
+        body: ['Roboto', 'sans-serif'],
+      },
+      maxWidth: {
+        '8xl': '1450px',
       },
       borderRadius: {
+        'xs': '2px',
+        'sm': '4px',
+        'md': '6px',
+        'lg': '8px',
+        'xl': '12px',
         '3xl': '1.5rem',
         '4xl': '2rem',
         '5xl': '3rem',
@@ -56,8 +73,8 @@ module.exports = {
         }
       },
       boxShadow: {
-        'premium': '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06), 0 10px 15px -3px rgba(0, 0, 0, 0.1)',
-        'glow': '0 0 20px rgba(239, 108, 0, 0.3)',
+        'premium': '0 0 10px rgba(0, 0, 0, 0.1)',
+        'glow': '0 0 20px rgba(1, 146, 103, 0.2)',
       }
     },
   },

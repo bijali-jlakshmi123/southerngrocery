@@ -87,72 +87,75 @@ export default function ProductCard({
 
   return (
     <motion.div
-      whileHover={{ y: -8 }}
-      className="group bg-white rounded-3xl p-4 shadow-sm hover:shadow-premium transition-all duration-500 border border-slate-100 flex flex-col h-full relative"
+      className="group bg-white rounded-md p-[15px] hover:shadow-premium transition-all duration-300 border border-gray-100 flex flex-col h-full relative"
     >
-      <div className="relative aspect-square bg-slate-50 rounded-2xl overflow-hidden mb-4 flex items-center justify-center group/img">
+      <div className="relative aspect-square bg-[#f8f8f8] rounded-md overflow-hidden mb-4 flex items-center justify-center group/img">
         {discount > 0 && (
-          <div className="absolute top-4 left-4 bg-secondary text-white text-[11px] font-black px-3 py-1 rounded-full z-10 shadow-lg">
-            -{discount}% OFF
+          <div className="absolute top-2 left-2 bg-primary text-white text-[10px] font-bold px-2 py-0.5 rounded z-10">
+            {discount}% OFF
           </div>
         )}
 
         <button
           onClick={handleToggleWishlist}
           className={clsx(
-            "absolute top-4 right-4 p-2.5 rounded-2xl shadow-sm backdrop-blur-md transition-all z-10",
+            "absolute top-2 right-2 p-1.5 rounded-full shadow-sm transition-all z-10",
             inWishlist
-              ? "bg-secondary text-white shadow-secondary/20"
-              : "bg-white/80 text-slate-300 hover:text-secondary",
+              ? "bg-primary text-white"
+              : "bg-white text-gray-400 hover:text-primary",
           )}
         >
-          <Heart size={20} className={inWishlist ? "fill-white" : ""} />
+          <Heart size={16} className={inWishlist ? "fill-white" : ""} />
         </button>
 
         <motion.div
-          whileHover={{ scale: 1.1 }}
-          transition={{ duration: 0.6 }}
+          whileHover={{ scale: 1.02 }}
+          transition={{ duration: 0.4 }}
           className="w-full h-full relative"
         >
           <Image
             src={image || "/placeholder.png"}
             alt={name}
             fill
-            className="object-cover"
+            className="object-contain p-4"
           />
         </motion.div>
 
-        <div className="absolute inset-x-4 bottom-4 lg:transform lg:translate-y-12 opacity-100 lg:opacity-0 lg:group-hover:translate-y-0 lg:group-hover:opacity-100 transition-all duration-300">
+        <div className="absolute inset-x-2 bottom-2  opacity-0 group-hover:opacity-100 transition-all duration-300">
           <button
             onClick={handleAddToCart}
-            className="w-full btn-base btn-primary !py-3 !rounded-2xl shadow-2xl active:scale-95 transition-transform"
+            className="w-full bg-primary text-white py-2 rounded-md font-bold text-[12px] uppercase tracking-wider shadow-lg active:scale-95 transition-transform"
           >
-            <ShoppingCart size={18} /> Quick Add
+            Add To Cart
           </button>
         </div>
       </div>
 
-      <div className="flex flex-col flex-1 px-1">
-        <div className="text-[9px] font-black text-accent uppercase tracking-widest mb-1">
+      <div className="flex flex-col flex-1">
+        <div className="text-[10px] font-normal text-gray-400 uppercase tracking-tight mb-1">
           {category}
         </div>
-        <h3 className="text-sm font-heading font-black text-slate-900 leading-tight mb-2 line-clamp-2">
+        <h3 className="text-[14px] font-normal text-secondary leading-snug mb-2 line-clamp-2 min-h-[40px] group-hover:text-primary transition-colors">
           {name}
         </h3>
-        <div className="mt-auto pt-3 flex items-center justify-between border-t border-slate-50">
-          <div className="flex flex-col">
+        <div className="mt-auto flex flex-col gap-1">
+          <div className="flex items-center gap-1">
+            <div className="flex items-center gap-0.5">
+              {[...Array(5)].map((_, i) => (
+                <Star key={i} size={10} className={i < 4 ? "fill-[#ffc107] text-[#ffc107]" : "text-gray-200"} />
+              ))}
+            </div>
+            <span className="text-[10px] text-gray-400">(4.8)</span>
+          </div>
+          <div className="flex items-center gap-2 mt-1">
+            <span className="text-primary font-bold text-[18px]">
+              £{price.toFixed(2)}
+            </span>
             {originalPrice && (
-              <span className="text-slate-300 text-[10px] line-through font-bold">
+              <span className="text-gray-300 text-[14px] line-through">
                 £{originalPrice.toFixed(2)}
               </span>
             )}
-            <span className="text-primary font-black text-xl">
-              £{price.toFixed(2)}
-            </span>
-          </div>
-          <div className="flex items-center gap-1 bg-slate-50 px-3 py-1.5 rounded-xl">
-            <Star size={12} className="fill-yellow-400 text-yellow-400" />
-            <span className="text-[10px] font-black text-slate-600">4.8</span>
           </div>
         </div>
       </div>

@@ -81,23 +81,20 @@ const item = {
 
 export default function CategoryGrid() {
   return (
-    <section className="py-16 bg-white relative overflow-hidden">
-      <div className="max-w-7xl mx-auto px-6">
+    <section className="py-16 md:py-24 bg-white relative overflow-hidden">
+      <div className="max-w-8xl mx-auto px-6">
         <div className="flex flex-col md:flex-row justify-between items-end mb-12 gap-6">
-          <div className="space-y-3">
-            <h2 className="text-3xl md:text-4xl font-heading font-black text-slate-900 leading-tight">
-              Shop By <span className="text-primary italic">Category</span>
+          <div className="space-y-2">
+            <h2 className="text-2xl md:text-3xl font-bold text-secondary uppercase tracking-tight">
+              Shop By Categories
             </h2>
-            <p className="text-slate-500 font-medium text-base max-w-xl">
-              Browse our curated collection of authentic Indian groceries.
-            </p>
+            <div className="h-1 w-20 bg-primary rounded-full"></div>
           </div>
           <Link
             href="/categories"
-            className="text-primary font-bold hover:underline underline-offset-8 decoration-2 flex items-center gap-2 group"
+            className="text-primary font-bold hover:underline underline-offset-8 decoration-2 flex items-center gap-2 group text-sm uppercase tracking-wider"
           >
-            View All Categories{" "}
-            <motion.span whileHover={{ x: 5 }}>→</motion.span>
+            View All <motion.span whileHover={{ x: 5 }}>→</motion.span>
           </Link>
         </div>
 
@@ -106,7 +103,7 @@ export default function CategoryGrid() {
           initial="hidden"
           whileInView="show"
           viewport={{ once: true }}
-          className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-4 gap-x-6 gap-y-10"
+          className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-8 gap-8"
         >
           {categories.map((cat, i) => (
             <motion.div key={i} variants={item}>
@@ -114,19 +111,18 @@ export default function CategoryGrid() {
                 href={`/category/${cat.name.split(" ")[0].toLowerCase()}`}
                 className="group block text-center space-y-4"
               >
-                <motion.div
-                  whileHover={{ scale: 1.05, y: -5 }}
-                  className={`w-24 h-24 md:w-32 md:h-32 bg-slate-50 rounded-3xl shadow-sm border border-slate-100 flex items-center justify-center mx-auto transition-all duration-300 group-hover:shadow-premium group-hover:border-primary/20 group-hover:bg-white text-${cat.color}`}
-                >
-                  {cat.icon}
-                </motion.div>
+                <div className="relative mx-auto">
+                  <motion.div
+                    whileHover={{ scale: 1.05 }}
+                    className="w-24 h-24 md:w-32 md:h-32 bg-[#f8f8f8] rounded-full flex items-center justify-center mx-auto transition-all duration-300 group-hover:bg-primary group-hover:text-white group-hover:shadow-lg text-primary"
+                  >
+                    {cat.icon}
+                  </motion.div>
+                </div>
                 <div className="space-y-1">
-                  <h3 className="text-lg font-heading font-black text-slate-900 group-hover:text-primary transition-colors">
+                  <h3 className="text-[14px] font-bold text-secondary group-hover:text-primary transition-colors uppercase tracking-tight">
                     {cat.name}
                   </h3>
-                  <p className="text-xs text-slate-400 font-bold uppercase tracking-wider">
-                    {cat.items}
-                  </p>
                 </div>
               </Link>
             </motion.div>
