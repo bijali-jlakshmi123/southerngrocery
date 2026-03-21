@@ -79,7 +79,77 @@ const item = {
   show: { opacity: 1, y: 0 },
 };
 
-export default function CategoryGrid() {
+interface CategoryGridProps {
+  categories?: any[];
+}
+
+export default function CategoryGrid({ categories: dynamicCategories }: CategoryGridProps) {
+  // Fallback to static if no dynamic categories are provided
+  const displayCategories = dynamicCategories?.length ? dynamicCategories.map(c => ({
+    name: c.name,
+    icon: <Package size={36} />, // Default icon for dynamic categories
+    items: `${c.count || 0} Products`,
+    slug: c.slug,
+    color: "primary"
+  })) : [
+    {
+      name: "Rice",
+      icon: <Waves size={36} />,
+      items: "Matta, Kaima, Ponni",
+      color: "primary",
+      slug: "rice"
+    },
+    {
+      name: "Atta & Flour",
+      icon: <Wheat size={36} />,
+      items: "Pillsbury, Aashirvad",
+      color: "accent",
+      slug: "atta"
+    },
+    {
+      name: "Pulses",
+      icon: <Package size={36} />,
+      items: "Uzhunnu, Dal, Kadala",
+      color: "success",
+      slug: "pulses"
+    },
+    {
+      name: "Oils",
+      icon: <Droplet size={36} />,
+      items: "Coconut, Ghee, Sunflower",
+      color: "secondary",
+      slug: "oils"
+    },
+    {
+      name: "Frozen",
+      icon: <Snowflake size={36} />,
+      items: "Kappa, Porotta, Coconut",
+      color: "accent",
+      slug: "frozen"
+    },
+    {
+      name: "Snacks",
+      icon: <Cookie size={36} />,
+      items: "Banana Chips, Mixture",
+      color: "primary",
+      slug: "snacks"
+    },
+    {
+      name: "Pickles",
+      icon: <Shrub size={36} />,
+      items: "Mango, Lime, Garlic",
+      color: "success",
+      slug: "pickles"
+    },
+    {
+      name: "Fresh Vegetables",
+      icon: <Apple size={36} />,
+      items: "Nenthra, Ginger, Onion",
+      color: "secondary",
+      slug: "vegetables"
+    },
+  ];
+
   return (
     <section className="py-16 md:py-24 bg-white relative overflow-hidden">
       <div className="max-w-8xl mx-auto px-6">
@@ -105,10 +175,10 @@ export default function CategoryGrid() {
           viewport={{ once: true }}
           className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-8 gap-8"
         >
-          {categories.map((cat, i) => (
+          {displayCategories.map((cat, i) => (
             <motion.div key={i} variants={item}>
               <Link
-                href={`/category/${cat.name.split(" ")[0].toLowerCase()}`}
+                href={`/category/${cat.slug}`}
                 className="group block text-center space-y-4"
               >
                 <div className="relative mx-auto">

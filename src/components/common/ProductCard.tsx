@@ -1,5 +1,6 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import { ShoppingCart, Star, Heart } from "lucide-react";
 import { motion } from "framer-motion";
 import { useCart, useAuth, useWishlist } from "@/lib/store";
@@ -30,7 +31,15 @@ export default function ProductCard({
   const addItem = useCart((state) => state.addItem);
   const { user } = useAuth();
   const { toggleItem, isInWishlist } = useWishlist();
-  const inWishlist = isInWishlist(id, user?.id || "guest");
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  // Hydration safe check
+  const inWishlist = mounted ? isInWishlist(id, user?.id || "guest") : false;
+
   const discount = originalPrice
     ? Math.round(((originalPrice - price) / originalPrice) * 100)
     : 0;

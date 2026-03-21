@@ -1,4 +1,4 @@
-import { getProductBySlug, getProducts } from '@/lib/woocommerce';
+import { getProductBySlug, getProducts, getCategories } from '@/lib/woocommerce';
 import ProductClient from './ProductClient';
 import Header from '@/components/layout/Header';
 import Footer from '@/components/layout/Footer';
@@ -31,9 +31,16 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
   
   let product;
   let relatedProducts = [];
+  let categories = [];
 
   try {
-    product = await getProductBySlug(slug);
+    const [fetchedProduct, fetchedCategories] = await Promise.all([
+      getProductBySlug(slug),
+      getCategories({ hide_empty: true })
+    ]);
+    
+    product = fetchedProduct;
+    categories = fetchedCategories;
     
     if (product && product.categories && product.categories.length > 0) {
       // Fetch related products from the same category
@@ -57,7 +64,7 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
 
   return (
     <main className="min-h-screen">
-      <Header />
+      <Header categories={categories} />
       <ProductClient product={product} relatedProducts={relatedProducts} />
       <Footer />
     </main>

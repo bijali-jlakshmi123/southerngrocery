@@ -34,8 +34,8 @@ export default function ProductClient({ product, relatedProducts = [] }: Product
   const { user } = useAuth();
   const { toggleItem, isInWishlist } = useWishlist();
 
-  const price = typeof product.price === 'string' ? parseFloat(product.price) : product.price;
-  const originalPrice = product.regular_price ? parseFloat(product.regular_price) : price;
+  const price = parseFloat(String(product.price || 0));
+  const originalPrice = product.regular_price ? parseFloat(String(product.regular_price)) : price;
   const discount = originalPrice > price ? Math.round(((originalPrice - price) / originalPrice) * 100) : 0;
   
   const inWishlist = isInWishlist(product.id, user?.id || 'guest');
@@ -74,11 +74,11 @@ export default function ProductClient({ product, relatedProducts = [] }: Product
     }
   };
 
-  const mainCategory = product.categories[0]?.name || 'Uncategorized';
-  const mainCategorySlug = product.categories[0]?.slug || 'uncategorized';
+  const mainCategory = product.categories?.[0]?.name || 'Uncategorized';
+  const mainCategorySlug = product.categories?.[0]?.slug || 'uncategorized';
 
   // Sanitize description (WooCommerce returns HTML)
-  const sanitizedDescription = product.description.replace(/<[^>]*>?/gm, '');
+  const sanitizedDescription = (product.description || '').replace(/<[^>]*>?/gm, '');
 
   return (
     <div className="section-container pt-8 pb-12">
@@ -105,8 +105,8 @@ export default function ProductClient({ product, relatedProducts = [] }: Product
               </div>
             )}
             <Image 
-              src={product.images[0]?.src || '/placeholder.png'} 
-              alt={product.name} 
+              src={product.images?.[0]?.src || '/placeholder.png'} 
+              alt={product.name || 'Southern Spices Product'} 
               fill 
               className="object-contain group-hover:scale-110 transition-transform duration-700 p-8"
             />

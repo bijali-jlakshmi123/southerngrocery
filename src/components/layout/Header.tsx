@@ -29,7 +29,11 @@ import { motion, AnimatePresence } from "framer-motion";
 import { clsx } from "clsx";
 import { useCart, useAuth, useWishlist } from "@/lib/store";
 
-export default function Header() {
+interface HeaderProps {
+  categories?: any[];
+}
+
+export default function Header({ categories: dynamicCategories }: HeaderProps) {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [mounted, setMounted] = useState(false);
@@ -64,15 +68,27 @@ export default function Header() {
     };
   }, []);
 
-  const categories = [
-    { name: "Rice & Grains", icon: <Waves size={18} />, href: "/category/rice" },
+  const categories = dynamicCategories?.length ? dynamicCategories.map(c => ({
+    name: c.name,
+    icon: <Package size={18} />,
+    href: `/category/${c.slug}`,
+  })) : [
+    {
+      name: "Rice & Grains",
+      icon: <Waves size={18} />,
+      href: "/category/rice",
+    },
     {
       name: "Atta & Flour",
       icon: <Wheat size={18} />,
       href: "/category/atta",
     },
     { name: "Pulses", icon: <Package size={18} />, href: "/category/pulses" },
-    { name: "Oils & Ghee", icon: <Droplet size={18} />, href: "/category/oils" },
+    {
+      name: "Oils & Ghee",
+      icon: <Droplet size={18} />,
+      href: "/category/oils",
+    },
     {
       name: "Frozen Foods",
       icon: <Snowflake size={18} />,
@@ -115,7 +131,8 @@ export default function Header() {
               <Phone size={14} className="text-primary" /> +44 XXXX XXXXXX
             </span>
             <span className="hidden sm:flex items-center gap-1.5 opacity-90">
-              <MapPin size={14} className="text-primary" /> Kerala Store Across UK
+              <MapPin size={14} className="text-primary" /> Kerala Store Across
+              UK
             </span>
           </div>
           <div className="flex gap-6 items-center">
@@ -258,7 +275,10 @@ export default function Header() {
           {/* Nav Categories - Desktop Only */}
           <nav className="mt-2 hidden lg:block border-t border-gray-50">
             <div className="flex items-center justify-between">
-              <div className="flex items-center gap-8 relative" ref={categoryMenuRef}>
+              <div
+                className="flex items-center gap-8 relative"
+                ref={categoryMenuRef}
+              >
                 <button
                   onClick={() => setIsCategoryMenuOpen(!isCategoryMenuOpen)}
                   className="bg-primary text-white px-6 py-3 font-semibold text-[14px] flex items-center gap-3 uppercase tracking-wider rounded-t-md min-w-[240px]"
