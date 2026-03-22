@@ -68,40 +68,54 @@ export default function Header({ categories: dynamicCategories }: HeaderProps) {
     };
   }, []);
 
-  const categories = dynamicCategories?.length ? dynamicCategories.map(c => ({
-    name: c.name,
-    icon: <Package size={18} />,
-    href: `/category/${c.slug}`,
-  })) : [
-    {
-      name: "Rice & Grains",
-      icon: <Waves size={18} />,
-      href: "/category/rice",
-    },
-    {
-      name: "Atta & Flour",
-      icon: <Wheat size={18} />,
-      href: "/category/atta",
-    },
-    { name: "Pulses", icon: <Package size={18} />, href: "/category/pulses" },
-    {
-      name: "Oils & Ghee",
-      icon: <Droplet size={18} />,
-      href: "/category/oils",
-    },
-    {
-      name: "Frozen Foods",
-      icon: <Snowflake size={18} />,
-      href: "/category/frozen",
-    },
-    { name: "Snacks", icon: <Cookie size={18} />, href: "/category/snacks" },
-    { name: "Pickles", icon: <Shrub size={18} />, href: "/category/pickles" },
-    {
-      name: "Fresh Vegetables",
-      icon: <Apple size={18} />,
-      href: "/category/vegetables",
-    },
-  ];
+  const categories = dynamicCategories?.length
+    ? dynamicCategories.map((c) => ({
+        name: c.name,
+        icon: <Package size={18} />,
+        href: `/category/${c.slug}`,
+      }))
+    : [
+        {
+          name: "Rice & Grains",
+          icon: <Waves size={18} />,
+          href: "/category/rice",
+        },
+        {
+          name: "Atta & Flour",
+          icon: <Wheat size={18} />,
+          href: "/category/atta",
+        },
+        {
+          name: "Pulses",
+          icon: <Package size={18} />,
+          href: "/category/pulses",
+        },
+        {
+          name: "Oils & Ghee",
+          icon: <Droplet size={18} />,
+          href: "/category/oils",
+        },
+        {
+          name: "Frozen Foods",
+          icon: <Snowflake size={18} />,
+          href: "/category/frozen",
+        },
+        {
+          name: "Snacks",
+          icon: <Cookie size={18} />,
+          href: "/category/snacks",
+        },
+        {
+          name: "Pickles",
+          icon: <Shrub size={18} />,
+          href: "/category/pickles",
+        },
+        {
+          name: "Fresh Vegetables",
+          icon: <Apple size={18} />,
+          href: "/category/vegetables",
+        },
+      ];
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
@@ -285,13 +299,14 @@ export default function Header({ categories: dynamicCategories }: HeaderProps) {
                 >
                   <Menu size={18} />
                   Shop By Categories
-                  <ChevronDown
+                  {/* <ChevronDown
                     size={16}
                     className={clsx(
                       "ml-auto transition-transform duration-300",
                       isCategoryMenuOpen && "rotate-180",
                     )}
                   />
+                  */}
                 </button>
 
                 {/* Categories Dropdown */}
