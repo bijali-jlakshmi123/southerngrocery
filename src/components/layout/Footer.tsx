@@ -55,7 +55,7 @@ export default function Footer() {
     <>
       {/* NEWSLETTER FULL WIDTH */}
       <div className="bg-primary py-12 w-full">
-        <div className="w-full px-6 lg:px-16 xl:px-24 flex flex-col lg:flex-row items-center justify-between gap-8">
+        <div className="max-w-8xl mx-auto px-6 flex flex-col lg:flex-row items-center justify-between gap-8">
           <div className="flex items-center gap-4 text-white">
             <div className="bg-white/10 p-4 rounded-xl">
               <Send size={30} />
@@ -89,7 +89,7 @@ export default function Footer() {
       <footer className="bg-white pt-24 pb-12 text-slate-600 relative border-t border-slate-100 w-full overflow-hidden">
         <div className="absolute top-0 right-0 w-1/3 h-full bg-gradient-to-l from-primary/5 to-transparent pointer-events-none" />
 
-        <div className="w-full px-6 lg:px-16 xl:px-24 relative z-10">
+        <div className="max-w-8xl mx-auto px-6 relative z-10">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-12 lg:gap-16 mb-20 text-center md:text-left">
             {/* Logo */}
             <div className="lg:col-span-2 space-y-8">
