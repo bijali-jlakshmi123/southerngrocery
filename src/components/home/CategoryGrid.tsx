@@ -1,83 +1,8 @@
 "use client";
 
-import {
-  Wheat,
-  Package,
-  Droplet,
-  Snowflake,
-  Cookie,
-  Apple,
-  Shrub,
-  Waves,
-} from "lucide-react";
 import Link from "next/link";
 import { motion } from "framer-motion";
-
-const categories = [
-  {
-    name: "Rice",
-    icon: <Waves size={36} />,
-    items: "Matta, Kaima, Ponni",
-    color: "primary",
-  },
-  {
-    name: "Atta & Flour",
-    icon: <Wheat size={36} />,
-    items: "Pillsbury, Aashirvad",
-    color: "accent",
-  },
-  {
-    name: "Pulses",
-    icon: <Package size={36} />,
-    items: "Uzhunnu, Dal, Kadala",
-    color: "success",
-  },
-  {
-    name: "Oils",
-    icon: <Droplet size={36} />,
-    items: "Coconut, Ghee, Sunflower",
-    color: "secondary",
-  },
-  {
-    name: "Frozen",
-    icon: <Snowflake size={36} />,
-    items: "Kappa, Porotta, Coconut",
-    color: "accent",
-  },
-  {
-    name: "Snacks",
-    icon: <Cookie size={36} />,
-    items: "Banana Chips, Mixture",
-    color: "primary",
-  },
-  {
-    name: "Pickles",
-    icon: <Shrub size={36} />,
-    items: "Mango, Lime, Garlic",
-    color: "success",
-  },
-  {
-    name: "Fresh Vegetables",
-    icon: <Apple size={36} />,
-    items: "Nenthra, Ginger, Onion",
-    color: "secondary",
-  },
-];
-
-const container = {
-  hidden: { opacity: 0 },
-  show: {
-    opacity: 1,
-    transition: {
-      staggerChildren: 0.1,
-    },
-  },
-};
-
-const item = {
-  hidden: { opacity: 0, y: 20 },
-  show: { opacity: 1, y: 0 },
-};
+import Image from "next/image";
 
 interface CategoryGridProps {
   categories?: any[];
@@ -87,68 +12,83 @@ export default function CategoryGrid({ categories: dynamicCategories }: Category
   // Fallback to static if no dynamic categories are provided
   const displayCategories = dynamicCategories?.length ? dynamicCategories.map(c => ({
     name: c.name,
-    icon: <Package size={36} />, // Default icon for dynamic categories
+    image: "/cat-pulses.png", // Default image for dynamic categories
     items: `${c.count || 0} Products`,
     slug: c.slug,
     color: "primary"
   })) : [
     {
       name: "Rice",
-      icon: <Waves size={36} />,
+      image: "/cat-rice.png",
       items: "Matta, Kaima, Ponni",
       color: "primary",
       slug: "rice"
     },
     {
       name: "Atta & Flour",
-      icon: <Wheat size={36} />,
+      image: "/cat-flour.png",
       items: "Pillsbury, Aashirvad",
       color: "accent",
       slug: "atta"
     },
     {
       name: "Pulses",
-      icon: <Package size={36} />,
+      image: "/cat-pulses.png",
       items: "Uzhunnu, Dal, Kadala",
       color: "success",
       slug: "pulses"
     },
     {
       name: "Oils",
-      icon: <Droplet size={36} />,
+      image: "/cat-oils.png",
       items: "Coconut, Ghee, Sunflower",
       color: "secondary",
       slug: "oils"
     },
     {
       name: "Frozen",
-      icon: <Snowflake size={36} />,
+      image: "/cat-frozen.png",
       items: "Kappa, Porotta, Coconut",
       color: "accent",
       slug: "frozen"
     },
     {
       name: "Snacks",
-      icon: <Cookie size={36} />,
+      image: "/cat-snacks.png",
       items: "Banana Chips, Mixture",
       color: "primary",
       slug: "snacks"
     },
     {
       name: "Pickles",
-      icon: <Shrub size={36} />,
+      image: "/cat-pickles.png",
       items: "Mango, Lime, Garlic",
       color: "success",
       slug: "pickles"
     },
     {
       name: "Fresh Vegetables",
-      icon: <Apple size={36} />,
+      image: "/cat-vegetables.png",
       items: "Nenthra, Ginger, Onion",
       color: "secondary",
       slug: "vegetables"
     },
   ];
+
+  const container = {
+    hidden: { opacity: 0 },
+    show: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.1,
+      },
+    },
+  };
+
+  const item = {
+    hidden: { opacity: 0, y: 20 },
+    show: { opacity: 1, y: 0 },
+  };
 
   return (
     <section className="py-16 md:py-24 bg-white relative overflow-hidden">
@@ -184,9 +124,14 @@ export default function CategoryGrid({ categories: dynamicCategories }: Category
                 <div className="relative mx-auto">
                   <motion.div
                     whileHover={{ scale: 1.05 }}
-                    className="w-24 h-24 md:w-32 md:h-32 bg-[#f8f8f8] rounded-full flex items-center justify-center mx-auto transition-all duration-300 group-hover:bg-primary group-hover:text-white group-hover:shadow-lg text-primary"
+                    className="w-24 h-24 md:w-32 md:h-32 rounded-full overflow-hidden mx-auto transition-all duration-300 group-hover:shadow-xl border-4 border-gray-50 group-hover:border-primary relative"
                   >
-                    {cat.icon}
+                    <Image
+                      src={cat.image}
+                      alt={cat.name}
+                      fill
+                      className="object-cover"
+                    />
                   </motion.div>
                 </div>
                 <div className="space-y-1">
