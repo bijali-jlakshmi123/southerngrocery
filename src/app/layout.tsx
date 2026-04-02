@@ -4,6 +4,7 @@ import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import "./globals.css";
 import WhatsAppButton from '@/components/common/WhatsAppButton';
+import MainLayout from "@/components/layout/MainLayout";
 
 const roboto = Roboto({
   subsets: ["latin"],
@@ -24,7 +25,9 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${roboto.variable} antialiased bg-background text-foreground`} suppressHydrationWarning>
-        {children}
+        <MainLayout>
+          {children}
+        </MainLayout>
         <WhatsAppButton />
         <ToastContainer 
           position="bottom-right"

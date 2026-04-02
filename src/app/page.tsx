@@ -1,5 +1,3 @@
-import Header from "@/components/layout/Header";
-import Footer from "@/components/layout/Footer";
 import HeroSlider from "@/components/home/HeroSlider";
 import CategoryGrid from "@/components/home/CategoryGrid";
 import WeeklyDeals from "@/components/home/WeeklyDeals";
@@ -88,8 +86,6 @@ const busyFamilyMeals = [
 export default function Home() {
   return (
     <main className="min-h-screen">
-      <Header />
-
       <HeroSlider />
 
       <CategoryGrid />
@@ -159,8 +155,6 @@ export default function Home() {
       />
 
       <TrustSection />
-
-      <Footer />
     </main>
   );
 }

@@ -1,7 +1,5 @@
 import { getProductBySlug, getProducts, getCategories } from '@/lib/woocommerce';
 import ProductClient from './ProductClient';
-import Header from '@/components/layout/Header';
-import Footer from '@/components/layout/Footer';
 
 // Mock data as fallback for development if WooCommerce is not fully connected
 const getMockProduct = (slug: string) => ({
@@ -64,9 +62,7 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
 
   return (
     <main className="min-h-screen">
-      <Header categories={categories} />
       <ProductClient product={product} relatedProducts={relatedProducts} />
-      <Footer />
     </main>
   );
 }

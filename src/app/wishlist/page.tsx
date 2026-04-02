@@ -13,8 +13,6 @@ import {
   ArrowRight
 } from 'lucide-react';
 import { useWishlist, useCart, useAuth } from '@/lib/store';
-import Header from '@/components/layout/Header';
-import Footer from '@/components/layout/Footer';
 import { toast } from 'react-toastify';
 import { useEffect, useState } from 'react';
 
@@ -45,7 +43,6 @@ export default function WishlistPage() {
 
   return (
     <main className="min-h-screen bg-slate-50">
-      <Header />
       
       <div className="max-w-7xl mx-auto px-6 py-16">
         {/* Breadcrumb & Header Header */}
@@ -139,8 +136,6 @@ export default function WishlistPage() {
           </div>
         )}
       </div>
-
-      <Footer />
     </main>
   );
 }
