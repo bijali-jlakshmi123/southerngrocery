@@ -60,7 +60,7 @@
 
 @layer utilities {
   .text-glow {
-    text-shadow: 0 0 20px rgba(1, 146, 103, 0.2);
+    text-shadow: 0 0 20px rgba(0, 165, 79, 0.2);
   }
 
   .bg-gradient-grocery {

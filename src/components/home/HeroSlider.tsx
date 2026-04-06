@@ -197,7 +197,7 @@ export default function HeroSlider() {
         }
         .swiper-pagination-bullet-active {
           opacity: 1;
-          background: #019267 !important;
+          background: #00A54F !important;
           width: 30px;
           border-radius: 5px;
         }

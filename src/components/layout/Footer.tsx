@@ -94,7 +94,8 @@ export default function Footer() {
             {/* Logo */}
             <div className="lg:col-span-2 space-y-8">
               <Link href="/" className="flex items-center gap-2">
-                <motion.div whileHover={{ scale: 1.05 }}>
+                <motion.div>
+                  {/*whileHover={{ scale: 1.05 }}>*/}
                   <Image
                     src="/logo.png"
                     alt="Southern Spices"

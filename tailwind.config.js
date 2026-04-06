@@ -9,9 +9,9 @@ module.exports = {
     extend: {
       colors: {
         primary: {
-          DEFAULT: '#019267', // Forest Green
-          light: '#02b17c',
-          dark: '#017351',
+          DEFAULT: '#00A54F', // Logo Green
+          light: '#00c35d',
+          dark: '#00843f',
         },
         secondary: {
           DEFAULT: '#111111', // Black/Dark Gray for headings
@@ -19,18 +19,18 @@ module.exports = {
           dark: '#000000',
         },
         accent: {
-          DEFAULT: '#019267', // Using primary as accent too
+          DEFAULT: '#00A54F', // Using primary as accent too
           light: '#DEEFDC', // Pale Mint
-          dark: '#017351',
+          dark: '#00843f',
         },
         muted: {
           DEFAULT: '#666666', // Gray for body text
           light: '#999999',
         },
         success: {
-          DEFAULT: '#019267',
+          DEFAULT: '#00A54F',
           light: '#DEEFDC',
-          dark: '#017351',
+          dark: '#00843f',
         },
         surface: {
           DEFAULT: '#FFFFFF',
@@ -74,7 +74,7 @@ module.exports = {
       },
       boxShadow: {
         'premium': '0 0 10px rgba(0, 0, 0, 0.1)',
-        'glow': '0 0 20px rgba(1, 146, 103, 0.2)',
+        'glow': '0 0 20px rgba(0, 165, 79, 0.2)',
       }
     },
   },
