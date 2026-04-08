@@ -10,8 +10,8 @@ export async function POST(request: Request) {
 
     const wpAuthKey = process.env.WP_AUTH_KEY || "southernspices2026";
 
-    // Try a more direct URL format
-    const url = `${wpUrl}/?rest_route=/simple-jwt-login/v1/register&email=${encodeURIComponent(body.email)}&password=${encodeURIComponent(body.password)}&AUTH_KEY=${encodeURIComponent(wpAuthKey)}&first_name=${encodeURIComponent(body.first_name || "")}&last_name=${encodeURIComponent(body.last_name || "")}&user_login=${encodeURIComponent(body.user_login || body.email.split('@')[0])}`;
+    // Try the /users endpoint as requested
+    const url = `${wpUrl}/index.php?rest_route=/simple-jwt-login/v1/users&email=${encodeURIComponent(body.email)}&password=${encodeURIComponent(body.password)}&AUTH_KEY=${encodeURIComponent(wpAuthKey)}&first_name=${encodeURIComponent(body.first_name || "")}&last_name=${encodeURIComponent(body.last_name || "")}&user_login=${encodeURIComponent(body.user_login || body.email.split('@')[0])}`;
 
     console.log("Attempting WordPress Register at:", url);
 
