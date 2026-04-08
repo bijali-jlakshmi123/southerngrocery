@@ -54,7 +54,8 @@ export default function RegisterPage() {
 
     try {
       const wpUrl =
-        process.env.NEXT_PUBLIC_WORDPRESS_URL || "http://localhost:8000";
+        process.env.NEXT_PUBLIC_WORDPRESS_URL ||
+        "https://silver-sublett-bdgur.zipwp.link";
 
       // Attempting registration via Simple JWT Login endpoints
       const response = await fetch(
@@ -117,8 +118,14 @@ export default function RegisterPage() {
       >
         <div className="md:col-span-full text-center">
           {/* Logo */}
-          <Link href="/" className="inline-flex justify-center w-full mb-10 group">
-            <motion.div whileHover={{ scale: 1.05 }} transition={{ type: "spring", stiffness: 400, damping: 10 }}>
+          <Link
+            href="/"
+            className="inline-flex justify-center w-full mb-10 group"
+          >
+            <motion.div
+              whileHover={{ scale: 1.05 }}
+              transition={{ type: "spring", stiffness: 400, damping: 10 }}
+            >
               <Image
                 src="/logo.png"
                 alt="Southern Spices Logo"
