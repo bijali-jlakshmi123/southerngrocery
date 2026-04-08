@@ -10,7 +10,7 @@ export async function POST(request: Request) {
 
     const wpAuthKey = process.env.WP_AUTH_KEY || "southernspices2026";
 
-    const response = await fetch(`${wpUrl}/wp-json/simple-jwt-login/v1/users`, {
+    const response = await fetch(`${wpUrl}/?rest_route=/simple-jwt-login/v1/users`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
