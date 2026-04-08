@@ -5,27 +5,30 @@ export async function POST(request: Request) {
     const body = await request.json();
 
     const wpUrl = (
-      process.env.WORDPRESS_URL || "https://southernspicesstore.com"
+      process.env.WORDPRESS_URL ||
+      "https://southernspicesstore.com"
     ).replace(/\/$/, "");
 
-    const wpAuthKey = process.env.WP_AUTH_KEY || "southernspices2026";
+    const wpAuthKey =
+      process.env.WP_AUTH_KEY || "southernspices2026";
 
-    const username = body.email; // USE EMAIL DIRECTLY
+    // IMPORTANT: use email directly
+    const username = body.email;
 
+    // Try auth endpoint
     const url = `${wpUrl}/?rest_route=/simple-jwt-login/v1/auth`;
 
     console.log("LOGIN URL:", url);
-    console.log("USERNAME SENT TO WP:", username);
-    console.log("PASSWORD SENT:", body.password);
+    console.log("USERNAME:", username);
+    console.log("PASSWORD:", body.password);
 
     const response = await fetch(url, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64)",
       },
       body: JSON.stringify({
-        username,
+        username: username,
         password: body.password,
         AUTH_KEY: wpAuthKey,
       }),
@@ -33,38 +36,32 @@ export async function POST(request: Request) {
 
     const text = await response.text();
 
-    console.log("WP LOGIN STATUS:", response.status);
-    console.log("WP LOGIN RAW RESPONSE:", text);
+    console.log("WP STATUS:", response.status);
+    console.log("WP RAW RESPONSE:", text);
 
-    let data;
+    let data: any;
 
     try {
       data = JSON.parse(text);
     } catch {
-      return NextResponse.json(
-        {
-          success: false,
-          message: "Invalid response from WordPress",
-          details: text,
-        },
-        { status: 502 },
-      );
+      data = {
+        success: false,
+        message: text,
+      };
     }
-
-    console.log("FULL WP RESPONSE:", data);
 
     return NextResponse.json(data, {
       status: response.status,
     });
   } catch (error: any) {
-    console.error("LOGIN API ERROR:", error);
+    console.error("LOGIN ERROR:", error);
 
     return NextResponse.json(
       {
         success: false,
-        message: error.message || "Failed to communicate with WordPress",
+        message: error.message || "Login failed",
       },
-      { status: 500 },
+      { status: 500 }
     );
   }
 }

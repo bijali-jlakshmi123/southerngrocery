@@ -57,7 +57,9 @@ export default function LoginPage() {
       console.log("LOGIN RESPONSE:", data);
 
       if (!response.ok || !data.success) {
-        throw new Error(data.message || "Invalid credentials");
+        throw new Error(
+          data.data?.message || data.message || "Invalid credentials",
+        );
       }
 
       // Save JWT token
