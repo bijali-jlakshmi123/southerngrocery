@@ -3,45 +3,37 @@ import { NextResponse } from "next/server";
 export async function POST(request: Request) {
   try {
     const body = await request.json();
-    const wpUrl = (process.env.WORDPRESS_URL || "https://southernspicesstore.com").replace(/\/$/, "");
 
-    const wpAuthKey = process.env.WP_AUTH_KEY || "southernspices2026";
+    const wpUrl = (
+      process.env.WORDPRESS_URL || "https://srv1565389.hstgr.cloud"
+    ).replace(/\/$/, "");
 
-    const url = `${wpUrl}/?rest_route=/simple-jwt-login/v1/auth`;
-
-    console.log("Attempting WordPress Login at:", url);
-
-    const response = await fetch(url, {
-      method: "POST",
-      headers: { 
-        "Content-Type": "application/json",
-        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
+    const response = await fetch(
+      `${wpUrl}/?rest_route=/simple-jwt-login/v1/auth`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          email: body.email,
+          password: body.password,
+        }),
       },
-      body: JSON.stringify({
-        ...body,
-        AUTH_KEY: wpAuthKey
-      }),
-    });
-
-    const contentType = response.headers.get("content-type") || "";
-    const text = await response.text();
-
-    console.log("WordPress Login Response Status:", response.status);
-
-    if (contentType.includes("application/json")) {
-       const data = JSON.parse(text);
-       return NextResponse.json(data, { status: response.status });
-    }
-    
-    return NextResponse.json(
-       { success: false, message: "Invalid response from WordPress", details: text },
-       { status: 502 }
     );
+
+    const data = await response.json();
+
+    return NextResponse.json(data, {
+      status: response.status,
+    });
   } catch (error: any) {
-    console.error("Login API Route Error:", error);
     return NextResponse.json(
-      { success: false, message: error.message || "Failed to communicate with WordPress" },
-      { status: 500 }
+      {
+        success: false,
+        message: error.message || "Login failed",
+      },
+      { status: 500 },
     );
   }
 }
