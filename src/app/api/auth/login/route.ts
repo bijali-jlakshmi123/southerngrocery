@@ -10,14 +10,13 @@ export async function POST(request: Request) {
 
     const wpAuthKey = process.env.WP_AUTH_KEY || "southernspices2026";
 
-    // Convert email to username
-    const username = body.email.includes("@")
-      ? body.email.split("@")[0]
-      : body.email;
+    const username = body.email; // USE EMAIL DIRECTLY
 
     const url = `${wpUrl}/?rest_route=/simple-jwt-login/v1/auth`;
 
     console.log("LOGIN URL:", url);
+    console.log("USERNAME SENT TO WP:", username);
+    console.log("PASSWORD SENT:", body.password);
 
     const response = await fetch(url, {
       method: "POST",
@@ -35,7 +34,7 @@ export async function POST(request: Request) {
     const text = await response.text();
 
     console.log("WP LOGIN STATUS:", response.status);
-    console.log("WP LOGIN RESPONSE:", text);
+    console.log("WP LOGIN RAW RESPONSE:", text);
 
     let data;
 
@@ -51,6 +50,8 @@ export async function POST(request: Request) {
         { status: 502 },
       );
     }
+
+    console.log("FULL WP RESPONSE:", data);
 
     return NextResponse.json(data, {
       status: response.status,

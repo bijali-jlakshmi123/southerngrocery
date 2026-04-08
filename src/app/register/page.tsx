@@ -27,15 +27,21 @@ export default function RegisterPage() {
   });
   const [agreedTerms, setAgreedTerms] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+
   const router = useRouter();
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
+
+    setFormData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
     if (
       !formData.name ||
       !formData.email ||
@@ -45,6 +51,7 @@ export default function RegisterPage() {
       toast.error("Please fill in all required fields.");
       return;
     }
+
     if (!agreedTerms) {
       toast.error("You must agree to the Terms and Privacy Policy.");
       return;
@@ -53,20 +60,24 @@ export default function RegisterPage() {
     setIsLoading(true);
 
     try {
-      // Proxying registration through our Next.js API route to avoid CORS issues
       const response = await fetch("/api/auth/register", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+        },
         body: JSON.stringify({
           email: formData.email,
           password: formData.password,
           first_name: formData.name.split(" ")[0],
           last_name: formData.name.split(" ").slice(1).join(" ") || "",
-          user_login: formData.email.split("@")[0],
+          user_login: formData.email, // FULL EMAIL AS USERNAME
+          phone: formData.phone,
         }),
       });
 
       const data = await response.json();
+
+      console.log("REGISTER RESPONSE:", data);
 
       if (!response.ok || !data.success) {
         throw new Error(
@@ -74,16 +85,16 @@ export default function RegisterPage() {
         );
       }
 
-      toast.success(
-        "Account created successfully in WordPress! Redirecting to login...",
-      );
+      toast.success("Account created successfully! Redirecting to login...");
+
       setTimeout(() => {
         router.push("/login");
       }, 1500);
     } catch (error: any) {
       console.error("Registration error:", error);
+
       toast.error(
-        error.message || "Failed to register account. Check connection.",
+        error.message || "Failed to register account. Please try again.",
       );
     } finally {
       setIsLoading(false);
@@ -91,191 +102,104 @@ export default function RegisterPage() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-50 flex items-center justify-center p-6 relative overflow-hidden">
-      {/* Background Orbs */}
-      <motion.div
-        animate={{ scale: [1, 1.2, 1], opacity: [0.1, 0.2, 0.1] }}
-        transition={{ duration: 12, repeat: Infinity }}
-        className="absolute -top-40 -left-40 w-[600px] h-[600px] bg-secondary-light rounded-full blur-[120px] pointer-events-none"
-      />
-      <motion.div
-        animate={{ scale: [1, 1.3, 1], opacity: [0.1, 0.3, 0.1] }}
-        transition={{ duration: 10, repeat: Infinity, delay: 1 }}
-        className="absolute -bottom-40 -right-40 w-[500px] h-[500px] bg-primary-light rounded-full blur-[100px] pointer-events-none"
-      />
-
+    <div className="min-h-screen bg-slate-50 flex items-center justify-center p-6">
       <motion.div
         initial={{ y: 20, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
-        className="w-full max-w-2xl bg-white/70 backdrop-blur-3xl rounded-6xl p-8 md:p-14 border border-white shadow-2xl relative z-10 grid md:grid-cols-12 gap-12"
+        className="w-full max-w-2xl bg-white rounded-3xl p-8 md:p-14 shadow-2xl"
       >
-        <div className="md:col-span-full text-center">
-          {/* Logo */}
-          <Link
-            href="/"
-            className="inline-flex justify-center w-full mb-10 group"
-          >
-            <motion.div
-              whileHover={{ scale: 1.05 }}
-              transition={{ type: "spring", stiffness: 400, damping: 10 }}
-            >
-              <Image
-                src="/logo.png"
-                alt="Southern Spices Logo"
-                width={250}
-                height={80}
-                priority
-                className="w-auto h-20 md:h-24 object-contain drop-shadow-sm"
-              />
-            </motion.div>
+        <div className="text-center mb-10">
+          <Link href="/" className="inline-flex justify-center w-full mb-8">
+            <Image
+              src="/logo.png"
+              alt="Southern Spices Logo"
+              width={250}
+              height={80}
+              priority
+              className="w-auto h-20 object-contain"
+            />
           </Link>
-          <h1 className="text-4xl font-heading font-black text-slate-900 leading-tight">
-            Join <span className="text-primary italic">Southern Spices</span>
+
+          <h1 className="text-4xl font-black text-slate-900">
+            Join Southern Spices
           </h1>
-          <p className="text-slate-500 font-medium mt-3">
-            Experience Kerala's authentic flavours delivered to your door.
-          </p>
+
+          <p className="text-slate-500 mt-3">Create your account</p>
         </div>
 
-        <form
-          onSubmit={handleSubmit}
-          className="md:col-span-full grid md:grid-cols-2 gap-x-8 gap-y-6"
-        >
-          <div className="space-y-2">
-            <label className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] ml-4 flex items-center gap-2">
-              <User size={12} className="text-primary" /> Full Name
-            </label>
+        <form onSubmit={handleSubmit} className="grid md:grid-cols-2 gap-6">
+          <input
+            name="name"
+            type="text"
+            placeholder="Full Name"
+            value={formData.name}
+            onChange={handleInputChange}
+            className="w-full px-6 py-4 rounded-2xl border"
+            required
+          />
+
+          <input
+            name="email"
+            type="email"
+            placeholder="Email"
+            value={formData.email}
+            onChange={handleInputChange}
+            className="w-full px-6 py-4 rounded-2xl border"
+            required
+          />
+
+          <input
+            name="phone"
+            type="tel"
+            placeholder="Phone"
+            value={formData.phone}
+            onChange={handleInputChange}
+            className="w-full px-6 py-4 rounded-2xl border"
+            required
+          />
+
+          <div className="relative">
             <input
-              name="name"
-              type="text"
-              placeholder="User Name"
-              value={formData.name}
+              name="password"
+              type={showPassword ? "text" : "password"}
+              placeholder="Password"
+              value={formData.password}
               onChange={handleInputChange}
-              className="w-full px-8 py-5 rounded-3xl border-2 border-slate-50 bg-white/50 focus:border-primary transition-all outline-none font-bold placeholder:text-slate-300"
+              className="w-full px-6 py-4 rounded-2xl border"
               required
             />
+
+            <button
+              type="button"
+              onClick={() => setShowPassword(!showPassword)}
+              className="absolute right-4 top-1/2 -translate-y-1/2"
+            >
+              <Eye size={20} />
+            </button>
           </div>
 
-          <div className="space-y-2">
-            <label className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] ml-4 flex items-center gap-2">
-              <Mail size={12} className="text-primary" /> Email Address
-            </label>
+          <label className="md:col-span-2 flex items-center gap-3">
             <input
-              name="email"
-              type="email"
-              placeholder="username@example.com"
-              value={formData.email}
-              onChange={handleInputChange}
-              className="w-full px-8 py-5 rounded-3xl border-2 border-slate-50 bg-white/50 focus:border-primary transition-all outline-none font-bold placeholder:text-slate-300"
-              required
+              type="checkbox"
+              checked={agreedTerms}
+              onChange={(e) => setAgreedTerms(e.target.checked)}
             />
-          </div>
-
-          <div className="space-y-2">
-            <label className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] ml-4 flex items-center gap-2">
-              <Phone size={12} className="text-primary" /> Phone Number
-            </label>
-            <input
-              name="phone"
-              type="tel"
-              placeholder="+44 XXXX XXXXXX"
-              value={formData.phone}
-              onChange={handleInputChange}
-              className="w-full px-8 py-5 rounded-3xl border-2 border-slate-50 bg-white/50 focus:border-primary transition-all outline-none font-bold placeholder:text-slate-300"
-              required
-            />
-          </div>
-
-          <div className="space-y-2 relative">
-            <label className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] ml-4 flex items-center gap-2">
-              <Lock size={12} className="text-primary" /> Password
-            </label>
-            <div className="relative">
-              <input
-                name="password"
-                type={showPassword ? "text" : "password"}
-                placeholder="••••••••"
-                value={formData.password}
-                onChange={handleInputChange}
-                className="w-full px-8 py-5 rounded-3xl border-2 border-slate-50 bg-white/50 focus:border-primary transition-all outline-none font-bold placeholder:text-slate-300"
-                required
-              />
-              <button
-                type="button"
-                onClick={() => setShowPassword(!showPassword)}
-                className="absolute right-6 top-1/2 -translate-y-1/2 text-slate-300 hover:text-primary transition-colors"
-              >
-                <Eye size={20} />
-              </button>
-            </div>
-          </div>
-
-          <div className="md:col-span-full pt-4">
-            <label className="flex items-start gap-4 cursor-pointer group">
-              <input
-                type="checkbox"
-                checked={agreedTerms}
-                onChange={(e) => setAgreedTerms(e.target.checked)}
-                className="mt-1 w-5 h-5 rounded-lg border-2 border-slate-200 checked:bg-primary transition-all outline-none shadow-sm"
-              />
-              <span className="text-[11px] font-bold text-slate-500 leading-relaxed uppercase tracking-widest group-hover:text-primary transition-colors">
-                I agree to the{" "}
-                <Link href="/terms" className="text-primary underline">
-                  Terms of Service
-                </Link>{" "}
-                and{" "}
-                <Link href="/privacy" className="text-primary underline">
-                  Privacy Policy
-                </Link>
-              </span>
-            </label>
-          </div>
+            <span>I agree to Terms & Privacy Policy</span>
+          </label>
 
           <button
             type="submit"
             disabled={isLoading}
-            className={`md:col-span-full btn-base btn-primary !py-5 shadow-glow active:scale-95 transition-all text-lg group mt-6 ${isLoading ? "opacity-70 cursor-not-allowed" : ""}`}
+            className="md:col-span-2 w-full py-4 rounded-2xl bg-primary text-white font-bold"
           >
-            {isLoading ? "Creating Account..." : "Create Account"}{" "}
-            <ArrowRight
-              size={20}
-              className="group-hover:translate-x-1 transition-transform"
-            />
+            {isLoading ? "Creating Account..." : "Create Account"}
           </button>
         </form>
 
-        <div className="md:col-span-full relative my-8">
-          <div className="absolute inset-0 flex items-center">
-            <div className="w-full border-t border-slate-100" />
-          </div>
-          <div className="relative flex justify-center text-[10px] uppercase font-black text-slate-300 tracking-[0.3em] bg-transparent">
-            <span className="bg-white/70 px-4">Already a member?</span>
-          </div>
-        </div>
-
-        <div className="md:col-span-full text-center">
-          <Link
-            href="/login"
-            className="btn-base btn-outline !rounded-3xl !py-4 w-full md:w-auto px-12 font-black text-slate-400 hover:text-primary active:scale-95 transition-all"
-          >
-            Sign In to Your Account
+        <div className="mt-8 text-center">
+          <Link href="/login" className="text-primary font-bold">
+            Already have an account? Sign In
           </Link>
-        </div>
-
-        <div className="md:col-span-full mt-10 pt-8 border-t border-slate-100 flex flex-col md:flex-row items-center justify-between gap-6">
-          <Link
-            href="/"
-            className="flex items-center gap-2 text-xs font-black text-slate-300 hover:text-secondary uppercase tracking-widest transition-colors group"
-          >
-            <ChevronLeft
-              size={16}
-              className="group-hover:-translate-x-1 transition-transform"
-            />{" "}
-            Back Home
-          </Link>
-          <div className="flex items-center gap-2 text-[10px] font-black text-success uppercase tracking-widest opacity-60">
-            <ShieldCheck size={14} /> SSL SECURED 256-BIT
-          </div>
         </div>
       </motion.div>
     </div>
