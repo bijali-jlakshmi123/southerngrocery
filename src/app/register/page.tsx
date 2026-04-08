@@ -53,25 +53,18 @@ export default function RegisterPage() {
     setIsLoading(true);
 
     try {
-      const wpUrl =
-        process.env.NEXT_PUBLIC_WORDPRESS_URL ||
-        "https://southernspicesstore.com";
-
-      // Attempting registration via Simple JWT Login endpoints
-      const response = await fetch(
-        `${wpUrl}/wp-json/simple-jwt-login/v1/users`,
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            email: formData.email,
-            password: formData.password,
-            first_name: formData.name.split(" ")[0],
-            last_name: formData.name.split(" ").slice(1).join(" ") || "",
-            user_login: formData.email.split("@")[0], // Using part of email as login
-          }),
-        },
-      );
+      // Proxying registration through our Next.js API route to avoid CORS issues
+      const response = await fetch("/api/auth/register", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          email: formData.email,
+          password: formData.password,
+          first_name: formData.name.split(" ")[0],
+          last_name: formData.name.split(" ").slice(1).join(" ") || "",
+          user_login: formData.email.split("@")[0],
+        }),
+      });
 
       const data = await response.json();
 

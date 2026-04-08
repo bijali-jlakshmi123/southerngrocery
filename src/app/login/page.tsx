@@ -41,19 +41,15 @@ export default function LoginPage() {
     setIsLoading(true);
 
     try {
-      const wpUrl =
-        process.env.NEXT_PUBLIC_WORDPRESS_URL || "http://localhost:8000";
-      const response = await fetch(
-        `${wpUrl}/wp-json/simple-jwt-login/v1/auth`,
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            email: formData.email,
-            password: formData.password,
-          }),
-        },
-      );
+      // Proxying login through our Next.js API route to avoid CORS issues
+      const response = await fetch("/api/auth/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          email: formData.email,
+          password: formData.password,
+        }),
+      });
 
       const data = await response.json();
 

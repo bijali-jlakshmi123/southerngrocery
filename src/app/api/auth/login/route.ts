@@ -1,0 +1,38 @@
+import { NextResponse } from "next/server";
+
+export async function POST(request: Request) {
+  try {
+    const body = await request.json();
+    const wpUrl = (process.env.NEXT_PUBLIC_WORDPRESS_URL || "https://southernspicesstore.com").replace(/\/$/, "");
+
+    const response = await fetch(`${wpUrl}/wp-json/simple-jwt-login/v1/auth`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(body),
+    });
+
+    const contentType = response.headers.get("content-type") || "";
+    let data;
+    
+    if (contentType.includes("application/json")) {
+       data = await response.json();
+    } else {
+       const text = await response.text();
+       console.error("Non-JSON response from WordPress:", text);
+       data = { success: false, message: "Invalid response from server" };
+       return NextResponse.json(data, { status: 502 });
+    }
+
+    if (!response.ok) {
+      return NextResponse.json(data, { status: response.status });
+    }
+
+    return NextResponse.json(data, { status: 200 });
+  } catch (error: any) {
+    console.error("Login API Route Error:", error);
+    return NextResponse.json(
+      { success: false, message: error.message || "Failed to communicate with WordPress" },
+      { status: 500 }
+    );
+  }
+}
