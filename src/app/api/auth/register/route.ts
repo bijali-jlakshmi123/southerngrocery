@@ -10,16 +10,15 @@ export async function POST(request: Request) {
 
     const wpAuthKey = process.env.WP_AUTH_KEY || "southernspices2026";
 
-    const response = await fetch(`${wpUrl}/?rest_route=/simple-jwt-login/v1/users`, {
+    const url = `${wpUrl}/index.php?rest_route=/simple-jwt-login/v1/users&email=${encodeURIComponent(body.email)}&password=${encodeURIComponent(body.password)}&AUTH_KEY=${encodeURIComponent(wpAuthKey)}&first_name=${encodeURIComponent(body.first_name || "")}&last_name=${encodeURIComponent(body.last_name || "")}&user_login=${encodeURIComponent(body.user_login || body.email.split('@')[0])}`;
+
+    const response = await fetch(url, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
         "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
       },
-      body: JSON.stringify({
-        ...body,
-        AUTH_KEY: wpAuthKey,
-      }),
+      body: JSON.stringify(body),
     });
 
     const contentType = response.headers.get("content-type") || "";
