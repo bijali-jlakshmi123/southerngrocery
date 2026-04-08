@@ -59,7 +59,10 @@ If you are hosting the database on the same VPS:
    ```bash
    sudo mysql -u root -p
    ```
-   _Inside the MySQL prompt:_
+   southernspicesdb
+   app*user
+   StrongPassword123!
+   Inside the MySQL prompt:*
    ```sql
    CREATE DATABASE southern_spices_db;
    CREATE USER 'app_user'@'localhost' IDENTIFIED BY 'StrongPassword123!';
