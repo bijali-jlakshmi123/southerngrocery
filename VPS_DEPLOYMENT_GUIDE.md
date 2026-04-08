@@ -79,18 +79,13 @@ If you are hosting your WordPress backend on this same VPS, you need to install 
    sudo mysql -u root -p
    ```
 
-Database Name: southernspicesdb
-User: appuser
-Password: nYVCLphxS4mr6E%xC37@
-
-````
 ```sql
 CREATE DATABASE wp_southern_spices;
 CREATE USER 'wp_user'@'localhost' IDENTIFIED BY 'WpStrongPassword123!';
 GRANT ALL PRIVILEGES ON wp_southern_spices.* TO 'wp_user'@'localhost';
 FLUSH PRIVILEGES;
 EXIT;
-````
+```
 
 2. **Install PHP and Extensions:**
 
