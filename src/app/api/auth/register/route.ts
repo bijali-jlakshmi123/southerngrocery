@@ -5,13 +5,18 @@ export async function POST(request: Request) {
     const body = await request.json();
     const wpUrl = (process.env.NEXT_PUBLIC_WORDPRESS_URL || "https://southernspicesstore.com").replace(/\/$/, "");
 
+    const wpAuthKey = process.env.WP_AUTH_KEY || "southernspices2026";
+
     const response = await fetch(`${wpUrl}/wp-json/simple-jwt-login/v1/users`, {
       method: "POST",
       headers: { 
         "Content-Type": "application/json",
         "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
       },
-      body: JSON.stringify(body),
+      body: JSON.stringify({
+        ...body,
+        AUTH_KEY: wpAuthKey
+      }),
     });
 
     const contentType = response.headers.get("content-type") || "";
