@@ -3,7 +3,7 @@ import { NextResponse } from "next/server";
 export async function POST(request: Request) {
   try {
     const body = await request.json();
-    const wpUrl = (process.env.NEXT_PUBLIC_WORDPRESS_URL || "https://southernspicesstore.com").replace(/\/$/, "");
+    const wpUrl = (process.env.WORDPRESS_URL || "https://southernspicesstore.com").replace(/\/$/, "");
 
     const wpAuthKey = process.env.WP_AUTH_KEY || "southernspices2026";
 
