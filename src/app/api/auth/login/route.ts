@@ -7,7 +7,7 @@ export async function POST(request: Request) {
 
     const wpAuthKey = process.env.WP_AUTH_KEY || "southernspices2026";
 
-    const url = `${wpUrl}/?rest_route=/simple-jwt-login/v1/auth&email=${encodeURIComponent(body.username || body.email)}&password=${encodeURIComponent(body.password)}&AUTH_KEY=${encodeURIComponent(wpAuthKey)}`;
+    const url = `${wpUrl}/?rest_route=/simple-jwt-login/v1/auth`;
 
     console.log("Attempting WordPress Login at:", url);
 
@@ -17,7 +17,10 @@ export async function POST(request: Request) {
         "Content-Type": "application/json",
         "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
       },
-      body: JSON.stringify(body),
+      body: JSON.stringify({
+        ...body,
+        AUTH_KEY: wpAuthKey
+      }),
     });
 
     const contentType = response.headers.get("content-type") || "";
