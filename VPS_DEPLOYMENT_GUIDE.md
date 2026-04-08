@@ -69,11 +69,75 @@ If you are hosting the database on the same VPS:
 
 ---
 
-## Step 4: Clone and Setup Your Project
+## Step 4: Install WordPress & WooCommerce (Headless CMS)
+
+If you are hosting your WordPress backend on this same VPS, you need to install PHP and configure a dedicated Nginx block for it.
+
+1. **Create a MySQL Database for WordPress:**
+   ```bash
+   sudo mysql -u root -p
+   ```
+   ```sql
+   CREATE DATABASE wp_southern_spices;
+   CREATE USER 'wp_user'@'localhost' IDENTIFIED BY 'WpStrongPassword123!';
+   GRANT ALL PRIVILEGES ON wp_southern_spices.* TO 'wp_user'@'localhost';
+   FLUSH PRIVILEGES;
+   EXIT;
+   ```
+
+2. **Install PHP and Extensions:**
+   ```bash
+   sudo apt install php-fpm php-mysql php-xml php-curl php-gd php-mbstring php-zip -y
+   ```
+
+3. **Download and Extract WordPress:**
+   ```bash
+   mkdir -p /var/www/wordpress
+   cd /var/www/wordpress
+   wget https://wordpress.org/latest.tar.gz
+   tar -xzvf latest.tar.gz --strip-components=1
+   sudo chown -R www-data:www-data /var/www/wordpress
+   sudo chmod -R 755 /var/www/wordpress
+   ```
+
+4. **Configure Nginx for WordPress:**
+   Create a new server block for your WordPress site (e.g., `api.yourdomain.com` for the headless backend).
+   ```bash
+   sudo nano /etc/nginx/sites-available/wordpress
+   ```
+   *Paste the following:*
+   ```nginx
+   server {
+       listen 80;
+       server_name api.yourdomain.com; # Use a subdomain for the backend
+       root /var/www/wordpress;
+       index index.php index.html index.htm;
+
+       location / {
+           try_files $uri $uri/ /index.php?$args;
+       }
+
+       location ~ \.php$ {
+           include snippets/fastcgi-php.conf;
+           fastcgi_pass unix:/var/run/php/php8.1-fpm.sock; # Adjust PHP version depending on what was installed (e.g., php8.1 or php8.3)
+       }
+   }
+   ```
+   *Enable the site:*
+   ```bash
+   sudo ln -s /etc/nginx/sites-available/wordpress /etc/nginx/sites-enabled/
+   ```
+
+5. **Complete WordPress Setup:**
+   Navigate to `http://api.yourdomain.com` in your browser to run the 5-minute install. Provide the database details (`wp_southern_spices`, `wp_user`). Once logged in, install the **WooCommerce** plugin and generate your REST API Keys from WooCommerce Settings > Advanced > REST API.
+
+---
+
+## Step 5: Clone and Setup Your Next.js Project
 
 1. **Clone your repository** (assuming you pushed your code to GitHub/GitLab). Alternatively, you can use FTP/SCP to upload the files.
    ```bash
-   mkdir /var/www/
+   mkdir -p /var/www/
    cd /var/www/
    git clone https://github.com/yourusername/your-repo-name.git southernspices
    cd southernspices
@@ -82,18 +146,19 @@ If you are hosting the database on the same VPS:
    ```bash
    nano .env
    ```
-   *Paste your environment variables, including the new Database URL. Remember to add your WooCommerce API keys.*
+   *Paste your environment variables, including the Database URL and WooCommerce API keys you just generated.*
    ```env
    DATABASE_URL="mysql://app_user:StrongPassword123!@localhost:3306/southern_spices_db"
-   NEXT_PUBLIC_WOOCOMMERCE_URL="https://your-wordpress-site.com"
-   WOOCOMMERCE_CONSUMER_KEY="ck_..."
-   WOOCOMMERCE_CONSUMER_SECRET="cs_..."
+   NEXT_PUBLIC_WORDPRESS_URL="https://your-wordpress-site.com"
+   WC_API_URL="https://your-wordpress-site.com"
+   WC_CONSUMER_KEY="ck_..."
+   WC_CONSUMER_SECRET="cs_..."
    ```
    *Press `Ctrl+X`, `Y`, and `Enter` to save.*
 
 ---
 
-## Step 5: Build and Start the Application
+## Step 6: Build and Start the Application
 
 1. **Install Dependencies:**
    ```bash
@@ -120,11 +185,11 @@ If you are hosting the database on the same VPS:
 
 ---
 
-## Step 6: Setup Nginx as a Reverse Proxy
+## Step 7: Setup Nginx as a Reverse Proxy for Next.js
 
 We need Nginx to map port 80 (HTTP) and 443 (HTTPS) to your Next.js app running on port 3000.
 
-1. **Install Nginx:**
+1. **Make sure Nginx is installed** (already installed in Step 4, but verify).
    ```bash
    sudo apt install nginx -y
    ```
@@ -152,29 +217,30 @@ We need Nginx to map port 80 (HTTP) and 443 (HTTPS) to your Next.js app running 
    ```bash
    sudo ln -s /etc/nginx/sites-available/southernspices /etc/nginx/sites-enabled/
    sudo nginx -t     # Test to ensure no syntax errors
-   sudo systemctl restart nginx
+   sudo systemctl reload nginx
    ```
 
 ---
 
-## Step 7: Secure Your Domain with Free SSL (Let's Encrypt)
+## Step 8: Secure Your Domains with Free SSL (Let's Encrypt)
 
 1. **Install Certbot:**
    ```bash
    sudo apt install certbot python3-certbot-nginx -y
    ```
-2. **Generate the SSL certificate:**
+2. **Generate the SSL certificates** (for both your Next.js frontend and WordPress backend):
    ```bash
-   sudo certbot --nginx -d yourdomain.com -d www.yourdomain.com
+   sudo certbot --nginx -d yourdomain.com -d www.yourdomain.com -d api.yourdomain.com
    ```
    *Follow the prompts (enter your email, agree to the terms).*
 
-Certbot will automatically update your Nginx configuration to force HTTPS and set up automatic renewals.
+Certbot will automatically update your Nginx configuration to force HTTPS for both apps and set up automatic renewals.
 
 ---
 
 ## Conclusion
-Your application is successfully deployed!
-- Next.js is managed by PM2 on port 3000.
-- Nginx intercepts web traffic securely and delegates it to Next.js.
-- Your MySQL Database runs alongside it reliably configured with Prisma.
+Your decoupled application is successfully deployed!
+- Headless WordPress & WooCommerce run securely on `api.yourdomain.com`.
+- Next.js is managed by PM2 on port 3000 and served via `yourdomain.com`.
+- Traffic is securely managed through Nginx and Let's Encrypt SSL.
+- Prisma correctly connects to your MySQL databases.

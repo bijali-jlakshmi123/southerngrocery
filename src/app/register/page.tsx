@@ -55,7 +55,7 @@ export default function RegisterPage() {
     try {
       const wpUrl =
         process.env.NEXT_PUBLIC_WORDPRESS_URL ||
-        "https://silver-sublett-bdgur.zipwp.link";
+        "https://southernspicesstore.com";
 
       // Attempting registration via Simple JWT Login endpoints
       const response = await fetch(
