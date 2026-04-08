@@ -4,8 +4,9 @@ import { useSearchParams } from 'next/navigation';
 import { Search, ShoppingBag } from 'lucide-react';
 import { motion } from 'framer-motion';
 import ProductCard from '@/components/common/ProductCard';
+import { Suspense } from 'react';
 
-export default function SearchPage() {
+function SearchContent() {
   const searchParams = useSearchParams();
   const query = searchParams.get('q') || '';
 
@@ -44,5 +45,17 @@ export default function SearchPage() {
         </div>
       )}
     </div>
+  );
+}
+
+export default function SearchPage() {
+  return (
+    <Suspense fallback={
+      <div className="section-container pt-12 pb-24 min-h-[50vh] flex items-center justify-center">
+        <div className="animate-pulse text-slate-400 font-medium">Loading results...</div>
+      </div>
+    }>
+      <SearchContent />
+    </Suspense>
   );
 }
