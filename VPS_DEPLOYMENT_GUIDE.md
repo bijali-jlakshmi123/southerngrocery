@@ -3,6 +3,7 @@
 This guide walks you through deploying your Next.js application (configured with Prisma, MySQL, and WooCommerce API connections) onto an unmanaged Hostinger VPS running Ubuntu.
 
 ## Prerequisites
+
 - A Hostinger VPS plan (Ubuntu 22.04 or 24.04 recommended).
 - A registered Domain Name pointing your A record to the VPS IP address.
 - SSH access to your Hostinger VPS.
@@ -58,7 +59,7 @@ If you are hosting the database on the same VPS:
    ```bash
    sudo mysql -u root -p
    ```
-   *Inside the MySQL prompt:*
+   _Inside the MySQL prompt:_
    ```sql
    CREATE DATABASE southern_spices_db;
    CREATE USER 'app_user'@'localhost' IDENTIFIED BY 'StrongPassword123!';
@@ -77,20 +78,28 @@ If you are hosting your WordPress backend on this same VPS, you need to install 
    ```bash
    sudo mysql -u root -p
    ```
-   ```sql
-   CREATE DATABASE wp_southern_spices;
-   CREATE USER 'wp_user'@'localhost' IDENTIFIED BY 'WpStrongPassword123!';
-   GRANT ALL PRIVILEGES ON wp_southern_spices.* TO 'wp_user'@'localhost';
-   FLUSH PRIVILEGES;
-   EXIT;
-   ```
+
+Database Name: southernspicesdb
+User: appuser
+Password: nYVCLphxS4mr6E%xC37@
+
+````
+```sql
+CREATE DATABASE wp_southern_spices;
+CREATE USER 'wp_user'@'localhost' IDENTIFIED BY 'WpStrongPassword123!';
+GRANT ALL PRIVILEGES ON wp_southern_spices.* TO 'wp_user'@'localhost';
+FLUSH PRIVILEGES;
+EXIT;
+````
 
 2. **Install PHP and Extensions:**
+
    ```bash
    sudo apt install php-fpm php-mysql php-xml php-curl php-gd php-mbstring php-zip -y
    ```
 
 3. **Download and Extract WordPress:**
+
    ```bash
    mkdir -p /var/www/wordpress
    cd /var/www/wordpress
@@ -102,10 +111,13 @@ If you are hosting your WordPress backend on this same VPS, you need to install 
 
 4. **Configure Nginx for WordPress:**
    Create a new server block for your WordPress site (e.g., `api.yourdomain.com` for the headless backend).
+
    ```bash
    sudo nano /etc/nginx/sites-available/wordpress
    ```
-   *Paste the following:*
+
+   _Paste the following:_
+
    ```nginx
    server {
        listen 80;
@@ -123,7 +135,9 @@ If you are hosting your WordPress backend on this same VPS, you need to install 
        }
    }
    ```
-   *Enable the site:*
+
+   _Enable the site:_
+
    ```bash
    sudo ln -s /etc/nginx/sites-available/wordpress /etc/nginx/sites-enabled/
    ```
@@ -146,7 +160,7 @@ If you are hosting your WordPress backend on this same VPS, you need to install 
    ```bash
    nano .env
    ```
-   *Paste your environment variables, including the Database URL and WooCommerce API keys you just generated.*
+   _Paste your environment variables, including the Database URL and WooCommerce API keys you just generated._
    ```env
    DATABASE_URL="mysql://app_user:StrongPassword123!@localhost:3306/southern_spices_db"
    NEXT_PUBLIC_WORDPRESS_URL="https://your-wordpress-site.com"
@@ -154,7 +168,7 @@ If you are hosting your WordPress backend on this same VPS, you need to install 
    WC_CONSUMER_KEY="ck_..."
    WC_CONSUMER_SECRET="cs_..."
    ```
-   *Press `Ctrl+X`, `Y`, and `Enter` to save.*
+   _Press `Ctrl+X`, `Y`, and `Enter` to save._
 
 ---
 
@@ -198,6 +212,7 @@ We need Nginx to map port 80 (HTTP) and 443 (HTTPS) to your Next.js app running 
    sudo nano /etc/nginx/sites-available/southernspices
    ```
 3. **Paste the following configuration** (replace `yourdomain.com` with your actual domain):
+
    ```nginx
    server {
        listen 80;
@@ -213,6 +228,7 @@ We need Nginx to map port 80 (HTTP) and 443 (HTTPS) to your Next.js app running 
        }
    }
    ```
+
 4. **Enable the site and restart Nginx:**
    ```bash
    sudo ln -s /etc/nginx/sites-available/southernspices /etc/nginx/sites-enabled/
@@ -232,14 +248,16 @@ We need Nginx to map port 80 (HTTP) and 443 (HTTPS) to your Next.js app running 
    ```bash
    sudo certbot --nginx -d yourdomain.com -d www.yourdomain.com -d api.yourdomain.com
    ```
-   *Follow the prompts (enter your email, agree to the terms).*
+   _Follow the prompts (enter your email, agree to the terms)._
 
 Certbot will automatically update your Nginx configuration to force HTTPS for both apps and set up automatic renewals.
 
 ---
 
 ## Conclusion
+
 Your decoupled application is successfully deployed!
+
 - Headless WordPress & WooCommerce run securely on `api.yourdomain.com`.
 - Next.js is managed by PM2 on port 3000 and served via `yourdomain.com`.
 - Traffic is securely managed through Nginx and Let's Encrypt SSL.
