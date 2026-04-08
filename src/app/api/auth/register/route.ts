@@ -10,7 +10,10 @@ export async function POST(request: Request) {
 
     const wpAuthKey = process.env.WP_AUTH_KEY || "southernspices2026";
 
-    const url = `${wpUrl}/index.php?rest_route=/simple-jwt-login/v1/register&email=${encodeURIComponent(body.email)}&password=${encodeURIComponent(body.password)}&AUTH_KEY=${encodeURIComponent(wpAuthKey)}&first_name=${encodeURIComponent(body.first_name || "")}&last_name=${encodeURIComponent(body.last_name || "")}&user_login=${encodeURIComponent(body.user_login || body.email.split('@')[0])}`;
+    // Try a more direct URL format
+    const url = `${wpUrl}/?rest_route=/simple-jwt-login/v1/register&email=${encodeURIComponent(body.email)}&password=${encodeURIComponent(body.password)}&AUTH_KEY=${encodeURIComponent(wpAuthKey)}&first_name=${encodeURIComponent(body.first_name || "")}&last_name=${encodeURIComponent(body.last_name || "")}&user_login=${encodeURIComponent(body.user_login || body.email.split('@')[0])}`;
+
+    console.log("Attempting WordPress Register at:", url);
 
     const response = await fetch(url, {
       method: "POST",
@@ -22,27 +25,20 @@ export async function POST(request: Request) {
     });
 
     const contentType = response.headers.get("content-type") || "";
-
-    let data;
+    const text = await response.text();
+    
+    console.log("WordPress Response Status:", response.status);
+    console.log("WordPress Response Body:", text);
 
     if (contentType.includes("application/json")) {
-      data = await response.json();
-    } else {
-      const text = await response.text();
-      console.error("WP response:", text);
-
-      return NextResponse.json(
-        {
-          success: false,
-          message: "Invalid response from WordPress",
-        },
-        { status: 502 },
-      );
+      const data = JSON.parse(text);
+      return NextResponse.json(data, { status: response.status });
     }
 
-    return NextResponse.json(data, {
-      status: response.status,
-    });
+    return NextResponse.json(
+      { success: false, message: "Invalid response from WordPress", details: text },
+      { status: 502 }
+    );
   } catch (error: any) {
     console.error("Register API Error:", error);
 
