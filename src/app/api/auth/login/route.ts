@@ -8,6 +8,8 @@ export async function POST(request: Request) {
       process.env.WORDPRESS_URL || "https://srv1565389.hstgr.cloud"
     ).replace(/\/$/, "");
 
+    const wpAuthKey = process.env.WP_AUTH_KEY || "southernspices2026";
+
     const response = await fetch(
       `${wpUrl}/?rest_route=/simple-jwt-login/v1/auth`,
       {
@@ -18,6 +20,7 @@ export async function POST(request: Request) {
         body: JSON.stringify({
           email: body.email,
           password: body.password,
+          AUTH_KEY: wpAuthKey,
         }),
       },
     );
