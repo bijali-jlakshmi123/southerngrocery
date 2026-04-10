@@ -116,14 +116,21 @@ export const api = {
    */
   post: async (endpoint: string, data: any) => {
     try {
-      const url = `${wpUrl}/wp-json/wc/v3/${endpoint}`;
+      // Use the rest_route URL format which we know works for routing on this server
+      const url = getWcUrl(endpoint);
+      
+      // Remove consumer keys from the URL for the POST request specifically, 
+      // as we will send them in the Authorization header for better security and compatibility
+      url.searchParams.delete("consumer_key");
+      url.searchParams.delete("consumer_secret");
 
       // Handle both server-side (Buffer) and client-side (btoa) environments
+      const credentials = `${consumerKey}:${consumerSecret}`;
       const auth = typeof btoa !== "undefined"
-        ? btoa(`${consumerKey}:${consumerSecret}`)
-        : Buffer.from(`${consumerKey}:${consumerSecret}`).toString("base64");
+        ? btoa(credentials)
+        : Buffer.from(credentials).toString("base64");
 
-      const response = await fetch(url, {
+      const response = await fetch(url.toString(), {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
