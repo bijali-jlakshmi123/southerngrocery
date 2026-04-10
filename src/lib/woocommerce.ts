@@ -4,42 +4,23 @@ const wpUrl = (
   "https://southernspicesstore.com"
 ).replace(/\/$/, "");
 
-const consumerKey =
-  process.env.WC_CONSUMER_KEY || "ck_eea2ae033ba9ce250c473f597a5fc7139f59943c";
-const consumerSecret =
-  process.env.WC_CONSUMER_SECRET ||
-  "cs_e4f0d3edde905941b7b8be2c07328a9bbd07b289";
+// SECURE: Only use environment variables for API keys
+const consumerKey = process.env.WC_CONSUMER_KEY!;
+const consumerSecret = process.env.WC_CONSUMER_SECRET!;
 
 /**
- * Centrally construct the WooCommerce API URL.
+ * Centrally construct the WooCommerce API URL for GET requests.
+ * Using query-parameter format for maximum compatibility with GET.
  */
-function getWcUrl(endpoint: string) {
+function getWcUrl(endpoint: string, params: Record<string, any> = {}) {
   const url = new URL(`${wpUrl}/`);
+  
+  // Use the query parameter format for REST API
   url.searchParams.append("rest_route", `/wc/v3/${endpoint}`);
-  return url;
-}
-
-/**
- * Get Basic Auth Header
- */
-function getAuthHeader() {
-  const credentials = `${consumerKey}:${consumerSecret}`;
-  const token = typeof btoa !== "undefined" 
-    ? btoa(credentials) 
-    : Buffer.from(credentials).toString("base64");
-  return { Authorization: `Basic ${token}` };
-}
-
-/**
- * Generic Fetch Wrapper for WooCommerce API
- */
-async function woocommerceFetch(
-  endpoint: string,
-  params: Record<string, any> = {},
-) {
-  const url = getWcUrl(endpoint);
-
-  // Add query params
+  url.searchParams.append("consumer_key", consumerKey);
+  url.searchParams.append("consumer_secret", consumerSecret);
+  
+  // Add additional query params
   Object.entries(params).forEach(([key, value]) => {
     if (value !== undefined && value !== null) {
       if (Array.isArray(value)) {
@@ -49,12 +30,23 @@ async function woocommerceFetch(
       }
     }
   });
+  
+  return url;
+}
+
+/**
+ * Generic Fetch Wrapper for WooCommerce API (GET)
+ */
+async function woocommerceFetch(
+  endpoint: string,
+  params: Record<string, any> = {},
+) {
+  const url = getWcUrl(endpoint, params);
 
   try {
     const response = await fetch(url.toString(), {
       headers: {
-        ...getAuthHeader(),
-        Accept: "application/json, text/plain, */*",
+        Accept: "application/json",
       },
       next: { revalidate: 3600 },
     });
@@ -62,7 +54,6 @@ async function woocommerceFetch(
     const contentType = response.headers.get("content-type") || "";
 
     if (!response.ok) {
-      const errorText = await response.text();
       console.warn(
         `[WooCommerce Fetch Error] ${endpoint}: HTTP ${response.status}`,
       );
@@ -119,35 +110,49 @@ export const api = {
   get: async (endpoint: string, params: any = {}) => {
     return await woocommerceFetch(endpoint, params);
   },
+  /**
+   * Secure and Robust POST request handling using Basic Authorization header.
+   * This format is required by many hosts (like Hostinger/Nginx) for write operations.
+   */
   post: async (endpoint: string, data: any) => {
     try {
-      const url = getWcUrl(endpoint);
+      const url = `${wpUrl}/wp-json/wc/v3/${endpoint}`;
 
-      const response = await fetch(url.toString(), {
+      // Handle both server-side (Buffer) and client-side (btoa) environments
+      const auth = typeof btoa !== "undefined"
+        ? btoa(`${consumerKey}:${consumerSecret}`)
+        : Buffer.from(`${consumerKey}:${consumerSecret}`).toString("base64");
+
+      const response = await fetch(url, {
         method: "POST",
         headers: {
-          ...getAuthHeader(),
           "Content-Type": "application/json",
-          "Accept": "application/json"
+          Accept: "application/json",
+          Authorization: `Basic ${auth}`,
         },
         body: JSON.stringify(data),
       });
 
       const contentType = response.headers.get("content-type") || "";
-      
+
       if (!response.ok) {
         const errorText = await response.text();
+        console.error(`[WooCommerce POST Error] ${endpoint}:`, errorText);
+
         let errorMessage = errorText;
         try {
           const errorJson = JSON.parse(errorText);
           errorMessage = errorJson.message || errorText;
-        } catch (e) {}
-        console.error(`[WooCommerce Post Error] ${endpoint}:`, errorText);
+        } catch {}
+
         return { data: null, error: errorMessage };
       }
 
       if (!contentType.includes("application/json")) {
-        return { data: null, error: "Received non-JSON response from server." };
+        return {
+          data: null,
+          error: "Received non-JSON response from server.",
+        };
       }
 
       const resData = await response.json();
