@@ -163,9 +163,13 @@ export default function Header({ categories: dynamicCategories }: HeaderProps) {
             <span className="opacity-30">|</span>
             {mounted && user ? (
               <div className="flex items-center gap-4">
-                <span className="text-primary font-bold">
-                  {user.name.split(" ")[0]}
-                </span>
+                <Link
+                  href="/dashboard"
+                  className="flex items-center gap-1.5 hover:text-primary transition-colors group text-sm font-bold"
+                >
+                  <User size={14} className="text-primary" /> Dashboard
+                </Link>
+                <span className="opacity-30">|</span>
                 <button
                   onClick={() => logout()}
                   className="text-secondary/60 hover:text-primary transition-colors uppercase tracking-widest text-[10px]"
@@ -492,6 +496,16 @@ export default function Header({ categories: dynamicCategories }: HeaderProps) {
                     </Link>
                   </li>
                 ))}
+                <li>
+                  <Link
+                    href="/dashboard"
+                    onClick={() => setIsMobileMenuOpen(false)}
+                    className="text-xl font-heading font-bold flex items-center justify-between group text-slate-600"
+                  >
+                    My Dashboard
+                    <User size={20} className="text-secondary" />
+                  </Link>
+                </li>
                 <li>
                   <Link
                     href="/wishlist"

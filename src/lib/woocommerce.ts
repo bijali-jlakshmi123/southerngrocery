@@ -109,10 +109,48 @@ export const getProductBySlug = async (slug: string) => {
 
 // Mock the API object for any direct imports, though preferred to use exports above
 export const api = {
-  get: async (endpoint: string, params: any) => {
+  get: async (endpoint: string, params: any = {}) => {
     const res = await woocommerceFetch(endpoint, params);
     return res;
   },
+  post: async (endpoint: string, data: any) => {
+    const url = new URL(`${wpUrl}/wp-json/wc/v3/${endpoint}`);
+    url.searchParams.append("consumer_key", consumerKey);
+    url.searchParams.append("consumer_secret", consumerSecret);
+
+    const response = await fetch(url.toString(), {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(data),
+    });
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      console.error(`[WooCommerce Post Error] ${endpoint}:`, errorText);
+      return { data: null, error: errorText };
+    }
+
+    const resData = await response.json();
+    return { data: resData };
+  },
+};
+
+export const createOrder = async (orderData: any) => {
+  return await api.post("orders", orderData);
+};
+
+export const getCustomerOrders = async (customerId: string) => {
+  return await api.get("orders", { customer: customerId });
+};
+
+export const updateCustomer = async (customerId: string, data: any) => {
+  return await api.post(`customers/${customerId}`, data);
+};
+
+export const getCustomer = async (customerId: string) => {
+  return await api.get(`customers/${customerId}`);
 };
 
 export default api;

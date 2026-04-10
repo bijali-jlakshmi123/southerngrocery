@@ -18,16 +18,34 @@ import { toast } from "react-toastify";
 import { useRouter } from "next/navigation";
 
 export default function CheckoutPage() {
-  const { user, logout } = useAuth();
+  const { user } = useAuth();
   const userId = user?.id || "guest";
   const { userCarts, getTotalPrice, clearCart } = useCart();
   const items: CartItem[] = userCarts[userId] || [];
+
+  const [formData, setFormData] = useState({
+    firstName: user?.name?.split(" ")[0] || "",
+    lastName: user?.name?.split(" ").slice(1).join(" ") || "",
+    email: user?.email || "",
+    phone: "",
+    address1: "",
+    city: "",
+    state: "",
+    postcode: "",
+    country: "GB",
+  });
 
   const [step, setStep] = useState(1);
   const [paymentMethod, setPaymentMethod] = useState<"stripe" | "paypal">(
     "stripe",
   );
+  const [isProcessing, setIsProcessing] = useState(false);
   const router = useRouter();
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
+  };
 
   // Restricted checkout for guests
   if (!user) {
@@ -60,21 +78,77 @@ export default function CheckoutPage() {
   const tax = subtotal * 0.2;
   const total = subtotal + shipping + tax;
 
-  const handlePlaceOrder = () => {
-    toast.success(
-      `🎉 Order placed with ${paymentMethod}! Southern Spices is on its way.`,
-      {
-        position: "top-center",
-        autoClose: 5000,
-        theme: "colored",
-      },
-    );
-    // Simulating clear cart and redirect
-    setTimeout(() => {
-      clearCart(userId);
-      logout();
-      router.push("/");
-    }, 2000);
+  const handlePlaceOrder = async () => {
+    if (!formData.address1 || !formData.city || !formData.postcode || !formData.phone) {
+      toast.error("Please fill in all shipping details");
+      setStep(1);
+      return;
+    }
+
+    setIsProcessing(true);
+
+    try {
+      const orderData = {
+        payment_method: paymentMethod,
+        payment_method_title: paymentMethod === "stripe" ? "Credit Card (Stripe)" : "PayPal",
+        set_paid: true,
+        customer_id: parseInt(user.id),
+        billing: {
+          first_name: formData.firstName,
+          last_name: formData.lastName,
+          address_1: formData.address1,
+          city: formData.city,
+          state: formData.state,
+          postcode: formData.postcode,
+          country: formData.country,
+          email: formData.email,
+          phone: formData.phone,
+        },
+        shipping: {
+          first_name: formData.firstName,
+          last_name: formData.lastName,
+          address_1: formData.address1,
+          city: formData.city,
+          state: formData.state,
+          postcode: formData.postcode,
+          country: formData.country,
+        },
+        line_items: items.map((item) => ({
+          product_id: item.id,
+          quantity: item.quantity,
+        })),
+        shipping_lines: [
+          {
+            method_id: "flat_rate",
+            method_title: "Standard Shipping",
+            total: shipping.toFixed(2),
+          },
+        ],
+      };
+
+      const response = await fetch("/api/orders", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(orderData),
+      });
+
+      const result = await response.json();
+
+      if (result.success) {
+        toast.success(
+          `🎉 Order placed successfully! Your order ID is #${result.data.id}`,
+          { position: "top-center", autoClose: 5000 }
+        );
+        clearCart(userId);
+        router.push("/dashboard");
+      } else {
+        throw new Error(result.error || "Failed to place order");
+      }
+    } catch (error: any) {
+      toast.error(error.message || "An error occurred while placing your order.");
+    } finally {
+      setIsProcessing(false);
+    }
   };
 
   if (items.length === 0) {
@@ -163,39 +237,75 @@ export default function CheckoutPage() {
                 <div className="space-y-4">
                   <h2 className="text-3xl font-heading font-black text-slate-900 flex items-center gap-4">
                     <div className="w-12 h-12 bg-primary/5 rounded-2xl flex items-center justify-center text-primary">
-                      <User size={24} />
+                      <MapPin size={24} />
                     </div>
-                    Customer Information
+                    Shipping Address
                   </h2>
-                  <p className="text-slate-500 font-medium">
-                    Already have an account?{" "}
-                    <Link
-                      href="/login"
-                      className="text-primary font-black underline"
-                    >
-                      Log in
-                    </Link>
-                  </p>
                 </div>
 
                 <div className="grid md:grid-cols-2 gap-6">
                   <div className="space-y-2">
                     <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-4">
-                      Full Name
+                      First Name
                     </label>
                     <input
+                      name="firstName"
                       type="text"
-                      placeholder="User name"
+                      placeholder="First Name"
+                      value={formData.firstName}
+                      onChange={handleInputChange}
                       className="w-full px-8 py-5 rounded-3xl border-2 border-slate-50 bg-slate-50 focus:bg-white focus:border-primary transition-all outline-none font-bold"
                     />
                   </div>
                   <div className="space-y-2">
                     <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-4">
-                      Email Address
+                      Last Name
                     </label>
                     <input
-                      type="email"
-                      placeholder="username@example.com"
+                      name="lastName"
+                      type="text"
+                      placeholder="Last Name"
+                      value={formData.lastName}
+                      onChange={handleInputChange}
+                      className="w-full px-8 py-5 rounded-3xl border-2 border-slate-50 bg-slate-50 focus:bg-white focus:border-primary transition-all outline-none font-bold"
+                    />
+                  </div>
+                  <div className="md:col-span-2 space-y-2">
+                    <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-4">
+                      Address
+                    </label>
+                    <input
+                      name="address1"
+                      type="text"
+                      placeholder="Street address, apartment, etc."
+                      value={formData.address1}
+                      onChange={handleInputChange}
+                      className="w-full px-8 py-5 rounded-3xl border-2 border-slate-50 bg-slate-50 focus:bg-white focus:border-primary transition-all outline-none font-bold"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-4">
+                      City
+                    </label>
+                    <input
+                      name="city"
+                      type="text"
+                      placeholder="City"
+                      value={formData.city}
+                      onChange={handleInputChange}
+                      className="w-full px-8 py-5 rounded-3xl border-2 border-slate-50 bg-slate-50 focus:bg-white focus:border-primary transition-all outline-none font-bold"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-4">
+                      Postcode
+                    </label>
+                    <input
+                      name="postcode"
+                      type="text"
+                      placeholder="Postcode"
+                      value={formData.postcode}
+                      onChange={handleInputChange}
                       className="w-full px-8 py-5 rounded-3xl border-2 border-slate-50 bg-slate-50 focus:bg-white focus:border-primary transition-all outline-none font-bold"
                     />
                   </div>
@@ -204,8 +314,11 @@ export default function CheckoutPage() {
                       Phone Number
                     </label>
                     <input
+                      name="phone"
                       type="tel"
-                      placeholder="+44 XXXX XXXXXX"
+                      placeholder="Phone for delivery updates"
+                      value={formData.phone}
+                      onChange={handleInputChange}
                       className="w-full px-8 py-5 rounded-3xl border-2 border-slate-50 bg-slate-50 focus:bg-white focus:border-primary transition-all outline-none font-bold"
                     />
                   </div>
@@ -249,7 +362,7 @@ export default function CheckoutPage() {
                     <input
                       type="radio"
                       name="shipping"
-                      checked
+                      defaultChecked
                       className="hidden"
                     />
                     <div className="w-6 h-6 rounded-full border-4 border-primary flex items-center justify-center bg-white">
@@ -257,36 +370,20 @@ export default function CheckoutPage() {
                     </div>
                     <div className="flex-1">
                       <div className="font-heading font-black text-slate-900 text-lg">
-                        Standard UK Delivery
+                        Standard Delivery
                       </div>
                       <div className="text-sm text-slate-500 font-bold uppercase tracking-widest">
                         3-5 Business Days
                       </div>
                     </div>
                     <div className="text-xl font-heading font-black text-primary">
-                      £5.99
+                      £{shipping.toFixed(2)}
                     </div>
                     {shipping === 0 && (
                       <div className="absolute top-0 right-10 translate-y-[-50%] bg-success text-white text-[10px] font-black px-4 py-1.5 rounded-full shadow-glow">
                         FREE FOR YOU
                       </div>
                     )}
-                  </label>
-
-                  <label className="relative flex items-center gap-6 p-8 rounded-4xl border-2 border-slate-50 bg-white hover:border-slate-100 cursor-pointer group transition-all">
-                    <input type="radio" name="shipping" className="hidden" />
-                    <div className="w-6 h-6 rounded-full border-2 border-slate-200 bg-white" />
-                    <div className="flex-1">
-                      <div className="font-heading font-black text-slate-900 text-lg">
-                        Next Day Express
-                      </div>
-                      <div className="text-sm text-slate-500 font-bold uppercase tracking-widest">
-                        Order by 2pm for tomorrow
-                      </div>
-                    </div>
-                    <div className="text-xl font-heading font-black text-slate-400">
-                      £9.99
-                    </div>
                   </label>
                 </div>
 
@@ -333,110 +430,21 @@ export default function CheckoutPage() {
                     onClick={() => setPaymentMethod("stripe")}
                     className={`flex flex-col items-center gap-4 p-8 rounded-4xl border-2 transition-all ${paymentMethod === "stripe" ? "border-primary bg-primary/5 shadow-premium" : "border-slate-50 bg-white hover:border-slate-100 opacity-60"}`}
                   >
-                    <img
-                      src="/stripe.png"
-                      alt="Stripe"
-                      className="h-8 object-contain"
-                    />
+                   <CreditCard size={32} className="text-slate-400" />
                     <span className="text-[10px] font-black uppercase tracking-widest text-slate-500">
-                      Pay with Card
+                      Stripe / Card
                     </span>
                   </button>
                   <button
                     onClick={() => setPaymentMethod("paypal")}
                     className={`flex flex-col items-center gap-4 p-8 rounded-4xl border-2 transition-all ${paymentMethod === "paypal" ? "border-[#0070ba] bg-[#0070ba]/5 shadow-premium" : "border-slate-50 bg-white hover:border-slate-100 opacity-60"}`}
                   >
-                    <img
-                      src="/paypal.png"
-                      alt="PayPal"
-                      className="h-8 object-contain"
-                    />
+                    <div className="font-heading font-black text-xl text-[#0070ba]">PayPal</div>
                     <span className="text-[10px] font-black uppercase tracking-widest text-slate-500">
-                      Fast Checkout
+                      PayPal
                     </span>
                   </button>
                 </div>
-
-                <AnimatePresence mode="wait">
-                  {paymentMethod === "stripe" ? (
-                    <motion.div
-                      initial={{ opacity: 0, y: 10 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      exit={{ opacity: 0, y: -10 }}
-                      className="space-y-8"
-                    >
-                      <div className="bg-slate-900 rounded-5xl p-10 text-white space-y-8 shadow-2xl relative overflow-hidden group">
-                        <div className="absolute top-0 right-0 w-64 h-64 bg-primary/20 blur-3xl rounded-full translate-x-1/2 -translate-y-1/2" />
-                        <div className="flex justify-between items-start relative z-10">
-                          <div className="w-16 h-12 bg-gradient-to-br from-yellow-400 to-yellow-600 rounded-xl" />
-                          <img
-                            src="/stripe.png"
-                            className="h-6 opacity-30 invert"
-                            alt=""
-                          />
-                        </div>
-                        <div className="space-y-6 relative z-10">
-                          <div className="space-y-2">
-                            <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">
-                              Card Number
-                            </label>
-                            <input
-                              type="text"
-                              placeholder="●●●●  ●●●●  ●●●●  ●●●●"
-                              className="w-full bg-slate-800 border-none rounded-2xl px-6 py-4 font-heading font-black text-2xl tracking-widest outline-none text-primary placeholder:opacity-20"
-                            />
-                          </div>
-                          <div className="grid grid-cols-2 gap-6">
-                            <div className="space-y-2">
-                              <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">
-                                Expiry Date
-                              </label>
-                              <input
-                                type="text"
-                                placeholder="MM/YY"
-                                className="w-full bg-slate-800 border-none rounded-2xl px-6 py-4 font-heading font-black text-lg outline-none text-white placeholder:opacity-20"
-                              />
-                            </div>
-                            <div className="space-y-2">
-                              <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">
-                                CVV
-                              </label>
-                              <input
-                                type="text"
-                                placeholder="***"
-                                className="w-full bg-slate-800 border-none rounded-2xl px-6 py-4 font-heading font-black text-lg outline-none text-white placeholder:opacity-20"
-                              />
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    </motion.div>
-                  ) : (
-                    <motion.div
-                      initial={{ opacity: 0, y: 10 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      exit={{ opacity: 0, y: -10 }}
-                      className="p-10 bg-[#0070ba]/10 rounded-5xl flex flex-col items-center gap-6 border-2 border-[#0070ba]/20"
-                    >
-                      <img src="/paypal.png" alt="PayPal" className="h-16" />
-                      <div className="text-center group-hover:scale-105 transition-all">
-                        <div className="font-heading font-black text-slate-900 text-xl">
-                          The smarter way to pay
-                        </div>
-                        <p className="text-slate-500 font-medium text-sm mt-1">
-                          You will be redirected to PayPal to complete your
-                          purchase safely.
-                        </p>
-                      </div>
-                      <button
-                        onClick={handlePlaceOrder}
-                        className="bg-[#ffc439] hover:bg-[#f2ba36] text-[#003087] font-black !py-4 px-16 rounded-full flex items-center gap-3 transition-all active:scale-95 shadow-lg uppercase tracking-widest text-sm"
-                      >
-                        Pay with PayPal <ArrowRight size={18} />
-                      </button>
-                    </motion.div>
-                  )}
-                </AnimatePresence>
 
                 <div className="flex items-center gap-4 bg-success/5 p-6 rounded-3xl border border-success/10 text-success">
                   <ShieldCheck size={28} className="flex-shrink-0" />
@@ -454,21 +462,20 @@ export default function CheckoutPage() {
                   >
                     <ChevronLeft size={18} /> Back
                   </button>
-                  {paymentMethod === "stripe" && (
-                    <button
-                      onClick={handlePlaceOrder}
-                      className="btn-base btn-primary !py-4 flex-1 shadow-glow group"
-                    >
-                      Pay £{total.toFixed(2)} with Stripe
-                    </button>
-                  )}
+                  <button
+                    onClick={handlePlaceOrder}
+                    disabled={isProcessing}
+                    className="btn-base btn-primary !py-4 flex-1 shadow-glow group disabled:opacity-50"
+                  >
+                    {isProcessing ? "Processing..." : `Pay £${total.toFixed(2)} & Place Order`}
+                  </button>
                 </div>
               </motion.div>
             )}
           </AnimatePresence>
         </div>
 
-        {/* Right Side: Order Summary Summary (Desktop) */}
+        {/* Right Side: Order Summary */}
         <div className="lg:w-96">
           <div className="sticky top-28 space-y-8">
             <div className="bg-slate-50 border border-slate-100 rounded-5xl p-8 shadow-sm">
@@ -538,28 +545,6 @@ export default function CheckoutPage() {
                   </div>
                 </div>
               </div>
-            </div>
-
-            <div className="flex flex-col items-center gap-4 text-center">
-              <div className="flex -space-x-4">
-                {[1, 2, 3, 4].map((i) => (
-                  <div
-                    key={i}
-                    className="w-10 h-10 rounded-full border-2 border-white bg-slate-100 flex items-center justify-center overflow-hidden"
-                  >
-                    <img
-                      src={`https://i.pravatar.cc/100?img=${i + 10}`}
-                      alt="Customer"
-                      className="w-full h-full object-cover"
-                    />
-                  </div>
-                ))}
-              </div>
-              <p className="text-[11px] font-bold text-slate-400 uppercase tracking-widest">
-                Joined by{" "}
-                <span className="text-slate-900 font-black">2,400+</span>{" "}
-                Customers in UK
-              </p>
             </div>
           </div>
         </div>
