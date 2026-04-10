@@ -12,15 +12,22 @@ const consumerSecret =
 
 /**
  * Centrally construct the WooCommerce API URL.
- * We use the ?rest_route= format to ensure compatibility with all permalink settings.
  */
 function getWcUrl(endpoint: string) {
-  // Use the query parameter format for REST API as it's more compatible with some hosts (like Hostinger plain permalinks)
   const url = new URL(`${wpUrl}/`);
   url.searchParams.append("rest_route", `/wc/v3/${endpoint}`);
-  url.searchParams.append("consumer_key", consumerKey);
-  url.searchParams.append("consumer_secret", consumerSecret);
   return url;
+}
+
+/**
+ * Get Basic Auth Header
+ */
+function getAuthHeader() {
+  const credentials = `${consumerKey}:${consumerSecret}`;
+  const token = typeof btoa !== "undefined" 
+    ? btoa(credentials) 
+    : Buffer.from(credentials).toString("base64");
+  return { Authorization: `Basic ${token}` };
 }
 
 /**
@@ -46,6 +53,7 @@ async function woocommerceFetch(
   try {
     const response = await fetch(url.toString(), {
       headers: {
+        ...getAuthHeader(),
         Accept: "application/json, text/plain, */*",
       },
       next: { revalidate: 3600 },
@@ -118,6 +126,7 @@ export const api = {
       const response = await fetch(url.toString(), {
         method: "POST",
         headers: {
+          ...getAuthHeader(),
           "Content-Type": "application/json",
           "Accept": "application/json"
         },
