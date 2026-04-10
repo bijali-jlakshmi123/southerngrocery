@@ -88,11 +88,14 @@ export default function CheckoutPage() {
     setIsProcessing(true);
 
     try {
+      // Validate customer ID
+      const numericUserId = parseInt(user.id);
+      
       const orderData = {
         payment_method: paymentMethod,
         payment_method_title: paymentMethod === "stripe" ? "Credit Card (Stripe)" : "PayPal",
         set_paid: true,
-        customer_id: parseInt(user.id),
+        customer_id: isNaN(numericUserId) ? 0 : numericUserId,
         billing: {
           first_name: formData.firstName,
           last_name: formData.lastName,
@@ -114,7 +117,7 @@ export default function CheckoutPage() {
           country: formData.country,
         },
         line_items: items.map((item) => ({
-          product_id: item.id,
+          product_id: parseInt(item.id.toString()),
           quantity: item.quantity,
         })),
         shipping_lines: [
@@ -193,7 +196,7 @@ export default function CheckoutPage() {
                 1
               </div>
               <span className="text-[10px] font-black uppercase tracking-widest hidden sm:block">
-                Information
+                Address
               </span>
             </div>
             <ChevronRight className="text-slate-200" size={16} />
@@ -272,12 +275,12 @@ export default function CheckoutPage() {
                   </div>
                   <div className="md:col-span-2 space-y-2">
                     <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-4">
-                      Address
+                      Street Address
                     </label>
                     <input
                       name="address1"
                       type="text"
-                      placeholder="Street address, apartment, etc."
+                      placeholder="e.g. 123 High Street"
                       value={formData.address1}
                       onChange={handleInputChange}
                       className="w-full px-8 py-5 rounded-3xl border-2 border-slate-50 bg-slate-50 focus:bg-white focus:border-primary transition-all outline-none font-bold"
@@ -298,6 +301,19 @@ export default function CheckoutPage() {
                   </div>
                   <div className="space-y-2">
                     <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-4">
+                      County / State
+                    </label>
+                    <input
+                      name="state"
+                      type="text"
+                      placeholder="e.g. London"
+                      value={formData.state}
+                      onChange={handleInputChange}
+                      className="w-full px-8 py-5 rounded-3xl border-2 border-slate-50 bg-slate-50 focus:bg-white focus:border-primary transition-all outline-none font-bold"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-4">
                       Postcode
                     </label>
                     <input
@@ -309,14 +325,14 @@ export default function CheckoutPage() {
                       className="w-full px-8 py-5 rounded-3xl border-2 border-slate-50 bg-slate-50 focus:bg-white focus:border-primary transition-all outline-none font-bold"
                     />
                   </div>
-                  <div className="md:col-span-2 space-y-2">
+                  <div className="space-y-2">
                     <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-4">
                       Phone Number
                     </label>
                     <input
                       name="phone"
                       type="tel"
-                      placeholder="Phone for delivery updates"
+                      placeholder="For delivery updates"
                       value={formData.phone}
                       onChange={handleInputChange}
                       className="w-full px-8 py-5 rounded-3xl border-2 border-slate-50 bg-slate-50 focus:bg-white focus:border-primary transition-all outline-none font-bold"
@@ -424,7 +440,7 @@ export default function CheckoutPage() {
                   </p>
                 </div>
 
-                {/* Method Selector Selector */}
+                {/* Method Selector */}
                 <div className="grid grid-cols-2 gap-6">
                   <button
                     onClick={() => setPaymentMethod("stripe")}
@@ -448,7 +464,7 @@ export default function CheckoutPage() {
 
                 <div className="flex items-center gap-4 bg-success/5 p-6 rounded-3xl border border-success/10 text-success">
                   <ShieldCheck size={28} className="flex-shrink-0" />
-                  <div className="text-xs font-bold leading-relaxed italic">
+                  <div className="text-xs font-bold leading-relaxed italic text-left">
                     The secure processing of your payment details is our #1
                     priority. We do not store your full card information on our
                     servers.

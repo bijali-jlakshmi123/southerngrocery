@@ -1,5 +1,7 @@
 const wpUrl = (
-  process.env.NEXT_PUBLIC_WORDPRESS_URL || "https://southernspicesstore.com"
+  process.env.NEXT_PUBLIC_WORDPRESS_URL || 
+  process.env.WORDPRESS_URL || 
+  "https://southernspicesstore.com"
 ).replace(/\/$/, "");
 const consumerKey =
   process.env.WC_CONSUMER_KEY || "ck_bdb3938c3c9bd4dabad293fdc33cff408e787415";
@@ -114,26 +116,38 @@ export const api = {
     return res;
   },
   post: async (endpoint: string, data: any) => {
-    const url = new URL(`${wpUrl}/wp-json/wc/v3/${endpoint}`);
-    url.searchParams.append("consumer_key", consumerKey);
-    url.searchParams.append("consumer_secret", consumerSecret);
+    try {
+      const url = new URL(`${wpUrl}/wp-json/wc/v3/${endpoint}`);
+      url.searchParams.append("consumer_key", consumerKey);
+      url.searchParams.append("consumer_secret", consumerSecret);
 
-    const response = await fetch(url.toString(), {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(data),
-    });
+      const response = await fetch(url.toString(), {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data),
+      });
 
-    if (!response.ok) {
-      const errorText = await response.text();
-      console.error(`[WooCommerce Post Error] ${endpoint}:`, errorText);
-      return { data: null, error: errorText };
+      if (!response.ok) {
+        const errorText = await response.text();
+        let errorMessage = errorText;
+        try {
+          const errorJson = JSON.parse(errorText);
+          errorMessage = errorJson.message || errorText;
+        } catch (e) {
+          // Not JSON, keep original text
+        }
+        console.error(`[WooCommerce Post Error] ${endpoint}:`, errorText);
+        return { data: null, error: errorMessage };
+      }
+
+      const resData = await response.json();
+      return { data: resData };
+    } catch (error: any) {
+      console.error(`[WooCommerce Post Exception] ${endpoint}:`, error.message);
+      return { data: null, error: error.message || "Network error occurred while contacting WooCommerce" };
     }
-
-    const resData = await response.json();
-    return { data: resData };
   },
 };
 

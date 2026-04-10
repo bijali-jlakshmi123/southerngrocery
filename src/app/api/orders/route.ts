@@ -4,9 +4,19 @@ import { createOrder } from "@/lib/woocommerce";
 export async function POST(request: Request) {
   try {
     const orderData = await request.json();
-    
-    console.log("Creating order with data:", JSON.stringify(orderData, null, 2));
-    
+
+    if (!orderData || !orderData.line_items) {
+      return NextResponse.json(
+        { success: false, error: "Empty order data" },
+        { status: 400 },
+      );
+    }
+
+    console.log(
+      "Creating order with data:",
+      JSON.stringify(orderData, null, 2),
+    );
+
     const response = await createOrder(orderData);
 
     if (response.data) {
@@ -15,12 +25,13 @@ export async function POST(request: Request) {
         data: response.data,
       });
     } else {
+      console.warn("Order creation failed:", response.error);
       return NextResponse.json(
         {
           success: false,
           error: response.error || "Failed to create order in WooCommerce",
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
   } catch (error: any) {
@@ -30,7 +41,7 @@ export async function POST(request: Request) {
         success: false,
         error: error.message || "Internal server error",
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

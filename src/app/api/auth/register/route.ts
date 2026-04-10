@@ -5,7 +5,9 @@ export async function POST(request: Request) {
     const body = await request.json();
 
     const wpUrl = (
-      process.env.WORDPRESS_URL || "https://southernspicesstore.com"
+      process.env.NEXT_PUBLIC_WORDPRESS_URL ||
+      process.env.WORDPRESS_URL ||
+      "https://southernspicesstore.com"
     ).replace(/\/$/, "");
 
     const wpAuthKey = process.env.WP_AUTH_KEY || "southernspices2026";
