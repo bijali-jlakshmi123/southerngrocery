@@ -3,10 +3,10 @@ import { getCustomerOrders } from "@/lib/woocommerce";
 
 export async function GET(
   request: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const userId = params.id;
+    const { id: userId } = await params;
     const response = await getCustomerOrders(userId);
 
     if (response.data) {

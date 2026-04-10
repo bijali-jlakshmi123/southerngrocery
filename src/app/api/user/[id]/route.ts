@@ -3,10 +3,10 @@ import { updateCustomer, getCustomer } from "@/lib/woocommerce";
 
 export async function GET(
   request: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const userId = params.id;
+    const { id: userId } = await params;
     const response = await getCustomer(userId);
 
     if (response.data) {
@@ -36,10 +36,10 @@ export async function GET(
 
 export async function POST(
   request: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const userId = params.id;
+    const { id: userId } = await params;
     const updateData = await request.json();
     const response = await updateCustomer(userId, updateData);
 
