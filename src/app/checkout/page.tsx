@@ -79,9 +79,15 @@ export default function CheckoutPage() {
   const total = subtotal + shipping + tax;
 
   const handlePlaceOrder = async () => {
-    if (!formData.address1 || !formData.city || !formData.postcode || !formData.phone) {
-      toast.error("Please fill in all shipping details");
+    // Enhanced Validation
+    if (!formData.firstName || !formData.lastName || !formData.email || !formData.phone || !formData.address1 || !formData.city || !formData.postcode) {
+      toast.error("Please fill in all required fields including your contact info.");
       setStep(1);
+      return;
+    }
+
+    if (!formData.email.includes("@")) {
+      toast.error("Please enter a valid email address.");
       return;
     }
 
@@ -101,7 +107,7 @@ export default function CheckoutPage() {
           last_name: formData.lastName,
           address_1: formData.address1,
           city: formData.city,
-          state: formData.state,
+          state: formData.state || formData.city, // WooCommerce sometimes requires state
           postcode: formData.postcode,
           country: formData.country,
           email: formData.email,
@@ -112,7 +118,7 @@ export default function CheckoutPage() {
           last_name: formData.lastName,
           address_1: formData.address1,
           city: formData.city,
-          state: formData.state,
+          state: formData.state || formData.city,
           postcode: formData.postcode,
           country: formData.country,
         },
@@ -140,8 +146,7 @@ export default function CheckoutPage() {
       if (contentType.includes("application/json")) {
         result = await response.json();
       } else {
-        const text = await response.text();
-        throw new Error("Server returned non-JSON response. Please check your connection or try again later.");
+        throw new Error("The server encountered an issue processing your order. Please try again or contact support.");
       }
 
       if (result.success) {
@@ -152,12 +157,11 @@ export default function CheckoutPage() {
         clearCart(userId);
         router.push("/dashboard");
       } else {
-        throw new Error(result.error || "Failed to place order");
+        throw new Error(result.error || "Failed to place order. Please check your details.");
       }
     } catch (error: any) {
       toast.error(error.message || "An error occurred while placing your order.");
-    } finally {
-      setIsProcessing(false);
+      setIsProcessing(false); // Reset button state on error
     }
   };
 
@@ -332,7 +336,7 @@ export default function CheckoutPage() {
                       className="w-full px-8 py-5 rounded-3xl border-2 border-slate-50 bg-slate-50 focus:bg-white focus:border-primary transition-all outline-none font-bold"
                     />
                   </div>
-                  <div className="space-y-2">
+                  <div className="md:col-span-2 space-y-2">
                     <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-4">
                       Phone Number
                     </label>

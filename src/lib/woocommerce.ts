@@ -116,15 +116,9 @@ export const api = {
    */
   post: async (endpoint: string, data: any) => {
     try {
-      // Use the rest_route URL format which we know works for routing on this server
+      // Keep keys in URL AND add them to Headers for maximum reliability
       const url = getWcUrl(endpoint);
       
-      // Remove consumer keys from the URL for the POST request specifically, 
-      // as we will send them in the Authorization header for better security and compatibility
-      url.searchParams.delete("consumer_key");
-      url.searchParams.delete("consumer_secret");
-
-      // Handle both server-side (Buffer) and client-side (btoa) environments
       const credentials = `${consumerKey}:${consumerSecret}`;
       const auth = typeof btoa !== "undefined"
         ? btoa(credentials)
@@ -150,7 +144,15 @@ export const api = {
         try {
           const errorJson = JSON.parse(errorText);
           errorMessage = errorJson.message || errorText;
-        } catch {}
+          
+          // If there are specific parameter errors (e.g. billing issues), include them in the message
+          if (errorJson.data && errorJson.data.params) {
+            const detailLines = Object.entries(errorJson.data.params)
+              .map(([key, val]) => `${val}`)
+              .join(" | ");
+            if (detailLines) errorMessage = `${errorMessage}: ${detailLines}`;
+          }
+        } catch (e) {}
 
         return { data: null, error: errorMessage };
       }
