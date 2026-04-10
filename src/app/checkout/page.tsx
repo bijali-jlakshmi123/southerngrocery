@@ -135,7 +135,14 @@ export default function CheckoutPage() {
         body: JSON.stringify(orderData),
       });
 
-      const result = await response.json();
+      const contentType = response.headers.get("content-type") || "";
+      let result;
+      if (contentType.includes("application/json")) {
+        result = await response.json();
+      } else {
+        const text = await response.text();
+        throw new Error("Server returned non-JSON response. Please check your connection or try again later.");
+      }
 
       if (result.success) {
         toast.success(
