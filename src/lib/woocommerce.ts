@@ -1,26 +1,23 @@
 const wpUrl = (
-  process.env.NEXT_PUBLIC_WORDPRESS_URL || 
-  process.env.WORDPRESS_URL || 
+  process.env.NEXT_PUBLIC_WORDPRESS_URL ||
+  process.env.WORDPRESS_URL ||
   "https://southernspicesstore.com"
 ).replace(/\/$/, "");
 
-// SECURE: Only use environment variables for API keys
 const consumerKey = process.env.WC_CONSUMER_KEY!;
 const consumerSecret = process.env.WC_CONSUMER_SECRET!;
 
 /**
- * Centrally construct the WooCommerce API URL for GET requests.
- * Using query-parameter format for maximum compatibility with GET.
+ * Build WooCommerce REST API URL
+ * Uses query-string authentication for maximum Hostinger compatibility
  */
 function getWcUrl(endpoint: string, params: Record<string, any> = {}) {
-  const url = new URL(`${wpUrl}/`);
-  
-  // Use the query parameter format for REST API
+  const url = new URL(`${wpUrl}/index.php`);
+
   url.searchParams.append("rest_route", `/wc/v3/${endpoint}`);
   url.searchParams.append("consumer_key", consumerKey);
   url.searchParams.append("consumer_secret", consumerSecret);
-  
-  // Add additional query params
+
   Object.entries(params).forEach(([key, value]) => {
     if (value !== undefined && value !== null) {
       if (Array.isArray(value)) {
@@ -30,12 +27,12 @@ function getWcUrl(endpoint: string, params: Record<string, any> = {}) {
       }
     }
   });
-  
+
   return url;
 }
 
 /**
- * Generic Fetch Wrapper for WooCommerce API (GET)
+ * Generic WooCommerce GET request
  */
 async function woocommerceFetch(
   endpoint: string,
@@ -54,123 +51,97 @@ async function woocommerceFetch(
     const contentType = response.headers.get("content-type") || "";
 
     if (!response.ok) {
-      console.warn(
-        `[WooCommerce Fetch Error] ${endpoint}: HTTP ${response.status}`,
+      console.error(
+        `[WooCommerce GET Error] ${endpoint}: HTTP ${response.status}`,
       );
       return { data: null };
     }
 
     if (!contentType.includes("application/json")) {
       const text = await response.text();
-      return { data: text.trim().startsWith("<!DOCTYPE") ? null : text };
+      return { data: text };
     }
 
     const data = await response.json();
     return { data };
   } catch (error: any) {
-    console.error(`[WooCommerce Fetch Error] ${endpoint}:`, error.message);
+    console.error(`[WooCommerce GET Error] ${endpoint}:`, error.message);
     return { data: null };
   }
 }
 
-export const getProducts = async (params = {}) => {
-  try {
-    const response = await woocommerceFetch("products", params);
-    if (!Array.isArray(response.data)) return [];
-    return response.data;
-  } catch (error: any) {
-    return [];
-  }
-};
+/**
+ * Generic WooCommerce POST request
+ * IMPORTANT: URL auth only (no Authorization header)
+ */
+async function woocommercePost(endpoint: string, data: any) {
+  const url = getWcUrl(endpoint);
 
-export const getCategories = async (params = {}) => {
   try {
-    const response = await woocommerceFetch("products/categories", params);
-    if (!Array.isArray(response.data)) return [];
-    return response.data;
-  } catch (error: any) {
-    return [];
-  }
-};
+    console.log(`[WC DEBUG POST] ${url.toString()}`);
+    console.log(`[WC DEBUG BODY]`, data);
 
-export const getProductBySlug = async (slug: string) => {
-  if (!slug) return null;
-  try {
-    const response = await woocommerceFetch("products", { slug });
-    if (response.data && response.data.length > 0) {
-      return response.data[0];
+    const response = await fetch(url.toString(), {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+      },
+      body: JSON.stringify(data),
+    });
+
+    const text = await response.text();
+
+    if (!response.ok) {
+      console.error(
+        `[WooCommerce POST Error] ${endpoint}: HTTP ${response.status}`,
+        text,
+      );
+
+      return {
+        data: null,
+        error: text,
+      };
     }
-    return null;
+
+    const resData = JSON.parse(text);
+
+    return {
+      data: resData,
+    };
   } catch (error: any) {
-    return null;
+    console.error(`[WooCommerce POST Exception]:`, error.message);
+
+    return {
+      data: null,
+      error: error.message,
+    };
   }
-};
+}
 
 export const api = {
   get: async (endpoint: string, params: any = {}) => {
     return await woocommerceFetch(endpoint, params);
   },
-  /**
-   * Secure and Robust POST request handling using Basic Authorization header.
-   * This format is required by many hosts (like Hostinger/Nginx) for write operations.
-   */
+
   post: async (endpoint: string, data: any) => {
-    try {
-      // Keep keys in URL AND add them to Headers for maximum reliability
-      const url = getWcUrl(endpoint);
-      
-      const credentials = `${consumerKey}:${consumerSecret}`;
-      const auth = typeof btoa !== "undefined"
-        ? btoa(credentials)
-        : Buffer.from(credentials).toString("base64");
-
-      const response = await fetch(url.toString(), {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Accept: "application/json",
-          Authorization: `Basic ${auth}`,
-        },
-        body: JSON.stringify(data),
-      });
-
-      const contentType = response.headers.get("content-type") || "";
-
-      if (!response.ok) {
-        const errorText = await response.text();
-        console.error(`[WooCommerce POST Error] ${endpoint}:`, errorText);
-
-        let errorMessage = errorText;
-        try {
-          const errorJson = JSON.parse(errorText);
-          errorMessage = errorJson.message || errorText;
-          
-          // If there are specific parameter errors (e.g. billing issues), include them in the message
-          if (errorJson.data && errorJson.data.params) {
-            const detailLines = Object.entries(errorJson.data.params)
-              .map(([key, val]) => `${val}`)
-              .join(" | ");
-            if (detailLines) errorMessage = `${errorMessage}: ${detailLines}`;
-          }
-        } catch (e) {}
-
-        return { data: null, error: errorMessage };
-      }
-
-      if (!contentType.includes("application/json")) {
-        return {
-          data: null,
-          error: "Received non-JSON response from server.",
-        };
-      }
-
-      const resData = await response.json();
-      return { data: resData };
-    } catch (error: any) {
-      console.error(`[WooCommerce Post Exception] ${endpoint}:`, error.message);
-      return { data: null, error: error.message };
-    }
+    return await woocommercePost(endpoint, data);
   },
+};
+
+export const getProducts = async (params = {}) => {
+  const response = await api.get("products", params);
+  return Array.isArray(response.data) ? response.data : [];
+};
+
+export const getCategories = async (params = {}) => {
+  const response = await api.get("products/categories", params);
+  return Array.isArray(response.data) ? response.data : [];
+};
+
+export const getProductBySlug = async (slug: string) => {
+  const response = await api.get("products", { slug });
+  return response.data?.[0] || null;
 };
 
 export const createOrder = async (orderData: any) => {

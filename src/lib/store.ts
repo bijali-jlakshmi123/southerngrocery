@@ -39,6 +39,7 @@ interface CartStore {
   removeItem: (productId: number, userId?: string) => void;
   updateQuantity: (productId: number, quantity: number, userId?: string) => void;
   clearCart: (userId?: string) => void;
+  mergeCarts: (fromUserId: string, toUserId: string) => void;
   getTotalItems: (userId?: string) => number;
   getTotalPrice: (userId?: string) => number;
 }
@@ -105,6 +106,31 @@ export const useCart = create<CartStore>()(
       clearCart: (userId = 'guest') => {
         const carts = get().userCarts;
         set({ userCarts: { ...carts, [userId]: [] } });
+      },
+      
+      mergeCarts: (fromUserId, toUserId) => {
+        const carts = get().userCarts;
+        const fromItems = carts[fromUserId] || [];
+        if (fromItems.length === 0) return;
+        
+        const toItems = [...(carts[toUserId] || [])];
+        
+        fromItems.forEach(fromItem => {
+          const existingIdx = toItems.findIndex(i => i.id === fromItem.id);
+          if (existingIdx > -1) {
+            toItems[existingIdx].quantity += fromItem.quantity;
+          } else {
+            toItems.push(fromItem);
+          }
+        });
+        
+        set({ 
+          userCarts: { 
+            ...carts, 
+            [toUserId]: toItems,
+            [fromUserId]: [] 
+          } 
+        });
       },
 
       getTotalItems: (userId = 'guest') => {

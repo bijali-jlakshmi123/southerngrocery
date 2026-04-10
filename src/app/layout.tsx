@@ -1,9 +1,9 @@
 import type { Metadata } from "next";
 import { Roboto } from "next/font/google";
-import { ToastContainer } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import "./globals.css";
-import WhatsAppButton from '@/components/common/WhatsAppButton';
+import WhatsAppButton from "@/components/common/WhatsAppButton";
 import MainLayout from "@/components/layout/MainLayout";
 
 const roboto = Roboto({
@@ -14,7 +14,13 @@ const roboto = Roboto({
 
 export const metadata: Metadata = {
   title: "Southern Spices | Kerala & Indian Groceries Delivered Across UK",
-  description: "Authentic Kerala and Indian groceries including Matta Rice, Kerala Snacks, Fresh Vegetables, and more. Delivered fast across the UK.",
+  description:
+    "Authentic Kerala and Indian groceries including Matta Rice, Kerala Snacks, Fresh Vegetables, and more. Delivered fast across the UK.",
+  icons: {
+    icon: "/logo.png",
+    shortcut: "/logo.png",
+    apple: "/logo.png",
+  },
 };
 
 export default function RootLayout({
@@ -24,12 +30,13 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${roboto.variable} antialiased bg-background text-foreground`} suppressHydrationWarning>
-        <MainLayout>
-          {children}
-        </MainLayout>
+      <body
+        className={`${roboto.variable} antialiased bg-background text-foreground`}
+        suppressHydrationWarning
+      >
+        <MainLayout>{children}</MainLayout>
         <WhatsAppButton />
-        <ToastContainer 
+        <ToastContainer
           position="bottom-right"
           autoClose={3000}
           hideProgressBar

@@ -36,7 +36,7 @@ export default function CheckoutPage() {
   });
 
   const [step, setStep] = useState(1);
-  const [paymentMethod, setPaymentMethod] = useState<"stripe" | "paypal">(
+  const [paymentMethod, setPaymentMethod] = useState<"stripe" | "paypal" | "bacs">(
     "stripe",
   );
   const [isProcessing, setIsProcessing] = useState(false);
@@ -62,7 +62,7 @@ export default function CheckoutPage() {
           orders. Please log in to continue.
         </p>
         <div className="flex gap-4">
-          <Link href="/login" className="btn-base btn-primary px-12">
+          <Link href="/login?redirect=/checkout" className="btn-base btn-primary px-12">
             Login Now
           </Link>
           <Link href="/register" className="btn-base btn-outline px-12">
@@ -78,36 +78,48 @@ export default function CheckoutPage() {
   const tax = subtotal * 0.2;
   const total = subtotal + shipping + tax;
 
-  const handlePlaceOrder = async () => {
-    // Enhanced Validation
-    if (!formData.firstName || !formData.lastName || !formData.email || !formData.phone || !formData.address1 || !formData.city || !formData.postcode) {
-      toast.error("Please fill in all required fields including your contact info.");
-      setStep(1);
-      return;
+  const validateStep1 = () => {
+    const required = ["firstName", "lastName", "email", "address1", "city", "postcode", "phone"];
+    for (const field of required) {
+      if (!formData[field as keyof typeof formData]) {
+        toast.error(`Please enter your ${field.replace(/([A-Z])/g, ' $1').toLowerCase()}`);
+        return false;
+      }
     }
-
     if (!formData.email.includes("@")) {
       toast.error("Please enter a valid email address.");
+      return false;
+    }
+    return true;
+  };
+
+  const handlePlaceOrder = async () => {
+    if (!validateStep1()) {
+      setStep(1);
       return;
     }
 
     setIsProcessing(true);
 
     try {
-      // Validate customer ID
-      const numericUserId = parseInt(user.id);
+      const numericUserId = user?.id ? parseInt(user.id) : 0;
       
-      const orderData = {
+      const methodTitles = {
+        stripe: "Credit Card (Stripe)",
+        paypal: "PayPal",
+        bacs: "Direct Bank Transfer"
+      };
+
+      const orderData: any = {
         payment_method: paymentMethod,
-        payment_method_title: paymentMethod === "stripe" ? "Credit Card (Stripe)" : "PayPal",
-        set_paid: true,
-        customer_id: isNaN(numericUserId) ? 0 : numericUserId,
+        payment_method_title: methodTitles[paymentMethod],
+        set_paid: paymentMethod !== "bacs",
         billing: {
           first_name: formData.firstName,
           last_name: formData.lastName,
           address_1: formData.address1,
           city: formData.city,
-          state: formData.state || formData.city, // WooCommerce sometimes requires state
+          state: formData.state || formData.city,
           postcode: formData.postcode,
           country: formData.country,
           email: formData.email,
@@ -135,33 +147,32 @@ export default function CheckoutPage() {
         ],
       };
 
+      if (!isNaN(numericUserId) && numericUserId > 0) {
+        orderData.customer_id = numericUserId;
+      }
+
       const response = await fetch("/api/orders", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(orderData),
       });
 
-      const contentType = response.headers.get("content-type") || "";
-      let result;
-      if (contentType.includes("application/json")) {
-        result = await response.json();
-      } else {
-        throw new Error("The server encountered an issue processing your order. Please try again or contact support.");
-      }
+      const result = await response.json();
 
       if (result.success) {
-        toast.success(
-          `🎉 Order placed successfully! Your order ID is #${result.data.id}`,
-          { position: "top-center", autoClose: 5000 }
-        );
+        toast.success(`🎉 Order placed successfully!`, { position: "top-center" });
         clearCart(userId);
-        router.push("/dashboard");
+        router.push(`/checkout/success?id=${result.data.id}`);
       } else {
-        throw new Error(result.error || "Failed to place order. Please check your details.");
+        let errorMsg = result.error;
+        if (errorMsg.includes("not allowed to create resources")) {
+          errorMsg = "API Permission Error: Your keys are active but the server is blocking orders. Try selecting 'Bank Transfer' or check if your WordPress security plugins (Wordfence/etc) are blocking the API.";
+        }
+        throw new Error(errorMsg);
       }
     } catch (error: any) {
       toast.error(error.message || "An error occurred while placing your order.");
-      setIsProcessing(false); // Reset button state on error
+      setIsProcessing(false);
     }
   };
 
@@ -184,9 +195,7 @@ export default function CheckoutPage() {
   return (
     <div className="min-h-screen pt-12 pb-24 section-container">
       <div className="flex flex-col lg:flex-row gap-16">
-        {/* Left Side: Checkout Form Stages */}
         <div className="flex-1 space-y-12">
-          {/* Checkout Progress Stepper */}
           <div className="bg-white p-6 rounded-4xl border border-slate-100 flex items-center justify-between shadow-sm relative overflow-hidden">
             <div className="absolute top-0 left-0 w-full h-1.5 bg-slate-50">
               <motion.div
@@ -198,56 +207,25 @@ export default function CheckoutPage() {
               />
             </div>
 
-            <div
-              className={`flex flex-col items-center gap-2 flex-1 transition-all ${step >= 1 ? "text-primary" : "text-slate-300 font-bold"}`}
-            >
-              <div
-                className={`w-8 h-8 rounded-full flex items-center justify-center font-bold text-xs border-2 ${step >= 1 ? "border-primary bg-primary text-white shadow-glow" : "border-slate-100 bg-white"}`}
-              >
-                1
-              </div>
-              <span className="text-[10px] font-black uppercase tracking-widest hidden sm:block">
-                Address
-              </span>
+            <div className={`flex flex-col items-center gap-2 flex-1 transition-all ${step >= 1 ? "text-primary" : "text-slate-300 font-bold"}`}>
+              <div className={`w-8 h-8 rounded-full flex items-center justify-center font-bold text-xs border-2 ${step >= 1 ? "border-primary bg-primary text-white shadow-glow" : "border-slate-100 bg-white"}`}>1</div>
+              <span className="text-[10px] font-black uppercase tracking-widest hidden sm:block">Address</span>
             </div>
             <ChevronRight className="text-slate-200" size={16} />
-            <div
-              className={`flex flex-col items-center gap-2 flex-1 transition-all ${step >= 2 ? "text-primary" : "text-slate-300 font-bold"}`}
-            >
-              <div
-                className={`w-8 h-8 rounded-full flex items-center justify-center font-bold text-xs border-2 ${step >= 2 ? "border-primary bg-primary text-white shadow-glow" : "border-slate-100 bg-white"}`}
-              >
-                2
-              </div>
-              <span className="text-[10px] font-black uppercase tracking-widest hidden sm:block">
-                Shipping
-              </span>
+            <div className={`flex flex-col items-center gap-2 flex-1 transition-all ${step >= 2 ? "text-primary" : "text-slate-300 font-bold"}`}>
+              <div className={`w-8 h-8 rounded-full flex items-center justify-center font-bold text-xs border-2 ${step >= 2 ? "border-primary bg-primary text-white shadow-glow" : "border-slate-100 bg-white"}`}>2</div>
+              <span className="text-[10px] font-black uppercase tracking-widest hidden sm:block">Shipping</span>
             </div>
             <ChevronRight className="text-slate-200" size={16} />
-            <div
-              className={`flex flex-col items-center gap-2 flex-1 transition-all ${step >= 3 ? "text-primary" : "text-slate-300 font-bold"}`}
-            >
-              <div
-                className={`w-8 h-8 rounded-full flex items-center justify-center font-bold text-xs border-2 ${step >= 3 ? "border-primary bg-primary text-white shadow-glow" : "border-slate-100 bg-white"}`}
-              >
-                3
-              </div>
-              <span className="text-[10px] font-black uppercase tracking-widest hidden sm:block">
-                Payment
-              </span>
+            <div className={`flex flex-col items-center gap-2 flex-1 transition-all ${step >= 3 ? "text-primary" : "text-slate-300 font-bold"}`}>
+              <div className={`w-8 h-8 rounded-full flex items-center justify-center font-bold text-xs border-2 ${step >= 3 ? "border-primary bg-primary text-white shadow-glow" : "border-slate-100 bg-white"}`}>3</div>
+              <span className="text-[10px] font-black uppercase tracking-widest hidden sm:block">Payment</span>
             </div>
           </div>
 
-          {/* Dynamic Step Content */}
           <AnimatePresence mode="wait">
             {step === 1 && (
-              <motion.div
-                key="step1"
-                initial={{ opacity: 0, x: -20 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: 20 }}
-                className="space-y-8"
-              >
+              <motion.div key="step1" initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: 20 }} className="space-y-8">
                 <div className="space-y-4">
                   <h2 className="text-3xl font-heading font-black text-slate-900 flex items-center gap-4">
                     <div className="w-12 h-12 bg-primary/5 rounded-2xl flex items-center justify-center text-primary">
@@ -259,132 +237,47 @@ export default function CheckoutPage() {
 
                 <div className="grid md:grid-cols-2 gap-6">
                   <div className="space-y-2">
-                    <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-4">
-                      First Name
-                    </label>
-                    <input
-                      name="firstName"
-                      type="text"
-                      placeholder="First Name"
-                      value={formData.firstName}
-                      onChange={handleInputChange}
-                      className="w-full px-8 py-5 rounded-3xl border-2 border-slate-50 bg-slate-50 focus:bg-white focus:border-primary transition-all outline-none font-bold"
-                    />
+                    <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-4">First Name</label>
+                    <input name="firstName" type="text" placeholder="First Name" value={formData.firstName} onChange={handleInputChange} className="w-full px-8 py-5 rounded-3xl border-2 border-slate-50 bg-slate-50 focus:bg-white focus:border-primary transition-all outline-none font-bold" />
                   </div>
                   <div className="space-y-2">
-                    <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-4">
-                      Last Name
-                    </label>
-                    <input
-                      name="lastName"
-                      type="text"
-                      placeholder="Last Name"
-                      value={formData.lastName}
-                      onChange={handleInputChange}
-                      className="w-full px-8 py-5 rounded-3xl border-2 border-slate-50 bg-slate-50 focus:bg-white focus:border-primary transition-all outline-none font-bold"
-                    />
+                    <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-4">Last Name</label>
+                    <input name="lastName" type="text" placeholder="Last Name" value={formData.lastName} onChange={handleInputChange} className="w-full px-8 py-5 rounded-3xl border-2 border-slate-50 bg-slate-50 focus:bg-white focus:border-primary transition-all outline-none font-bold" />
                   </div>
                   <div className="md:col-span-2 space-y-2">
-                    <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-4">
-                      Email Address
-                    </label>
-                    <input
-                      name="email"
-                      type="email"
-                      placeholder="email@example.com"
-                      value={formData.email}
-                      onChange={handleInputChange}
-                      className="w-full px-8 py-5 rounded-3xl border-2 border-slate-50 bg-slate-50 focus:bg-white focus:border-primary transition-all outline-none font-bold"
-                    />
+                    <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-4">Email Address</label>
+                    <input name="email" type="email" placeholder="email@example.com" value={formData.email} onChange={handleInputChange} className="w-full px-8 py-5 rounded-3xl border-2 border-slate-50 bg-slate-50 focus:bg-white focus:border-primary transition-all outline-none font-bold" />
                   </div>
                   <div className="md:col-span-2 space-y-2">
-                    <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-4">
-                      Street Address
-                    </label>
-                    <input
-                      name="address1"
-                      type="text"
-                      placeholder="e.g. 123 High Street"
-                      value={formData.address1}
-                      onChange={handleInputChange}
-                      className="w-full px-8 py-5 rounded-3xl border-2 border-slate-50 bg-slate-50 focus:bg-white focus:border-primary transition-all outline-none font-bold"
-                    />
+                    <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-4">Street Address</label>
+                    <input name="address1" type="text" placeholder="e.g. 123 High Street" value={formData.address1} onChange={handleInputChange} className="w-full px-8 py-5 rounded-3xl border-2 border-slate-50 bg-slate-50 focus:bg-white focus:border-primary transition-all outline-none font-bold" />
                   </div>
                   <div className="space-y-2">
-                    <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-4">
-                      City
-                    </label>
-                    <input
-                      name="city"
-                      type="text"
-                      placeholder="City"
-                      value={formData.city}
-                      onChange={handleInputChange}
-                      className="w-full px-8 py-5 rounded-3xl border-2 border-slate-50 bg-slate-50 focus:bg-white focus:border-primary transition-all outline-none font-bold"
-                    />
+                    <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-4">City</label>
+                    <input name="city" type="text" placeholder="City" value={formData.city} onChange={handleInputChange} className="w-full px-8 py-5 rounded-3xl border-2 border-slate-50 bg-slate-50 focus:bg-white focus:border-primary transition-all outline-none font-bold" />
                   </div>
                   <div className="space-y-2">
-                    <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-4">
-                      County / State
-                    </label>
-                    <input
-                      name="state"
-                      type="text"
-                      placeholder="e.g. London"
-                      value={formData.state}
-                      onChange={handleInputChange}
-                      className="w-full px-8 py-5 rounded-3xl border-2 border-slate-50 bg-slate-50 focus:bg-white focus:border-primary transition-all outline-none font-bold"
-                    />
+                    <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-4">County / State</label>
+                    <input name="state" type="text" placeholder="e.g. London" value={formData.state} onChange={handleInputChange} className="w-full px-8 py-5 rounded-3xl border-2 border-slate-50 bg-slate-50 focus:bg-white focus:border-primary transition-all outline-none font-bold" />
                   </div>
                   <div className="space-y-2">
-                    <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-4">
-                      Postcode
-                    </label>
-                    <input
-                      name="postcode"
-                      type="text"
-                      placeholder="Postcode"
-                      value={formData.postcode}
-                      onChange={handleInputChange}
-                      className="w-full px-8 py-5 rounded-3xl border-2 border-slate-50 bg-slate-50 focus:bg-white focus:border-primary transition-all outline-none font-bold"
-                    />
+                    <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-4">Postcode</label>
+                    <input name="postcode" type="text" placeholder="Postcode" value={formData.postcode} onChange={handleInputChange} className="w-full px-8 py-5 rounded-3xl border-2 border-slate-50 bg-slate-50 focus:bg-white focus:border-primary transition-all outline-none font-bold" />
                   </div>
                   <div className="md:col-span-2 space-y-2">
-                    <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-4">
-                      Phone Number
-                    </label>
-                    <input
-                      name="phone"
-                      type="tel"
-                      placeholder="For delivery updates"
-                      value={formData.phone}
-                      onChange={handleInputChange}
-                      className="w-full px-8 py-5 rounded-3xl border-2 border-slate-50 bg-slate-50 focus:bg-white focus:border-primary transition-all outline-none font-bold"
-                    />
+                    <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-4">Phone Number</label>
+                    <input name="phone" type="tel" placeholder="For delivery updates" value={formData.phone} onChange={handleInputChange} className="w-full px-8 py-5 rounded-3xl border-2 border-slate-50 bg-slate-50 focus:bg-white focus:border-primary transition-all outline-none font-bold" />
                   </div>
                 </div>
 
-                <button
-                  onClick={() => setStep(2)}
-                  className="btn-base btn-primary !py-4 w-full sm:w-auto px-12 mt-4 shadow-glow flex items-center justify-center gap-3 group"
-                >
-                  Continue to Shipping{" "}
-                  <ArrowRight
-                    size={18}
-                    className="group-hover:translate-x-1 transition-transform"
-                  />
+                <button onClick={() => { if (validateStep1()) setStep(2); }} className="btn-base btn-primary !py-4 w-full sm:w-auto px-12 mt-4 shadow-glow flex items-center justify-center gap-3 group">
+                  Continue to Shipping <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />
                 </button>
               </motion.div>
             )}
 
             {step === 2 && (
-              <motion.div
-                key="step2"
-                initial={{ opacity: 0, x: -20 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: 20 }}
-                className="space-y-8"
-              >
+              <motion.div key="step2" initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: 20 }} className="space-y-8">
                 <div className="space-y-4">
                   <h2 className="text-3xl font-heading font-black text-slate-900 flex items-center gap-4">
                     <div className="w-12 h-12 bg-primary/5 rounded-2xl flex items-center justify-center text-primary">
@@ -392,66 +285,33 @@ export default function CheckoutPage() {
                     </div>
                     Shipping Method
                   </h2>
-                  <p className="text-slate-500 font-medium">
-                    Select how you'd like your Southern Spices delivered.
-                  </p>
                 </div>
 
                 <div className="space-y-4">
                   <label className="relative flex items-center gap-6 p-8 rounded-4xl border-2 border-primary bg-primary/5 cursor-pointer group shadow-sm">
-                    <input
-                      type="radio"
-                      name="shipping"
-                      defaultChecked
-                      className="hidden"
-                    />
+                    <input type="radio" name="shipping" defaultChecked className="hidden" />
                     <div className="w-6 h-6 rounded-full border-4 border-primary flex items-center justify-center bg-white">
                       <div className="w-2 h-2 rounded-full bg-primary" />
                     </div>
                     <div className="flex-1">
-                      <div className="font-heading font-black text-slate-900 text-lg">
-                        Standard Delivery
-                      </div>
-                      <div className="text-sm text-slate-500 font-bold uppercase tracking-widest">
-                        3-5 Business Days
-                      </div>
+                      <div className="font-heading font-black text-slate-900 text-lg">Standard Delivery</div>
+                      <div className="text-sm text-slate-500 font-bold uppercase tracking-widest">3-5 Business Days</div>
                     </div>
-                    <div className="text-xl font-heading font-black text-primary">
-                      £{shipping.toFixed(2)}
-                    </div>
-                    {shipping === 0 && (
-                      <div className="absolute top-0 right-10 translate-y-[-50%] bg-success text-white text-[10px] font-black px-4 py-1.5 rounded-full shadow-glow">
-                        FREE FOR YOU
-                      </div>
-                    )}
+                    <div className="text-xl font-heading font-black text-primary">£{shipping.toFixed(2)}</div>
                   </label>
                 </div>
 
                 <div className="flex items-center gap-4 mt-8">
-                  <button
-                    onClick={() => setStep(1)}
-                    className="btn-base btn-outline !rounded-2xl !py-4 px-8 flex items-center gap-2 font-bold text-slate-400 active:scale-95 transition-all"
-                  >
+                  <button onClick={() => setStep(1)} className="btn-base btn-outline !rounded-2xl !py-4 px-8 flex items-center gap-2 font-bold text-slate-400">
                     <ChevronLeft size={18} /> Back
                   </button>
-                  <button
-                    onClick={() => setStep(3)}
-                    className="btn-base btn-primary !py-4 flex-1 shadow-glow active:scale-95 transition-all"
-                  >
-                    Proceed to Payment
-                  </button>
+                  <button onClick={() => setStep(3)} className="btn-base btn-primary !py-4 flex-1 shadow-glow">Proceed to Payment</button>
                 </div>
               </motion.div>
             )}
 
             {step === 3 && (
-              <motion.div
-                key="step3"
-                initial={{ opacity: 0, x: -20 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: 20 }}
-                className="space-y-8"
-              >
+              <motion.div key="step3" initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: 20 }} className="space-y-8">
                 <div className="space-y-4">
                   <h2 className="text-3xl font-heading font-black text-slate-900 flex items-center gap-4">
                     <div className="w-12 h-12 bg-primary/5 rounded-2xl flex items-center justify-center text-primary">
@@ -459,54 +319,35 @@ export default function CheckoutPage() {
                     </div>
                     Secure Payment
                   </h2>
-                  <p className="text-slate-500 font-medium">
-                    Select your preferred payment method.
-                  </p>
                 </div>
 
-                {/* Method Selector */}
-                <div className="grid grid-cols-2 gap-6">
-                  <button
-                    onClick={() => setPaymentMethod("stripe")}
-                    className={`flex flex-col items-center gap-4 p-8 rounded-4xl border-2 transition-all ${paymentMethod === "stripe" ? "border-primary bg-primary/5 shadow-premium" : "border-slate-50 bg-white hover:border-slate-100 opacity-60"}`}
-                  >
-                   <CreditCard size={32} className="text-slate-400" />
-                    <span className="text-[10px] font-black uppercase tracking-widest text-slate-500">
-                      Stripe / Card
-                    </span>
+                <div className="grid grid-cols-2 lg:grid-cols-3 gap-6">
+                  <button onClick={() => setPaymentMethod("stripe")} className={`flex flex-col items-center gap-4 p-8 rounded-4xl border-2 transition-all ${paymentMethod === "stripe" ? "border-primary bg-primary/5 shadow-premium" : "border-slate-50 bg-white hover:border-slate-100 opacity-60"}`}>
+                    <CreditCard size={32} className="text-slate-400" />
+                    <span className="text-[10px] font-black uppercase tracking-widest text-slate-500">Stripe / Card</span>
                   </button>
-                  <button
-                    onClick={() => setPaymentMethod("paypal")}
-                    className={`flex flex-col items-center gap-4 p-8 rounded-4xl border-2 transition-all ${paymentMethod === "paypal" ? "border-[#0070ba] bg-[#0070ba]/5 shadow-premium" : "border-slate-50 bg-white hover:border-slate-100 opacity-60"}`}
-                  >
+                  <button onClick={() => setPaymentMethod("paypal")} className={`flex flex-col items-center gap-4 p-8 rounded-4xl border-2 transition-all ${paymentMethod === "paypal" ? "border-[#0070ba] bg-[#0070ba]/5 shadow-premium" : "border-slate-50 bg-white hover:border-slate-100 opacity-60"}`}>
                     <div className="font-heading font-black text-xl text-[#0070ba]">PayPal</div>
-                    <span className="text-[10px] font-black uppercase tracking-widest text-slate-500">
-                      PayPal
-                    </span>
+                    <span className="text-[10px] font-black uppercase tracking-widest text-slate-500">PayPal</span>
+                  </button>
+                  <button onClick={() => setPaymentMethod("bacs")} className={`flex flex-col items-center gap-4 p-8 rounded-4xl border-2 transition-all ${paymentMethod === "bacs" ? "border-secondary bg-secondary/5 shadow-premium" : "border-slate-50 bg-white hover:border-slate-100 opacity-60"}`}>
+                    <Truck size={32} className="text-slate-400" />
+                    <span className="text-[10px] font-black uppercase tracking-widest text-slate-500">Bank Transfer</span>
                   </button>
                 </div>
 
                 <div className="flex items-center gap-4 bg-success/5 p-6 rounded-3xl border border-success/10 text-success">
                   <ShieldCheck size={28} className="flex-shrink-0" />
                   <div className="text-xs font-bold leading-relaxed italic text-left">
-                    The secure processing of your payment details is our #1
-                    priority. We do not store your full card information on our
-                    servers.
+                    The secure processing of your payment details is our #1 priority. We do not store your full card information on our servers.
                   </div>
                 </div>
 
                 <div className="flex items-center gap-4 mt-8">
-                  <button
-                    onClick={() => setStep(2)}
-                    className="btn-base btn-outline !rounded-2xl !py-4 px-8 font-bold text-slate-400 flex items-center gap-2"
-                  >
+                  <button onClick={() => setStep(2)} className="btn-base btn-outline !rounded-2xl !py-4 px-8 font-bold text-slate-400 flex items-center gap-2">
                     <ChevronLeft size={18} /> Back
                   </button>
-                  <button
-                    onClick={handlePlaceOrder}
-                    disabled={isProcessing}
-                    className="btn-base btn-primary !py-4 flex-1 shadow-glow group disabled:opacity-50"
-                  >
+                  <button onClick={handlePlaceOrder} disabled={isProcessing} className="btn-base btn-primary !py-4 flex-1 shadow-glow group disabled:opacity-50">
                     {isProcessing ? "Processing..." : `Pay £${total.toFixed(2)} & Place Order`}
                   </button>
                 </div>
@@ -515,37 +356,23 @@ export default function CheckoutPage() {
           </AnimatePresence>
         </div>
 
-        {/* Right Side: Order Summary */}
         <div className="lg:w-96">
           <div className="sticky top-28 space-y-8">
             <div className="bg-slate-50 border border-slate-100 rounded-5xl p-8 shadow-sm">
-              <h3 className="text-xl font-heading font-black text-slate-900 mb-8 border-b pb-4 border-slate-200 uppercase tracking-widest">
-                Your Order
-              </h3>
+              <h3 className="text-xl font-heading font-black text-slate-900 mb-8 border-b pb-4 border-slate-200 uppercase tracking-widest">Your Order</h3>
               <div className="space-y-6 max-h-[400px] overflow-y-auto pr-2 custom-scrollbar">
                 {items.map((item) => (
                   <div key={item.id} className="flex gap-4">
                     <div className="w-16 h-16 bg-white rounded-2xl border border-slate-100 overflow-hidden flex-shrink-0 p-1">
                       <div className="relative w-full h-full rounded-xl overflow-hidden">
-                        <Image
-                          src={item.imageUrl}
-                          alt={item.name}
-                          fill
-                          className="object-cover"
-                        />
+                        <Image src={item.imageUrl} alt={item.name} fill className="object-cover" />
                       </div>
                     </div>
                     <div className="flex-1 min-w-0">
-                      <h4 className="text-xs font-black text-slate-900 truncate uppercase mt-1">
-                        {item.name}
-                      </h4>
+                      <h4 className="text-xs font-black text-slate-900 truncate uppercase mt-1">{item.name}</h4>
                       <div className="flex justify-between items-center mt-1">
-                        <span className="text-[10px] font-bold text-slate-400 tracking-wider">
-                          Qty: {item.quantity}
-                        </span>
-                        <span className="text-xs font-black text-primary italic">
-                          £{(parseFloat(item.price) * item.quantity).toFixed(2)}
-                        </span>
+                        <span className="text-[10px] font-bold text-slate-400 tracking-wider">Qty: {item.quantity}</span>
+                        <span className="text-xs font-black text-primary italic">£{(parseFloat(item.price) * item.quantity).toFixed(2)}</span>
                       </div>
                     </div>
                   </div>
@@ -559,29 +386,17 @@ export default function CheckoutPage() {
                 </div>
                 <div className="flex justify-between font-bold text-slate-400 tracking-widest text-[10px] uppercase">
                   <span>Shipping</span>
-                  <span
-                    className={
-                      shipping === 0 ? "text-success" : "text-slate-600"
-                    }
-                  >
-                    {shipping === 0 ? "FREE" : `£${shipping.toFixed(2)}`}
-                  </span>
+                  <span className={shipping === 0 ? "text-success" : "text-slate-600"}>{shipping === 0 ? "FREE" : `£${shipping.toFixed(2)}`}</span>
                 </div>
                 <div className="flex justify-between font-bold text-slate-400 tracking-widest text-[10px] uppercase">
                   <span>VAT (20%)</span>
                   <span className="text-slate-600">£{tax.toFixed(2)}</span>
                 </div>
                 <div className="flex justify-between items-end pt-4 border-t border-slate-100">
-                  <span className="font-heading font-black text-slate-900 text-lg">
-                    Total
-                  </span>
+                  <span className="font-heading font-black text-slate-900 text-lg">Total</span>
                   <div className="text-right">
-                    <div className="text-3xl font-heading font-black text-primary leading-none italic">
-                      £{total.toFixed(2)}
-                    </div>
-                    <div className="text-[9px] font-black text-slate-300 uppercase mt-1 tracking-widest">
-                      Everything Included
-                    </div>
+                    <div className="text-3xl font-heading font-black text-primary leading-none italic">£{total.toFixed(2)}</div>
+                    <div className="text-[9px] font-black text-slate-300 uppercase mt-1 tracking-widest">Everything Included</div>
                   </div>
                 </div>
               </div>
@@ -595,17 +410,7 @@ export default function CheckoutPage() {
 
 function ArrowRight({ size, className }: { size: number; className?: string }) {
   return (
-    <svg
-      width={size}
-      height={size}
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="3"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      className={className}
-    >
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" className={className}>
       <path d="M5 12h14m-7-7 7 7-7 7" />
     </svg>
   );

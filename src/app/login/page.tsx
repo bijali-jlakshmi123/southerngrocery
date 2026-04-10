@@ -8,7 +8,7 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { toast } from "react-toastify";
 
-import { useAuth } from "@/lib/store";
+import { useAuth, useCart } from "@/lib/store";
 
 export default function LoginPage() {
   const [showPassword, setShowPassword] = useState(false);
@@ -20,6 +20,7 @@ export default function LoginPage() {
 
   const router = useRouter();
   const setUser = useAuth((state) => state.setUser);
+  const { mergeCarts } = useCart();
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -68,15 +69,22 @@ export default function LoginPage() {
       }
 
       // Save user to store
-      setUser({
-        id: data.data?.user?.id || "wp_user",
+      const loggedInUser = {
+        id: data.data?.user?.id?.toString() || "wp_user",
         name: data.data?.user?.display_name || formData.email.split("@")[0],
         email: formData.email,
-      });
+      };
+      
+      setUser(loggedInUser);
+
+      // Merge Guest Cart to User Cart
+      mergeCarts("guest", loggedInUser.id);
 
       toast.success("Successfully logged in!");
 
-      router.push("/");
+      const searchParams = new URLSearchParams(window.location.search);
+      const redirect = searchParams.get("redirect") || "/";
+      router.push(redirect);
     } catch (error: any) {
       console.error("Login error:", error);
 

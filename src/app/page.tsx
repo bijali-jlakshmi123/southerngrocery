@@ -4,8 +4,10 @@ import WeeklyDeals from "@/components/home/WeeklyDeals";
 import ShopByBrand from "@/components/home/ShopByBrand";
 import FeaturedProducts from "@/components/home/FeaturedProducts";
 import TrustSection from "@/components/home/TrustSection";
+import { getProducts } from "@/lib/woocommerce";
+import { mapWcProduct } from "@/lib/utils";
 
-const keralaFavourites = [
+const mockKeralaFavourites = [
   {
     id: 101,
     name: "Premium Matta Rice 5kg",
@@ -38,52 +40,18 @@ const keralaFavourites = [
     category: "Snacks",
     slug: "banana-chips",
   },
-  {
-    id: 105,
-    name: "Traditional Mango Pickle 400g",
-    price: 4.5,
-    image: "/mango-pickle.png",
-    category: "Pickles",
-    slug: "mango-pickle",
-  },
 ];
 
-const busyFamilyMeals = [
-  {
-    id: 201,
-    name: "Ready-to-Eat Kadala Curry",
-    price: 2.49,
-    image: "/spices-mix.png",
-    category: "Ready Mix",
-    slug: "kadala-curry",
-  },
-  {
-    id: 202,
-    name: "Traditional Semiya Payasam Mix",
-    price: 1.15,
-    image: "/spices-mix.png",
-    category: "Ready Mix",
-    slug: "payasam-mix",
-  },
-  {
-    id: 203,
-    name: "Fresh Idiyappam (Frozen Pack)",
-    price: 1.99,
-    image: "/porotta.png",
-    category: "Frozen",
-    slug: "idiyappam",
-  },
-  {
-    id: 204,
-    name: "Instant Appam / Upma Mix",
-    price: 1.49,
-    image: "/kappa.png",
-    category: "Ready Mix",
-    slug: "upma-mix",
-  },
-];
+export default async function Home() {
+  const wcProducts = await getProducts({ per_page: 20 });
+  const realProducts = wcProducts.map(mapWcProduct);
 
-export default function Home() {
+  // Split products into sections if we have them
+  const favourites =
+    realProducts.length > 0 ? realProducts.slice(0, 4) : mockKeralaFavourites;
+  const arrivals = realProducts.length > 4 ? realProducts.slice(4, 8) : [];
+  const deals = realProducts.length > 8 ? realProducts.slice(8, 12) : [];
+
   return (
     <main className="min-h-screen">
       <HeroSlider />
@@ -98,61 +66,32 @@ export default function Home() {
         title="Kerala Favourites"
         subtitle="Bringing the authentic taste of home to your kitchen. Curated staples for every household."
         category="favourites"
-        products={keralaFavourites}
+        products={favourites}
         bgColor="bg-white"
         accentColor="text-primary"
       />
 
-      <FeaturedProducts
-        title="Ready to Eat / Busy Family"
-        subtitle="Quick, delicious Kerala meals for those busy UK workdays. No compromise on taste."
-        category="ready-mix"
-        products={busyFamilyMeals}
-        bgColor="bg-surface-muted"
-        accentColor="text-secondary"
-      />
+      {arrivals.length > 0 && (
+        <FeaturedProducts
+          title="New Arrivals"
+          subtitle="Fresh from the homeland! Explore our latest additions and seasonal specialties."
+          category="new-arrivals"
+          products={arrivals}
+          bgColor="bg-surface-muted"
+          accentColor="text-secondary"
+        />
+      )}
 
-      <FeaturedProducts
-        title="New Arrivals"
-        subtitle="Fresh from the homeland! Explore our latest additions and seasonal specialties."
-        category="new-arrivals"
-        products={[
-          {
-            id: 301,
-            name: "Fresh Nenthra Banana (Daily)",
-            price: 3.49,
-            image: "/fresh-veg.png",
-            category: "Vegetables",
-            slug: "nenthra-banana",
-          },
-          {
-            id: 302,
-            name: "Premium Jackfruit (Sliced) 500g",
-            price: 4.99,
-            image: "/fresh-veg.png",
-            category: "Frozen",
-            slug: "jackfruit",
-          },
-          {
-            id: 303,
-            name: "Ajmi Rice Puttu Podi 1kg",
-            price: 1.65,
-            image: "/puttu-podi.png",
-            category: "Rice",
-            slug: "puttu-podi",
-          },
-          {
-            id: 304,
-            name: "Kitchen Treasures Fish Masala",
-            price: 0.99,
-            image: "/spices-mix.png",
-            category: "Spices",
-            slug: "fish-masala",
-          },
-        ]}
-        bgColor="bg-white"
-        accentColor="text-success"
-      />
+      {deals.length > 0 && (
+        <FeaturedProducts
+          title="Weekly Offers"
+          subtitle="Save big on your favorite authentic Indian brands Every Single Week."
+          category="offers"
+          products={deals}
+          bgColor="bg-white"
+          accentColor="text-success"
+        />
+      )}
 
       <TrustSection />
     </main>
