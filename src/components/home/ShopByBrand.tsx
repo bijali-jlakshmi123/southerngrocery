@@ -5,9 +5,19 @@ import { Autoplay, Pagination } from 'swiper/modules';
 import 'swiper/css';
 import 'swiper/css/pagination';
 import { motion } from 'framer-motion';
+import Image from 'next/image';
 
 const brands = [
-  'Eastern', 'Double Horse', 'Ajmi', 'Kitchen Treasures', 'Brahmins', 'India Gate', 'Periyar', 'Nirapara', 'AVT', 'Tilda'
+  { name: 'Eastern', logo: '/brands/eastern.png' },
+  { name: 'Double Horse', logo: '/brands/double-horse.png' },
+  { name: 'Ajmi', logo: '/brands/ajmi.svg' },
+  { name: 'Kitchen Treasures', logo: '/brands/kitchen-treasures.png' },
+  { name: 'Brahmins', logo: '/brands/brahmins.png' },
+  { name: 'India Gate', logo: '/brands/india-gate.png' },
+  { name: 'Periyar', logo: '/brands/periyar.png' },
+  { name: 'Nirapara', logo: '/brands/nirapara.png' },
+  { name: 'AVT', logo: '/brands/avt.png' },
+  { name: 'Tilda', logo: '/brands/tilda.png' }
 ];
 
 export default function ShopByBrand() {
@@ -42,11 +52,16 @@ export default function ShopByBrand() {
                <SwiperSlide key={i}>
                  <motion.div 
                    whileHover={{ y: -5 }}
-                   className="flex items-center justify-center h-32 bg-slate-50 rounded-4xl border border-slate-100 hover:border-accent/20 hover:bg-white hover:shadow-premium transition-all group px-4"
+                   className="flex items-center justify-center p-4 h-32 bg-slate-50 rounded-4xl border border-slate-100 hover:border-accent/20 hover:bg-white hover:shadow-premium transition-all group"
                  >
-                    {/* Brand Logo Placeholder with Premium Minimalist Style */}
-                    <div className="text-slate-300 group-hover:text-accent font-heading font-black italic text-xl tracking-tighter uppercase transition-colors select-none text-center">
-                       {brand}
+                    <div className="relative w-full h-full flex items-center justify-center grayscale group-hover:grayscale-0 opacity-70 group-hover:opacity-100 transition-all duration-300">
+                      <Image
+                        src={brand.logo}
+                        alt={`${brand.name} logo`}
+                        fill
+                        className="object-contain p-2"
+                        sizes="(max-width: 640px) 50vw, (max-width: 768px) 33vw, (max-width: 1024px) 25vw, 16vw"
+                      />
                     </div>
                  </motion.div>
                </SwiperSlide>

@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 200" width="100%" height="100%">
+  <rect width="400" height="200" fill="white" />
+  <text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif" font-size="48" font-weight="900" font-style="italic" fill="#007A33" letter-spacing="-1">NIRAPARA</text>
+  <path d="M 50 160 L 350 160" stroke="#007A33" stroke-width="4" stroke-linecap="round" opacity="0.5" />
+</svg>
