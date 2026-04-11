@@ -4,7 +4,7 @@ import { usePathname } from "next/navigation";
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
 
-export default function MainLayout({ children }: { children: React.ReactNode }) {
+export default function MainLayout({ children, categories }: { children: React.ReactNode, categories?: any[] }) {
   const pathname = usePathname();
   
   // Define routes where we DON'T want the Header and Footer
@@ -17,7 +17,7 @@ export default function MainLayout({ children }: { children: React.ReactNode }) 
 
   return (
     <>
-      <Header />
+      <Header categories={categories} />
       <main>{children}</main>
       <Footer />
     </>

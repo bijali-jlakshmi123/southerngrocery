@@ -43,20 +43,27 @@ const mockKeralaFavourites = [
 ];
 
 export default async function Home() {
-  const wcProducts = await getProducts({ per_page: 20 });
+  const wcProducts = await getProducts({ per_page: 50 });
   const realProducts = wcProducts.map(mapWcProduct);
+
+  // Fetch real categories for the category grid
+  const { getCategories } = await import("@/lib/woocommerce");
+  const wcCategories = await getCategories({ hide_empty: true, per_page: 8 });
+  const realCategories = wcCategories
+    .filter(c => c.name !== "Uncategorized")
+    .sort((a, b) => (b.count || 0) - (a.count || 0));
 
   // Split products into sections if we have them
   const favourites =
-    realProducts.length > 0 ? realProducts.slice(0, 4) : mockKeralaFavourites;
-  const arrivals = realProducts.length > 4 ? realProducts.slice(4, 8) : [];
-  const deals = realProducts.length > 8 ? realProducts.slice(8, 12) : [];
+    realProducts.length > 0 ? realProducts.slice(0, 12) : mockKeralaFavourites;
+  const arrivals = realProducts.length > 12 ? realProducts.slice(12, 24) : [];
+  const deals = realProducts.length > 24 ? realProducts.slice(24, 36) : [];
 
   return (
     <main className="min-h-screen">
       <HeroSlider />
 
-      <CategoryGrid />
+      <CategoryGrid categories={realCategories} />
 
       <WeeklyDeals />
 

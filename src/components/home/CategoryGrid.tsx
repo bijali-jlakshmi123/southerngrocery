@@ -1,3 +1,4 @@
+
 "use client";
 
 import Link from "next/link";
@@ -9,14 +10,8 @@ interface CategoryGridProps {
 }
 
 export default function CategoryGrid({ categories: dynamicCategories }: CategoryGridProps) {
-  // Fallback to static if no dynamic categories are provided
-  const displayCategories = dynamicCategories?.length ? dynamicCategories.map(c => ({
-    name: c.name,
-    image: "/cat-pulses.png", // Default image for dynamic categories
-    items: `${c.count || 0} Products`,
-    slug: c.slug,
-    color: "primary"
-  })) : [
+  // Use a fixed static list to match the user's exact design preference
+  const displayCategories = [
     {
       name: "Rice",
       image: "/cat-rice.png",
@@ -29,7 +24,7 @@ export default function CategoryGrid({ categories: dynamicCategories }: Category
       image: "/cat-flour.png",
       items: "Pillsbury, Aashirvad",
       color: "accent",
-      slug: "atta"
+      slug: "aattas"
     },
     {
       name: "Pulses",
@@ -91,10 +86,10 @@ export default function CategoryGrid({ categories: dynamicCategories }: Category
   };
 
   return (
-    <section className="py-16 md:py-24 bg-white relative overflow-hidden">
+    <section className="py-16 md:py-24 bg-white relative overflow-hidden text-center">
       <div className="max-w-8xl mx-auto px-6">
         <div className="flex flex-col md:flex-row justify-between items-end mb-12 gap-6">
-          <div className="space-y-2">
+          <div className="space-y-2 text-left">
             <h2 className="text-2xl md:text-3xl font-bold text-secondary uppercase tracking-tight">
               Shop By Categories
             </h2>

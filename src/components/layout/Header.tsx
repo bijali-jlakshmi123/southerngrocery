@@ -22,6 +22,15 @@ import {
   Apple,
   Shrub,
   Waves,
+  Pipette,
+  Shapes,
+  Droplets,
+  Flame,
+  Utensils,
+  Coffee,
+  Milk,
+  Home,
+  ShoppingBag,
 } from "lucide-react";
 import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
@@ -68,53 +77,41 @@ export default function Header({ categories: dynamicCategories }: HeaderProps) {
     };
   }, []);
 
+  const getIcon = (name: string) => {
+    const n = name.toLowerCase();
+    if (n.includes("rice") || n.includes("grains")) return <Waves size={18} />;
+    if (n.includes("atta") || n.includes("flour")) return <Wheat size={18} />;
+    if (n.includes("oil") || n.includes("ghee")) return <Droplet size={18} />;
+    if (n.includes("frozen") || n.includes("vegetables"))
+      return <Snowflake size={18} />;
+    if (n.includes("snack") || n.includes("chips")) return <Cookie size={18} />;
+    if (n.includes("pickle")) return <Shrub size={18} />;
+    if (n.includes("spices") || n.includes("masala"))
+      return <Shrub size={18} />;
+    return <Package size={18} />;
+  };
+
   const categories = dynamicCategories?.length
     ? dynamicCategories.map((c) => ({
         name: c.name,
-        icon: <Package size={18} />,
+        icon: getIcon(c.name),
         href: `/category/${c.slug}`,
       }))
     : [
-        {
-          name: "Rice & Grains",
-          icon: <Waves size={18} />,
-          href: "/category/rice",
-        },
-        {
-          name: "Atta & Flour",
-          icon: <Wheat size={18} />,
-          href: "/category/atta",
-        },
-        {
-          name: "Pulses",
-          icon: <Package size={18} />,
-          href: "/category/pulses",
-        },
-        {
-          name: "Oils & Ghee",
-          icon: <Droplet size={18} />,
-          href: "/category/oils",
-        },
-        {
-          name: "Frozen Foods",
-          icon: <Snowflake size={18} />,
-          href: "/category/frozen",
-        },
-        {
-          name: "Snacks",
-          icon: <Cookie size={18} />,
-          href: "/category/snacks",
-        },
-        {
-          name: "Pickles",
-          icon: <Shrub size={18} />,
-          href: "/category/pickles",
-        },
-        {
-          name: "Fresh Vegetables",
-          icon: <Apple size={18} />,
-          href: "/category/vegetables",
-        },
+        { name: "Rice & Rice Products", icon: <Waves size={18} />, href: "/category/rice-and-rice-products" },
+        { name: "Atta / Flour / Grains", icon: <Pipette size={18} />, href: "/category/atta-flour-grains" },
+        { name: "Pulses & Lentils", icon: <Shapes size={18} />, href: "/category/pulses-and-lentils" },
+        { name: "Oil & Ghee", icon: <Droplets size={18} />, href: "/category/oil-and-ghee" },
+        { name: "Spices & Masala", icon: <Flame size={18} />, href: "/category/spices-and-masala" },
+        { name: "Pickles & Chutneys", icon: <Shrub size={18} />, href: "/category/pickles-and-chutneys" },
+        { name: "Ready to Eat", icon: <Utensils size={18} />, href: "/category/ready-to-eat" },
+        { name: "Frozen Foods", icon: <Snowflake size={18} />, href: "/category/frozen-foods" },
+        { name: "Snacks & Sweets", icon: <Cookie size={18} />, href: "/category/snacks-and-sweets" },
+        { name: "Beverages", icon: <Coffee size={18} />, href: "/category/beverages" },
+        { name: "Dairy & Milk Powder", icon: <Milk size={18} />, href: "/category/dairy-and-milk-powder" },
+        { name: "Household", icon: <Home size={18} />, href: "/category/household-and-personal-care" },
+        { name: "Fresh Vegetables", icon: <Apple size={18} />, href: "/category/fresh-vegetables" },
+        { name: "Kitchenware", icon: <ShoppingBag size={18} />, href: "/category/kitchenware" },
       ];
 
   const handleSearch = (e: React.FormEvent) => {

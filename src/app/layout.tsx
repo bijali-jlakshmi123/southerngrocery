@@ -23,18 +23,23 @@ export const metadata: Metadata = {
   },
 };
 
-export default function RootLayout({
+import { getCategories } from "@/lib/woocommerce";
+
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const wcCategories = await getCategories({ hide_empty: true, per_page: 20 });
+  const categories = wcCategories.filter(c => c.name !== "Uncategorized");
+
   return (
     <html lang="en">
       <body
         className={`${roboto.variable} antialiased bg-background text-foreground`}
         suppressHydrationWarning
       >
-        <MainLayout>{children}</MainLayout>
+        <MainLayout categories={categories}>{children}</MainLayout>
         <WhatsAppButton />
         <ToastContainer
           position="bottom-right"

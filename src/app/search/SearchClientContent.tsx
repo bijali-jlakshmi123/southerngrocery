@@ -5,15 +5,8 @@ import { Search } from 'lucide-react';
 import { motion } from 'framer-motion';
 import ProductCard from '@/components/common/ProductCard';
 
-export default function SearchClientContent() {
-  const searchParams = useSearchParams();
-  const query = searchParams.get('q') || '';
-
-  // Mock results (In a real app, fetch from WooCommerce based on query)
-  const results = [
-    { id: 1, name: 'Premium Kerala Matta Rice', price: 12.50, originalPrice: 15.00, image: '/matta-rice.png', category: 'Rice', slug: 'matta-rice' },
-    { id: 10, name: 'Double Horse Chili Powder', price: 2.50, image: '/spices-mix.png', category: 'Spices', slug: 'chili-powder' },
-  ].filter(p => p.name.toLowerCase().includes(query.toLowerCase()));
+export default function SearchClientContent({ initialResults, query }: { initialResults: any[], query: string }) {
+  const results = initialResults;
 
   return (
     <div className="section-container pt-12 pb-24">
