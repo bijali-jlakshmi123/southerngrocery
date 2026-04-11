@@ -99,20 +99,76 @@ export default function Header({ categories: dynamicCategories }: HeaderProps) {
         href: `/category/${c.slug}`,
       }))
     : [
-        { name: "Rice & Rice Products", icon: <Waves size={18} />, href: "/category/rice-and-rice-products" },
-        { name: "Atta / Flour / Grains", icon: <Pipette size={18} />, href: "/category/atta-flour-grains" },
-        { name: "Pulses & Lentils", icon: <Shapes size={18} />, href: "/category/pulses-and-lentils" },
-        { name: "Oil & Ghee", icon: <Droplets size={18} />, href: "/category/oil-and-ghee" },
-        { name: "Spices & Masala", icon: <Flame size={18} />, href: "/category/spices-and-masala" },
-        { name: "Pickles & Chutneys", icon: <Shrub size={18} />, href: "/category/pickles-and-chutneys" },
-        { name: "Ready to Eat", icon: <Utensils size={18} />, href: "/category/ready-to-eat" },
-        { name: "Frozen Foods", icon: <Snowflake size={18} />, href: "/category/frozen-foods" },
-        { name: "Snacks & Sweets", icon: <Cookie size={18} />, href: "/category/snacks-and-sweets" },
-        { name: "Beverages", icon: <Coffee size={18} />, href: "/category/beverages" },
-        { name: "Dairy & Milk Powder", icon: <Milk size={18} />, href: "/category/dairy-and-milk-powder" },
-        { name: "Household", icon: <Home size={18} />, href: "/category/household-and-personal-care" },
-        { name: "Fresh Vegetables", icon: <Apple size={18} />, href: "/category/fresh-vegetables" },
-        { name: "Kitchenware", icon: <ShoppingBag size={18} />, href: "/category/kitchenware" },
+        {
+          name: "Rice & Rice Products",
+          icon: <Waves size={18} />,
+          href: "/category/rice-and-rice-products",
+        },
+        {
+          name: "Atta / Flour / Grains",
+          icon: <Pipette size={18} />,
+          href: "/category/atta-flour-grains",
+        },
+        {
+          name: "Pulses & Lentils",
+          icon: <Shapes size={18} />,
+          href: "/category/pulses-and-lentils",
+        },
+        {
+          name: "Oil & Ghee",
+          icon: <Droplets size={18} />,
+          href: "/category/oil-and-ghee",
+        },
+        {
+          name: "Spices & Masala",
+          icon: <Flame size={18} />,
+          href: "/category/spices-and-masala",
+        },
+        {
+          name: "Pickles & Chutneys",
+          icon: <Shrub size={18} />,
+          href: "/category/pickles-and-chutneys",
+        },
+        {
+          name: "Ready to Eat",
+          icon: <Utensils size={18} />,
+          href: "/category/ready-to-eat",
+        },
+        {
+          name: "Frozen Foods",
+          icon: <Snowflake size={18} />,
+          href: "/category/frozen-foods",
+        },
+        {
+          name: "Snacks & Sweets",
+          icon: <Cookie size={18} />,
+          href: "/category/snacks-and-sweets",
+        },
+        {
+          name: "Beverages",
+          icon: <Coffee size={18} />,
+          href: "/category/beverages",
+        },
+        {
+          name: "Dairy & Milk Powder",
+          icon: <Milk size={18} />,
+          href: "/category/dairy-and-milk-powder",
+        },
+        {
+          name: "Household",
+          icon: <Home size={18} />,
+          href: "/category/household-and-personal-care",
+        },
+        {
+          name: "Fresh Vegetables",
+          icon: <Apple size={18} />,
+          href: "/category/fresh-vegetables",
+        },
+        {
+          name: "Kitchenware",
+          icon: <ShoppingBag size={18} />,
+          href: "/category/kitchenware",
+        },
       ];
 
   const handleSearch = (e: React.FormEvent) => {
@@ -140,7 +196,7 @@ export default function Header({ categories: dynamicCategories }: HeaderProps) {
         <div className="max-w-8xl mx-auto px-6 flex justify-between items-center w-full">
           <div className="flex gap-6">
             <span className="flex items-center gap-1.5 opacity-90">
-              <Phone size={14} className="text-primary" /> +44 XXXX XXXXXX
+              <Phone size={14} className="text-primary" /> +44 7352 393384
             </span>
             <span className="hidden sm:flex items-center gap-1.5 opacity-90">
               <MapPin size={14} className="text-primary" /> Kerala Store Across
@@ -149,7 +205,7 @@ export default function Header({ categories: dynamicCategories }: HeaderProps) {
           </div>
           <div className="flex gap-6 items-center">
             <Link
-              href="https://wa.me/XXXXXXXXXX"
+              href="https://wa.me/+447352393384"
               className="flex items-center gap-1.5 hover:text-primary transition-colors group"
             >
               <MessageCircle
@@ -358,8 +414,8 @@ export default function Header({ categories: dynamicCategories }: HeaderProps) {
                             isActive
                               ? "text-primary font-bold"
                               : link.special
-                              ? "text-primary/80"
-                              : "text-slate-700"
+                                ? "text-primary/80"
+                                : "text-slate-700",
                           )}
                         >
                           {link.name}
