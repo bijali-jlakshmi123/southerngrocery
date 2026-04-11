@@ -156,37 +156,62 @@ export default function Footer() {
             <div className="flex gap-4 items-start">
               <Phone className="flex-shrink-0 text-primary mt-0.5" size={18} />
               <div>
-                <a href="tel:+447352393384" className="font-semibold text-slate-700 hover:text-primary transition-colors">
+                <a
+                  href="tel:+447352393384"
+                  className="font-semibold text-slate-700 hover:text-primary transition-colors"
+                >
                   +44 7352 393384
                 </a>
-                <div className="text-xs text-slate-400 mt-0.5">Mon–Sat 10–7 · Sun 10–4</div>
+                <div className="text-xs text-slate-400 mt-0.5">
+                  Mon–Sat 10–7 · Sun 10–4
+                </div>
               </div>
             </div>
             <div className="flex gap-4 items-start">
-              <MessageCircle className="flex-shrink-0 text-primary mt-0.5" size={18} />
+              <MessageCircle
+                className="flex-shrink-0 text-primary mt-0.5"
+                size={18}
+              />
               <div>
-                <a href="https://wa.me/+447352393384" target="_blank" rel="noopener noreferrer" className="font-semibold text-slate-700 hover:text-primary transition-colors">
+                <a
+                  href="https://wa.me/+447352393384"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="font-semibold text-slate-700 hover:text-primary transition-colors"
+                >
                   WhatsApp Us
                 </a>
-                <div className="text-xs text-slate-400 mt-0.5">Instant Support</div>
+                <div className="text-xs text-slate-400 mt-0.5">
+                  Instant Support
+                </div>
               </div>
             </div>
             <div className="flex gap-4 items-start">
               <MapPin className="flex-shrink-0 text-primary mt-0.5" size={18} />
               <div>
-                <a href="/store-address" className="font-semibold text-slate-700 hover:text-primary transition-colors">
-                  3 Store Locations
+                <a
+                  href="/store-address"
+                  className="font-semibold text-slate-700 hover:text-primary transition-colors"
+                >
+                  4 Store Locations
                 </a>
-                <div className="text-xs text-slate-400 mt-0.5">Burton · Derby · Nottingham</div>
+                <div className="text-xs text-slate-400 mt-0.5">
+                  Burton · Derby · Nottingham
+                </div>
               </div>
             </div>
             <div className="flex gap-4 items-start">
               <Mail className="flex-shrink-0 text-primary mt-0.5" size={18} />
               <div>
-                <a href="mailto:support@southernspices.co.uk" className="font-semibold text-slate-700 hover:text-primary transition-colors">
+                <a
+                  href="mailto:support@southernspices.co.uk"
+                  className="font-semibold text-slate-700 hover:text-primary transition-colors"
+                >
                   support@southernspices.co.uk
                 </a>
-                <div className="text-xs text-slate-400 mt-0.5">Reply within 24h</div>
+                <div className="text-xs text-slate-400 mt-0.5">
+                  Reply within 24h
+                </div>
               </div>
             </div>
           </div>

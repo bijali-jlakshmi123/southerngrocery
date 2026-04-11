@@ -199,8 +199,10 @@ export default function Header({ categories: dynamicCategories }: HeaderProps) {
               <Phone size={14} className="text-primary" /> +44 7352 393384
             </span>
             <span className="hidden sm:flex items-center gap-1.5 opacity-90">
-              <MapPin size={14} className="text-primary" /> Kerala Store Across
-              UK
+              <MapPin size={14} className="text-primary" />{" "}
+              <Link href="https://share.google/c3GT9j5U8iqBEcFiT">
+                Southern Spices conveience store burton
+              </Link>
             </span>
           </div>
           <div className="flex gap-6 items-center">
