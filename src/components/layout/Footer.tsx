@@ -26,7 +26,7 @@ export default function Footer() {
         { name: "Contact Us", href: "/contact" },
         { name: "Weekly Offers", href: "/offers" },
         { name: "Privacy Policy", href: "/privacy" },
-        { name: "Store Address", href: "/contact" },
+        { name: "Store Locations", href: "/store-address" },
       ],
     },
     {
@@ -46,7 +46,7 @@ export default function Footer() {
         { name: "My Account", href: "/login" },
         { name: "Shopping Basket", href: "/cart" },
         { name: "Contact & Support", href: "/contact" },
-        { name: "Store Address", href: "/contact" },
+        { name: "Store Locations", href: "/store-address" },
       ],
     },
   ];
@@ -153,21 +153,41 @@ export default function Footer() {
 
           {/* CONTACT STRIP */}
           <div className="grid grid-cols-1 md:grid-cols-4 gap-8 py-12 border-y mb-12 bg-slate-50 rounded-3xl px-8">
-            <div className="flex gap-4">
-              <Phone />
-              <span>+44 7352 393384</span>
+            <div className="flex gap-4 items-start">
+              <Phone className="flex-shrink-0 text-primary mt-0.5" size={18} />
+              <div>
+                <a href="tel:+447352393384" className="font-semibold text-slate-700 hover:text-primary transition-colors">
+                  +44 7352 393384
+                </a>
+                <div className="text-xs text-slate-400 mt-0.5">Mon–Sat 10–7 · Sun 10–4</div>
+              </div>
             </div>
-            <div className="flex gap-4">
-              <MessageCircle />
-              <span>Chat Now</span>
+            <div className="flex gap-4 items-start">
+              <MessageCircle className="flex-shrink-0 text-primary mt-0.5" size={18} />
+              <div>
+                <a href="https://wa.me/+447352393384" target="_blank" rel="noopener noreferrer" className="font-semibold text-slate-700 hover:text-primary transition-colors">
+                  WhatsApp Us
+                </a>
+                <div className="text-xs text-slate-400 mt-0.5">Instant Support</div>
+              </div>
             </div>
-            <div className="flex gap-4">
-              <MapPin />
-              <span>Southern Spices UK HQ</span>
+            <div className="flex gap-4 items-start">
+              <MapPin className="flex-shrink-0 text-primary mt-0.5" size={18} />
+              <div>
+                <a href="/store-address" className="font-semibold text-slate-700 hover:text-primary transition-colors">
+                  3 Store Locations
+                </a>
+                <div className="text-xs text-slate-400 mt-0.5">Burton · Derby · Nottingham</div>
+              </div>
             </div>
-            <div className="flex gap-4">
-              <Mail />
-              <span>support@southernspices.co.uk</span>
+            <div className="flex gap-4 items-start">
+              <Mail className="flex-shrink-0 text-primary mt-0.5" size={18} />
+              <div>
+                <a href="mailto:support@southernspices.co.uk" className="font-semibold text-slate-700 hover:text-primary transition-colors">
+                  support@southernspices.co.uk
+                </a>
+                <div className="text-xs text-slate-400 mt-0.5">Reply within 24h</div>
+              </div>
             </div>
           </div>
 
