@@ -12,9 +12,8 @@ const consumerSecret = process.env.WC_CONSUMER_SECRET!;
  * Uses query-string authentication for maximum Hostinger compatibility
  */
 function getWcUrl(endpoint: string, params: Record<string, any> = {}) {
-  const url = new URL(`${wpUrl}/index.php`);
+  const url = new URL(`${wpUrl}/wp-json/wc/v3/${endpoint}`);
 
-  url.searchParams.append("rest_route", `/wc/v3/${endpoint}`);
   url.searchParams.append("consumer_key", consumerKey);
   url.searchParams.append("consumer_secret", consumerSecret);
 
@@ -41,9 +40,11 @@ async function woocommerceFetch(
   const url = getWcUrl(endpoint, params);
 
   try {
+    const basicAuth = Buffer.from(`${consumerKey}:${consumerSecret}`).toString("base64");
     const response = await fetch(url.toString(), {
       headers: {
         Accept: "application/json",
+        Authorization: `Basic ${basicAuth}`,
       },
       next: { revalidate: 3600 },
     });
