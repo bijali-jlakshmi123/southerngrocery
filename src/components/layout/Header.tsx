@@ -33,7 +33,7 @@ import {
   ShoppingBag,
 } from "lucide-react";
 import { useState, useEffect, useRef } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import { clsx } from "clsx";
 import { useCart, useAuth, useWishlist } from "@/lib/store";
@@ -50,6 +50,7 @@ export default function Header({ categories: dynamicCategories }: HeaderProps) {
   const [isCategoryMenuOpen, setIsCategoryMenuOpen] = useState(false);
   const [isMobileCategoriesOpen, setIsMobileCategoriesOpen] = useState(false);
   const router = useRouter();
+  const pathname = usePathname();
 
   const { user, logout } = useAuth();
   const getTotalItems = useCart((state) => state.getTotalItems);
@@ -346,19 +347,32 @@ export default function Header({ categories: dynamicCategories }: HeaderProps) {
                 </AnimatePresence>
 
                 <ul className="flex items-center gap-8 text-[14px] font-normal text-slate-700 tracking-[0.3px]">
-                  {navLinks.map((link) => (
-                    <li key={link.name}>
-                      <Link
-                        href={link.href}
-                        className={clsx(
-                          "hover:text-primary transition-all relative group",
-                          link.special && "text-primary font-bold",
-                        )}
-                      >
-                        {link.name}
-                      </Link>
-                    </li>
-                  ))}
+                  {navLinks.map((link) => {
+                    const isActive = pathname === link.href;
+                    return (
+                      <li key={link.name}>
+                        <Link
+                          href={link.href}
+                          className={clsx(
+                            "hover:text-primary transition-all relative group h-full flex items-center py-4",
+                            isActive
+                              ? "text-primary font-bold"
+                              : link.special
+                              ? "text-primary/80"
+                              : "text-slate-700"
+                          )}
+                        >
+                          {link.name}
+                          {isActive && (
+                            <motion.div
+                              layoutId="activeNav"
+                              className="absolute bottom-0 left-0 right-0 h-0.5 bg-primary"
+                            />
+                          )}
+                        </Link>
+                      </li>
+                    );
+                  })}
                 </ul>
               </div>
               <div className="flex items-center gap-4">

@@ -24,9 +24,19 @@ export default async function CategoryPage({
 
   // Fetch real products for this category
   // Handle virtual categories and broad categories
-  let wcProducts = [];
+  // Helper: merge results from multiple searches and deduplicate by product ID
+  const mergeProducts = (arrays: any[][]) => {
+    const seen = new Set<number>();
+    return arrays.flat().filter((p) => {
+      if (seen.has(p.id)) return false;
+      seen.add(p.id);
+      return true;
+    });
+  };
+
+  let wcProducts: any[] = [];
   const normalizedSlug = slug.toLowerCase();
-  
+
   if (normalizedSlug === "favourites") {
     wcProducts = await getProducts({ per_page: 50 });
   } else if (normalizedSlug === "new-arrivals") {
@@ -34,33 +44,94 @@ export default async function CategoryPage({
   } else if (normalizedSlug === "offers") {
     wcProducts = await getProducts({ per_page: 50, on_sale: true });
   } else if (normalizedSlug === "rice-and-rice-products" || normalizedSlug === "rice") {
-    wcProducts = await getProducts({ search: "rice kaima ponni sona masoori basmati puttu podi aval riceflakes", per_page: 100 });
+    wcProducts = await getProducts({ search: "rice", per_page: 100 });
   } else if (normalizedSlug === "atta-flour-grains" || normalizedSlug === "atta") {
-    wcProducts = await getProducts({ search: "atta aatta flour ragi wheat maida grain", per_page: 100 });
+    // Fetch atta and flour separately
+    const [atta, flour] = await Promise.all([
+      getProducts({ search: "atta", per_page: 100 }),
+      getProducts({ search: "flour", per_page: 100 }),
+    ]);
+    wcProducts = mergeProducts([atta, flour]);
   } else if (normalizedSlug === "pulses-and-lentils" || normalizedSlug === "pulses") {
-    wcProducts = await getProducts({ search: "pulses uzhunnu dal parippu cherupayar lentil peas kadala", per_page: 100 });
+    const [dal, pulses] = await Promise.all([
+      getProducts({ search: "dal", per_page: 100 }),
+      getProducts({ search: "lentil", per_page: 100 }),
+    ]);
+    wcProducts = mergeProducts([dal, pulses]);
   } else if (normalizedSlug === "oil-and-ghee" || normalizedSlug === "oils") {
-    wcProducts = await getProducts({ search: "oil ghee coconut sunflower vegetable", per_page: 100 });
+    // WooCommerce search is a single phrase — fetch oil and ghee in separate calls
+    const [oils, ghee] = await Promise.all([
+      getProducts({ search: "oil", per_page: 100 }),
+      getProducts({ search: "ghee", per_page: 100 }),
+    ]);
+    wcProducts = mergeProducts([oils, ghee]);
   } else if (normalizedSlug === "spices-and-masala" || normalizedSlug === "spices") {
-    wcProducts = await getProducts({ search: "masala powder spices chilli turmeric coriander whole spices", per_page: 100 });
+    const [masala, spice] = await Promise.all([
+      getProducts({ search: "masala", per_page: 100 }),
+      getProducts({ search: "spice", per_page: 100 }),
+    ]);
+    wcProducts = mergeProducts([masala, spice]);
   } else if (normalizedSlug === "pickles-and-chutneys" || normalizedSlug === "pickles") {
-    wcProducts = await getProducts({ search: "pickle chutney chammanthi ginger garlic lime mango", per_page: 100 });
+    const [pickle, chutney] = await Promise.all([
+      getProducts({ search: "pickle", per_page: 100 }),
+      getProducts({ search: "chutney", per_page: 100 }),
+    ]);
+    wcProducts = mergeProducts([pickle, chutney]);
   } else if (normalizedSlug === "ready-to-eat") {
-    wcProducts = await getProducts({ search: "ready instant mix upma payasam idly appam curry", per_page: 100 });
+    const [ready, curry] = await Promise.all([
+      getProducts({ search: "ready", per_page: 100 }),
+      getProducts({ search: "curry mix", per_page: 100 }),
+    ]);
+    wcProducts = mergeProducts([ready, curry]);
   } else if (normalizedSlug === "frozen-foods" || normalizedSlug === "frozen") {
-    wcProducts = await getProducts({ search: "frozen kappa jackfruit drumstick porotta coconut grated", per_page: 100 });
+    wcProducts = await getProducts({ search: "frozen", per_page: 100 });
   } else if (normalizedSlug === "snacks-and-sweets" || normalizedSlug === "snacks") {
-    wcProducts = await getProducts({ search: "snacks sweets chips mixture biscuit halwa laddu sweets cake", per_page: 100 });
+    // Each search term must be sent separately
+    const [snacks, chips, mixture, biscuit] = await Promise.all([
+      getProducts({ search: "snack", per_page: 100 }),
+      getProducts({ search: "chips", per_page: 100 }),
+      getProducts({ search: "mixture", per_page: 100 }),
+      getProducts({ search: "biscuit", per_page: 100 }),
+    ]);
+    wcProducts = mergeProducts([snacks, chips, mixture, biscuit]);
   } else if (normalizedSlug === "beverages") {
-    wcProducts = await getProducts({ search: "tea coffee squash horlicks boost beverages drink", per_page: 100 });
+    const [tea, coffee, drink] = await Promise.all([
+      getProducts({ search: "tea", per_page: 100 }),
+      getProducts({ search: "coffee", per_page: 100 }),
+      getProducts({ search: "drink", per_page: 100 }),
+    ]);
+    wcProducts = mergeProducts([tea, coffee, drink]);
   } else if (normalizedSlug === "dairy-and-milk-powder") {
-    wcProducts = await getProducts({ search: "milk powder dairy maggi milk", per_page: 100 });
+    const [milk, dairy] = await Promise.all([
+      getProducts({ search: "milk", per_page: 100 }),
+      getProducts({ search: "dairy", per_page: 100 }),
+    ]);
+    wcProducts = mergeProducts([milk, dairy]);
   } else if (normalizedSlug === "household-and-personal-care") {
-    wcProducts = await getProducts({ search: "soap toothpaste hair oil agarbathi personal household", per_page: 100 });
+    const [soap, paste, detergent] = await Promise.all([
+      getProducts({ search: "soap", per_page: 100 }),
+      getProducts({ search: "paste", per_page: 100 }),
+      getProducts({ search: "detergent", per_page: 100 }),
+    ]);
+    wcProducts = mergeProducts([soap, paste, detergent]);
   } else if (normalizedSlug === "fresh-vegetables" || normalizedSlug === "vegetables") {
-    wcProducts = await getProducts({ search: "fresh vegetable banana ginger onion chena mathanga kumbalanga", per_page: 100 });
+    // WooCommerce category is "fresh-vegetable" (singular) — fetch by both slugs
+    const [bySlug1, bySlug2, bySearch] = await Promise.all([
+      getCategories({ slug: "fresh-vegetable" }).then((cats: any[]) =>
+        cats[0]?.id ? getProducts({ category: cats[0].id, per_page: 100 }) : []
+      ),
+      getCategories({ slug: "fresh-vegetables" }).then((cats: any[]) =>
+        cats[0]?.id ? getProducts({ category: cats[0].id, per_page: 100 }) : []
+      ),
+      getProducts({ search: "vegetable", per_page: 100 }),
+    ]);
+    wcProducts = mergeProducts([bySlug1, bySlug2, bySearch]);
   } else if (normalizedSlug === "kitchenware") {
-    wcProducts = await getProducts({ search: "kitchenware maker cooker chatie mixie", per_page: 100 });
+    const [cooker, kitchen] = await Promise.all([
+      getProducts({ search: "cooker", per_page: 100 }),
+      getProducts({ search: "kitchen", per_page: 100 }),
+    ]);
+    wcProducts = mergeProducts([cooker, kitchen]);
   } else {
     wcProducts = await getProducts({ category: currentCategory?.id || slug, per_page: 50 });
   }

@@ -30,8 +30,7 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const wcCategories = await getCategories({ hide_empty: true, per_page: 20 });
-  const categories = wcCategories.filter(c => c.name !== "Uncategorized");
+  const categories: { id: number; name: string; slug: string }[] = await getCategories({ per_page: 100, hide_empty: true }).catch(() => []);
 
   return (
     <html lang="en">
