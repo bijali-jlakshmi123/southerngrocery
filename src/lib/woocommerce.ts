@@ -51,8 +51,9 @@ async function woocommerceFetch(
     const contentType = response.headers.get("content-type") || "";
 
     if (!response.ok) {
+      const body = await response.text().catch(() => "(could not read body)");
       console.error(
-        `[WooCommerce GET Error] ${endpoint}: HTTP ${response.status}`,
+        `[WooCommerce GET Error] ${endpoint}: HTTP ${response.status}\nURL: ${url.toString()}\nResponse body: ${body.substring(0, 500)}`,
       );
       return { data: null };
     }
