@@ -25,7 +25,7 @@ export async function POST(request: Request) {
         data: response.data,
       });
     } else {
-      console.warn("Order creation failed:", response.error);
+      console.error(`[ORDER FAIL] WooCommerce rejected the order:`, response.error);
       return NextResponse.json(
         {
           success: false,

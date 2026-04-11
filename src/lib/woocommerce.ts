@@ -1,8 +1,8 @@
 const wpUrl = (
-  process.env.NEXT_PUBLIC_WORDPRESS_URL ||
-  process.env.WORDPRESS_URL ||
-  "https://southernspicesstore.com"
-).replace(/\/$/, "");
+  process.env.WC_API_URL || 
+  process.env.NEXT_PUBLIC_WORDPRESS_URL || 
+  process.env.WORDPRESS_URL
+)?.replace(/\/$/, "") || "https://srv1565389.hstgr.cloud";
 
 const consumerKey = process.env.WC_CONSUMER_KEY!;
 const consumerSecret = process.env.WC_CONSUMER_SECRET!;
@@ -93,14 +93,22 @@ async function woocommercePost(endpoint: string, data: any) {
     const text = await response.text();
 
     if (!response.ok) {
-      console.error(
-        `[WooCommerce POST Error] ${endpoint}: HTTP ${response.status}`,
-        text,
-      );
+      console.error(`[WooCommerce POST Error] ${endpoint}: HTTP ${response.status}`);
+      
+      let errorMessage = text;
+      // If it looks like HTML (starts with <! or contains <html>), don't return the whole thing
+      if (text.trim().startsWith("<!") || text.includes("<html")) {
+        errorMessage = `WordPress server returned an HTML error (HTTP ${response.status}). This usually means the endpoint URL is wrong or the server is blocking the request.`;
+      } else {
+        try {
+          const json = JSON.parse(text);
+          errorMessage = json.message || text;
+        } catch (e) {}
+      }
 
       return {
         data: null,
-        error: text,
+        error: errorMessage,
       };
     }
 

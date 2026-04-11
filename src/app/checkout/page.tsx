@@ -157,20 +157,28 @@ export default function CheckoutPage() {
         body: JSON.stringify(orderData),
       });
 
-      const result = await response.json();
+      let result: any;
+      const text = await response.text();
+      
+      try {
+        result = JSON.parse(text);
+      } catch (e) {
+        result = { success: false, error: `Server Error (${response.status}). The server returned an invalid response.` };
+      }
 
       if (result.success) {
         toast.success(`🎉 Order placed successfully!`, { position: "top-center" });
         clearCart(userId);
         router.push(`/checkout/success?id=${result.data.id}`);
       } else {
-        let errorMsg = result.error;
-        if (errorMsg.includes("not allowed to create resources")) {
-          errorMsg = "API Permission Error: Your keys are active but the server is blocking orders. Try selecting 'Bank Transfer' or check if your WordPress security plugins (Wordfence/etc) are blocking the API.";
+        let errorMsg = result.error || "Unknown error";
+        if (typeof errorMsg === "string" && errorMsg.includes("not allowed to create resources")) {
+          errorMsg = "API Permission Error: Your keys are active but the server is blocking orders. Ensure your keys have 'Read/Write' access and no security plugins are blocking the request.";
         }
         throw new Error(errorMsg);
       }
     } catch (error: any) {
+      console.error("Checkout Error:", error);
       toast.error(error.message || "An error occurred while placing your order.");
       setIsProcessing(false);
     }
