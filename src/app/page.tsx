@@ -55,9 +55,10 @@ export default async function Home() {
 
   // Split products into sections if we have them
   const favourites =
-    realProducts.length > 0 ? realProducts.slice(0, 12) : mockKeralaFavourites;
-  const arrivals = realProducts.length > 12 ? realProducts.slice(12, 24) : [];
-  const deals = realProducts.length > 24 ? realProducts.slice(24, 36) : [];
+    realProducts.length > 0 ? realProducts.slice(0, 4) : mockKeralaFavourites.slice(0, 4);
+  const arrivals = realProducts.length > 4 ? realProducts.slice(4, 8) : [];
+  const deals = realProducts.length > 8 ? realProducts.slice(8, 12) : [];
+
 
   return (
     <main className="min-h-screen">

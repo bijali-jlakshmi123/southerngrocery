@@ -64,7 +64,8 @@ export default function WeeklyDeals() {
             </h2>
             <div className="h-1 w-20 bg-primary rounded-full"></div>
             <p className="text-gray-500 font-medium text-sm max-w-xl pt-2">
-              Save big on your favorite authentic Indian brands Every Single Week.
+              Save big on your favorite authentic Indian brands Every Single
+              Week.
             </p>
           </div>
 
