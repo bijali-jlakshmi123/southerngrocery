@@ -105,7 +105,7 @@ export default function ProductClient({ product, relatedProducts = [] }: Product
               </div>
             )}
             <Image 
-              src={product.images?.[0]?.src || '/placeholder.png'} 
+              src={(product.images?.[0]?.src && product.images[0].src !== 'image') ? product.images[0].src : '/placeholder.png'} 
               alt={product.name || 'Southern Spices Product'} 
               fill 
               className="object-contain group-hover:scale-110 transition-transform duration-700 p-8"
@@ -213,7 +213,7 @@ export default function ProductClient({ product, relatedProducts = [] }: Product
           name: rp.name,
           price: typeof rp.price === 'string' ? parseFloat(rp.price) : rp.price,
           originalPrice: rp.regular_price ? parseFloat(rp.regular_price) : undefined,
-          image: rp.images?.[0]?.src || '/placeholder.png',
+          image: (rp.images?.[0]?.src && rp.images[0].src !== 'image') ? rp.images[0].src : '/placeholder.png',
           category: rp.categories?.[0]?.name || 'Uncategorized',
           slug: rp.slug
         }))}

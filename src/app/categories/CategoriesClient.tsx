@@ -159,7 +159,7 @@ export default function CategoriesClient({
 
                   <div className="w-full h-44 relative mb-6 flex items-center justify-center">
                     <Image
-                      src={category.image || "/placeholder.png"}
+                      src={(category.image && category.image !== 'image') ? category.image : "/placeholder.png"}
                       alt={category.name}
                       fill
                       className="object-contain"

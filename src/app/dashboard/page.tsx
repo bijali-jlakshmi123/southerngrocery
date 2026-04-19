@@ -307,7 +307,7 @@ export default function DashboardPage() {
                                 {order.line_items.slice(0, 4).map((item: any, idx: number) => (
                                   <div key={idx} className="aspect-square bg-slate-50 rounded-2xl border border-slate-100 p-2 group-hover:bg-white transition-colors relative">
                                     <img 
-                                      src={item.image?.src || "/placeholder.png"} 
+                                      src={(item.image?.src && item.image.src !== 'image') ? item.image.src : "/placeholder.png"} 
                                       alt={item.name}
                                       className="w-full h-full object-contain"
                                     />

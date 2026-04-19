@@ -29,12 +29,22 @@ export function mapWcProduct(wcProduct: any) {
     brand = brands.find(b => name.toLowerCase().includes(b.toLowerCase())) || null;
   }
 
+  // Ensure image is a valid URL or fallback to placeholder
+  let image = "/placeholder.png";
+  if (wcProduct.images && wcProduct.images.length > 0) {
+    const src = wcProduct.images[0].src;
+    // Some systems export literal 'image' as a placeholder - ignore it
+    if (src && src !== 'image' && src !== '') {
+      image = src;
+    }
+  }
+
   return {
     id: wcProduct.id,
     name: name,
     price: parseFloat(wcProduct.price) || 0,
     originalPrice: parseFloat(wcProduct.regular_price) || 0,
-    image: wcProduct.images?.[0]?.src || "/placeholder.png",
+    image: image,
     category: mainCategory,
     subCategory: subCategory,
     brand: brand,

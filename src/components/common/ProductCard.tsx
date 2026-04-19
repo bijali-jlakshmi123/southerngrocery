@@ -125,7 +125,7 @@ export default function ProductCard({
             className="w-full h-full relative"
           >
             <Image
-              src={image || "/placeholder.png"}
+              src={(image && image !== 'image') ? image : "/placeholder.png"}
               alt={name}
               fill
               className="object-contain p-4"
