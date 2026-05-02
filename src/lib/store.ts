@@ -68,7 +68,7 @@ export const useCart = create<CartStore>()(
               id: product.id,
               name: product.name,
               price: product.price,
-              imageUrl: product.images?.[0]?.src || '/placeholder.png',
+              imageUrl: (product.images?.[0]?.src && product.images[0].src !== 'image') ? product.images[0].src : '/placeholder.png',
               slug: product.slug,
               quantity,
             },
@@ -187,7 +187,7 @@ export const useWishlist = create<WishlistStore>()(
               id: product.id,
               name: product.name,
               price: product.price,
-              imageUrl: product.images?.[0]?.src || product.imageUrl || '/placeholder.png',
+              imageUrl: (product.images?.[0]?.src && product.images[0].src !== 'image') ? product.images[0].src : (product.imageUrl && product.imageUrl !== 'image' ? product.imageUrl : '/placeholder.png'),
               slug: product.slug,
             },
           ];

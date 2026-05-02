@@ -58,7 +58,7 @@ export default function CartPage() {
                   className="bg-white rounded-3xl p-4 md:p-6 shadow-sm border border-slate-50 flex items-center gap-6"
                 >
                   <div className="w-24 h-24 relative bg-slate-50 rounded-2xl overflow-hidden flex-shrink-0">
-                    <Image src={item.imageUrl} alt={item.name} fill className="object-cover" />
+                    <Image src={(item.imageUrl && item.imageUrl !== 'image') ? item.imageUrl : "/placeholder.png"} alt={item.name} fill className="object-cover" />
                   </div>
 
                   <div className="flex-1 min-w-0">

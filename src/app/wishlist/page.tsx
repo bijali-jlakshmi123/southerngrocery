@@ -82,7 +82,7 @@ export default function WishlistPage() {
                   {/* Image Product */}
                   <Link href={`/product/${item.slug}`} className="relative w-40 h-40 bg-slate-50 rounded-3xl flex-shrink-0 flex items-center justify-center overflow-hidden group-hover:bg-white transition-colors">
                      <Image 
-                       src={item.imageUrl} 
+                       src={(item.imageUrl && item.imageUrl !== 'image') ? item.imageUrl : "/placeholder.png"} 
                        alt={item.name} 
                        width={160} 
                        height={160} 
