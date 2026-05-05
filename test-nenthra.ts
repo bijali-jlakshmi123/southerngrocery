@@ -1,5 +1,5 @@
 import 'dotenv/config';
-import { getProductBySlug } from './src/lib/woocommerce.ts';
+import { getProductBySlug } from './src/lib/woocommerce';
 import fs from 'fs';
 
 async function test() {
