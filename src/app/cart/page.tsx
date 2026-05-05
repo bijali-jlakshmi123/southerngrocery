@@ -55,7 +55,7 @@ export default function CartPage() {
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, x: -100 }}
-                  className="bg-white rounded-3xl p-4 md:p-6 shadow-sm border border-slate-50 flex items-center gap-6"
+                  className="bg-white rounded-3xl p-4 md:p-6 shadow-sm border border-slate-50 flex flex-col sm:flex-row items-start sm:items-center gap-6"
                 >
                   <div className="w-24 h-24 relative bg-slate-50 rounded-2xl overflow-hidden flex-shrink-0">
                     <Image src={(item.imageUrl && item.imageUrl !== 'image') ? item.imageUrl : "/placeholder.png"} alt={item.name} fill className="object-cover" />

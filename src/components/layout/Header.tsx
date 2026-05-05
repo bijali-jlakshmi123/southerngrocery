@@ -214,7 +214,7 @@ export default function Header({ categories: dynamicCategories }: HeaderProps) {
                 size={14}
                 className="group-hover:scale-110 transition-transform"
               />{" "}
-              WhatsApp Order
+              <span className="hidden sm:inline">WhatsApp Order</span>
             </Link>
             <span className="opacity-30">|</span>
             {mounted && user ? (
@@ -238,7 +238,7 @@ export default function Header({ categories: dynamicCategories }: HeaderProps) {
                 href="/login"
                 className="flex items-center gap-1.5 hover:text-primary transition-colors group"
               >
-                <User size={14} /> My Account
+                <User size={14} /> <span className="hidden sm:inline">My Account</span>
               </Link>
             )}
           </div>

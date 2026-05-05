@@ -36,7 +36,7 @@ export default async function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${roboto.variable} antialiased bg-background text-foreground`}
+        className={`${roboto.variable} antialiased bg-background text-foreground overflow-x-hidden`}
         suppressHydrationWarning
       >
         <MainLayout categories={categories}>{children}</MainLayout>

@@ -57,7 +57,7 @@ export default function WeeklyDeals() {
   return (
     <section className="py-[80px] bg-[#f8f8f8] border-t border-gray-100 relative overflow-hidden">
       <div className="max-w-8xl mx-auto px-6">
-        <div className="flex flex-col lg:flex-row justify-between items-end mb-12 gap-8">
+        <div className="flex flex-col lg:flex-row justify-between items-start lg:items-end mb-12 gap-8">
           <div className="space-y-3">
             <h2 className="text-2xl md:text-3xl font-bold text-secondary uppercase tracking-tight">
               Weekly Offers

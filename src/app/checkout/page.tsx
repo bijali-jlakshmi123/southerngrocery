@@ -329,7 +329,7 @@ export default function CheckoutPage() {
                   </h2>
                 </div>
 
-                <div className="grid grid-cols-2 lg:grid-cols-3 gap-6">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                   <button onClick={() => setPaymentMethod("stripe")} className={`flex flex-col items-center gap-4 p-8 rounded-4xl border-2 transition-all ${paymentMethod === "stripe" ? "border-primary bg-primary/5 shadow-premium" : "border-slate-50 bg-white hover:border-slate-100 opacity-60"}`}>
                     <CreditCard size={32} className="text-slate-400" />
                     <span className="text-[10px] font-black uppercase tracking-widest text-slate-500">Stripe / Card</span>

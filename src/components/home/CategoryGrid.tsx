@@ -88,7 +88,7 @@ export default function CategoryGrid({ categories: dynamicCategories }: Category
   return (
     <section className="py-16 md:py-24 bg-white relative overflow-hidden text-center">
       <div className="max-w-8xl mx-auto px-6">
-        <div className="flex flex-col md:flex-row justify-between items-end mb-12 gap-6">
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-12 gap-6">
           <div className="space-y-2 text-left">
             <h2 className="text-2xl md:text-3xl font-bold text-secondary uppercase tracking-tight">
               Shop By Categories
