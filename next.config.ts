@@ -5,6 +5,10 @@ const nextConfig: NextConfig = {
     remotePatterns: [
       {
         protocol: 'https',
+        hostname: 'srv1565389.hstgr.cloud',
+      },
+      {
+        protocol: 'https',
         hostname: '**',
       },
       {

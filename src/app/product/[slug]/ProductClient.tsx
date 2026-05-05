@@ -30,6 +30,7 @@ interface ProductClientProps {
 
 export default function ProductClient({ product, relatedProducts = [] }: ProductClientProps) {
   const [quantity, setQuantity] = useState(1);
+  const [activeImageIndex, setActiveImageIndex] = useState(0);
   const { addItem } = useCart();
   const { user } = useAuth();
   const { toggleItem, isInWishlist } = useWishlist();
@@ -93,7 +94,7 @@ export default function ProductClient({ product, relatedProducts = [] }: Product
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 xl:gap-24 mb-24">
         {/* Left: Product Images */}
-        <div className="space-y-6">
+        <div className="space-y-4">
           <motion.div 
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
@@ -105,12 +106,34 @@ export default function ProductClient({ product, relatedProducts = [] }: Product
               </div>
             )}
             <Image 
-              src={(product.images?.[0]?.src && product.images[0].src !== 'image') ? product.images[0].src : '/placeholder.png'} 
+              src={(product.images?.[activeImageIndex]?.src && product.images[activeImageIndex].src !== 'image') ? product.images[activeImageIndex].src : '/placeholder.png'} 
               alt={product.name || 'Southern Spices Product'} 
               fill 
               className="object-contain group-hover:scale-110 transition-transform duration-700 p-8"
             />
           </motion.div>
+
+          {/* Thumbnails */}
+          {product.images && product.images.length > 1 && (
+            <div className="flex gap-4 overflow-x-auto pb-2 scrollbar-hide">
+              {product.images.map((img, idx) => (
+                <button
+                  key={img.src || idx}
+                  onClick={() => setActiveImageIndex(idx)}
+                  className={`relative w-24 h-24 rounded-2xl overflow-hidden border-2 flex-shrink-0 transition-all ${
+                    activeImageIndex === idx ? 'border-primary shadow-md' : 'border-slate-100 hover:border-slate-300 opacity-70 hover:opacity-100'
+                  }`}
+                >
+                  <Image 
+                    src={(img.src && img.src !== 'image') ? img.src : '/placeholder.png'} 
+                    alt={`${product.name} thumbnail ${idx + 1}`} 
+                    fill 
+                    className="object-contain p-2 bg-slate-50"
+                  />
+                </button>
+              ))}
+            </div>
+          )}
         </div>
 
         {/* Right: Product Details Info */}

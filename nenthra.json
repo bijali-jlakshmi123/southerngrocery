@@ -1,0 +1,123 @@
+{
+  "id": 859,
+  "name": "Nenthra pazham",
+  "slug": "nenthra-pazham",
+  "permalink": "https://srv1565389.hstgr.cloud/product/nenthra-pazham/",
+  "date_created": "2026-04-11T13:55:00",
+  "date_created_gmt": "2026-04-11T13:55:00",
+  "date_modified": "2026-05-02T09:46:20",
+  "date_modified_gmt": "2026-05-02T09:46:20",
+  "type": "simple",
+  "status": "publish",
+  "featured": false,
+  "catalog_visibility": "visible",
+  "description": "<p>A banana is a soft, sweet, elongated fruit with a yellow peel, rich in potassium and energy.</p>\n",
+  "short_description": "",
+  "sku": "",
+  "price": "2.59",
+  "regular_price": "2.59",
+  "sale_price": "",
+  "date_on_sale_from": null,
+  "date_on_sale_from_gmt": null,
+  "date_on_sale_to": null,
+  "date_on_sale_to_gmt": null,
+  "on_sale": false,
+  "purchasable": true,
+  "total_sales": 0,
+  "virtual": false,
+  "downloadable": false,
+  "downloads": [],
+  "download_limit": -1,
+  "download_expiry": -1,
+  "external_url": "",
+  "button_text": "",
+  "tax_status": "taxable",
+  "tax_class": "",
+  "manage_stock": false,
+  "stock_quantity": null,
+  "backorders": "no",
+  "backorders_allowed": false,
+  "backordered": false,
+  "low_stock_amount": null,
+  "sold_individually": false,
+  "weight": "",
+  "dimensions": {
+    "length": "",
+    "width": "",
+    "height": ""
+  },
+  "shipping_required": true,
+  "shipping_taxable": true,
+  "shipping_class": "",
+  "shipping_class_id": 0,
+  "reviews_allowed": true,
+  "average_rating": "0.00",
+  "rating_count": 0,
+  "upsell_ids": [],
+  "cross_sell_ids": [],
+  "parent_id": 0,
+  "purchase_note": "",
+  "categories": [
+    {
+      "id": 93,
+      "name": "Fresh Vegetable",
+      "slug": "fresh-vegetable"
+    }
+  ],
+  "brands": [],
+  "tags": [],
+  "images": [
+    {
+      "id": 973,
+      "date_created": "2026-04-19T09:59:16",
+      "date_created_gmt": "2026-04-19T09:59:16",
+      "date_modified": "2026-04-19T09:59:16",
+      "date_modified_gmt": "2026-04-19T09:59:16",
+      "src": "https://srv1565389.hstgr.cloud/wp-content/uploads/2026/04/download.jpg",
+      "name": "download",
+      "alt": "",
+      "srcset": "",
+      "sizes": "(max-width: 265px) 100vw, 265px",
+      "thumbnail": "https://srv1565389.hstgr.cloud/wp-content/uploads/2026/04/download.jpg"
+    }
+  ],
+  "attributes": [],
+  "default_attributes": [],
+  "variations": [],
+  "grouped_products": [],
+  "menu_order": 0,
+  "price_html": "<span class=\"woocommerce-Price-amount amount\"><bdi><span class=\"woocommerce-Price-currencySymbol\">&#8377;</span>2.59</bdi></span>",
+  "related_ids": [
+    858,
+    853,
+    852,
+    855,
+    856
+  ],
+  "meta_data": [],
+  "stock_status": "instock",
+  "has_options": false,
+  "post_password": "",
+  "global_unique_id": "",
+  "_links": {
+    "self": [
+      {
+        "href": "https://srv1565389.hstgr.cloud/wp-json/wc/v3/products/859",
+        "targetHints": {
+          "allow": [
+            "GET",
+            "POST",
+            "PUT",
+            "PATCH",
+            "DELETE"
+          ]
+        }
+      }
+    ],
+    "collection": [
+      {
+        "href": "https://srv1565389.hstgr.cloud/wp-json/wc/v3/products"
+      }
+    ]
+  }
+}
