@@ -293,7 +293,7 @@ export default function AIAssistantWidget() {
       {/* FAB Button */}
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="fixed bottom-24 right-4 sm:right-6 sm:bottom-6 w-14 h-14 bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 text-white rounded-full shadow-[0_0_20px_rgba(249,115,22,0.4)] hover:shadow-[0_0_25px_rgba(249,115,22,0.6)] transition-all duration-300 z-50 flex items-center justify-center transform hover:scale-105 active:scale-95"
+        className="fixed bottom-6 right-6 w-14 h-14 bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 text-white rounded-full shadow-[0_0_20px_rgba(249,115,22,0.4)] hover:shadow-[0_0_25px_rgba(249,115,22,0.6)] transition-all duration-300 z-50 flex items-center justify-center transform hover:scale-105 active:scale-95"
       >
         {isOpen ? <X className="w-6 h-6" /> : (
           <div className="relative">
