@@ -21,7 +21,7 @@ export async function POST(req: Request) {
       });
     }
 
-    const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+    const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
 
     const promptContext = `
     You are a friendly and helpful AI Shopping Assistant for an Indian and Kerala grocery store called Southern Spices in the UK.
