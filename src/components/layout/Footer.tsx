@@ -196,7 +196,7 @@ export default function Footer() {
                   4 Store Locations
                 </a>
                 <div className="text-xs text-slate-400 mt-0.5">
-                  Burton · Derby · Nottingham
+                  Burton · Derby · Nottingham · Manchester
                 </div>
               </div>
             </div>
