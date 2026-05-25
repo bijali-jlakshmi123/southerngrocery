@@ -8,11 +8,26 @@ async function test() {
   const url = new URL(`${wpUrl}/wp-json/wc/v3/products`);
   url.searchParams.append("consumer_key", consumerKey);
   url.searchParams.append("consumer_secret", consumerSecret);
-  url.searchParams.append("per_page", "2");
+  url.searchParams.append("search", "onion");
 
   const response = await fetch(url.toString());
   const data = await response.json();
-  console.log(JSON.stringify(data[0]?.images, null, 2));
+  data.forEach(p => {
+    console.log(`Product: ${p.name}`);
+    console.log(`Images:`, JSON.stringify(p.images, null, 2));
+  });
+
+  const url2 = new URL(`${wpUrl}/wp-json/wc/v3/products`);
+  url2.searchParams.append("consumer_key", consumerKey);
+  url2.searchParams.append("consumer_secret", consumerSecret);
+  url2.searchParams.append("search", "garlic");
+
+  const response2 = await fetch(url2.toString());
+  const data2 = await response2.json();
+  data2.forEach(p => {
+    console.log(`Product: ${p.name}`);
+    console.log(`Images:`, JSON.stringify(p.images, null, 2));
+  });
 }
 
 test();
