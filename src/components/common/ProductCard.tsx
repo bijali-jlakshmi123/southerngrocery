@@ -128,6 +128,7 @@ export default function ProductCard({
               src={(image && image !== 'image') ? image : "/placeholder.png"}
               alt={name}
               fill
+              priority={false}
               className="object-contain p-4"
             />
           </motion.div>
