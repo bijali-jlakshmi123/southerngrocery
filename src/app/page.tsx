@@ -60,7 +60,7 @@ export default async function Home() {
   const { getCategories } = await import("@/lib/woocommerce");
   const wcCategories = await getCategories({ hide_empty: true, per_page: 8 });
   const realCategories = wcCategories
-    .filter(c => c.name !== "Uncategorized")
+    .filter((c) => c.name !== "Uncategorized")
     .sort((a, b) => (b.count || 0) - (a.count || 0));
 
   // Split products into sections if we have them
@@ -68,9 +68,14 @@ export default async function Home() {
     realProducts.length > 0
       ? [mattaRiceFavourite, ...realProductsWithoutMattaRice].slice(0, 4)
       : mockKeralaFavourites.slice(0, 4);
-  const arrivals = realProductsWithoutMattaRice.length > 4 ? realProductsWithoutMattaRice.slice(4, 8) : [];
-  const deals = realProductsWithoutMattaRice.length > 8 ? realProductsWithoutMattaRice.slice(8, 12) : [];
-
+  const arrivals =
+    realProductsWithoutMattaRice.length > 4
+      ? realProductsWithoutMattaRice.slice(4, 8)
+      : [];
+  const deals =
+    realProductsWithoutMattaRice.length > 8
+      ? realProductsWithoutMattaRice.slice(8, 12)
+      : [];
 
   return (
     <main className="min-h-screen">
