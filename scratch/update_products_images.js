@@ -8,7 +8,7 @@ const baseUrl = 'https://srv1565389.hstgr.cloud/wp-json/wc/v3';
 
 const verifiedImages = {
   "Periyar Vadi Matta": "https://www.keralataste.com/cdn/shop/products/MattaRiceDoubleHorse_3efa859f-79e2-4f07-b221-621252151751_800x.jpg?v=1610116617",
-  "Double Horse Matta": "https://www.keralataste.com/cdn/shop/products/MattaRiceDoubleHorse_3efa859f-79e2-4f07-b221-621252151751_800x.jpg?v=1610116617",
+  "Double Horse Matta": "https://cdn.shopify.com/s/files/1/0669/9047/3439/files/5kg_1_abb1ec0f-330d-4c20-83e6-84bba447f517.jpg?v=1747973538",
   "Ajmi Matta": "https://www.keralataste.com/cdn/shop/files/IMG-0210_800x.webp?v=1770839956",
   "Meeval Sona Masoori": "https://www.keralataste.com/cdn/shop/files/FullSizeRender_8211c254-6bfd-4ff0-9ee0-0cec80c70873_800x.jpg?v=1770114160",
   "India Gate Sona Masoori": "https://www.keralataste.com/cdn/shop/products/IndiaGateBasmatiRice_800x.jpg?v=1610116617",
