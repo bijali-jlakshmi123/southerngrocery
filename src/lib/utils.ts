@@ -1,4 +1,3 @@
-
 const localRiceImages: Record<string, string> = {
   "matta-rice": "/matta-rice.png",
   "jeerakasala-rice": "/jeerakasala-rice.png",
@@ -46,25 +45,52 @@ export function mapWcProduct(wcProduct: any) {
   // Smarter subcategory mapping based on keywords
   if (!subCategory || subCategory === mainCategory) {
     if (name.toLowerCase().includes("matta")) subCategory = "Matta Rice";
-    else if (name.toLowerCase().includes("kaima") || name.toLowerCase().includes("jeerakasala")) subCategory = "Kaima Rice";
-    else if (name.toLowerCase().includes("basmati")) subCategory = "Basmati Rice";
+    else if (
+      name.toLowerCase().includes("kaima") ||
+      name.toLowerCase().includes("jeerakasala")
+    )
+      subCategory = "Kaima Rice";
+    else if (name.toLowerCase().includes("basmati"))
+      subCategory = "Basmati Rice";
     else if (name.toLowerCase().includes("ponni")) subCategory = "Ponni Rice";
     else if (name.toLowerCase().includes("atta")) subCategory = "Atta";
-    else if (name.toLowerCase().includes("roasted")) subCategory = "Roasted Powder";
-    else if (name.toLowerCase().includes("idli") || name.toLowerCase().includes("dosa")) subCategory = "Breakfast Mix";
-    else if (name.toLowerCase().includes("coconut oil")) subCategory = "Coconut Oil";
+    else if (name.toLowerCase().includes("roasted"))
+      subCategory = "Roasted Powder";
+    else if (
+      name.toLowerCase().includes("idli") ||
+      name.toLowerCase().includes("dosa")
+    )
+      subCategory = "Breakfast Mix";
+    else if (name.toLowerCase().includes("coconut oil"))
+      subCategory = "Coconut Oil";
     else if (name.toLowerCase().includes("ghee")) subCategory = "Ghee";
     else if (name.toLowerCase().includes("pickle")) subCategory = "Pickles";
-    else if (name.toLowerCase().includes("chips")) subCategory = "Kerala Snacks";
+    else if (name.toLowerCase().includes("chips"))
+      subCategory = "Kerala Snacks";
   }
-  
+
   // Find brand from attributes or common brands in name
-  const brandAttr = wcProduct.attributes?.find((a: any) => a.name.toLowerCase() === 'brand');
+  const brandAttr = wcProduct.attributes?.find(
+    (a: any) => a.name.toLowerCase() === "brand",
+  );
   let brand = brandAttr?.options?.[0] || null;
-  
+
   if (!brand) {
-    const brands = ["Double Horse", "Eastern", "Ajmi", "Nirapara", "Brahmins", "Tilda", "Aashirvad", "Pillsbury", "Himalayan", "KTC", "Pavizham"];
-    brand = brands.find(b => name.toLowerCase().includes(b.toLowerCase())) || null;
+    const brands = [
+      "Double Horse",
+      "Eastern",
+      "Ajmi",
+      "Nirapara",
+      "Brahmins",
+      "Tilda",
+      "Aashirvad",
+      "Pillsbury",
+      "Himalayan",
+      "KTC",
+      "Pavizham",
+    ];
+    brand =
+      brands.find((b) => name.toLowerCase().includes(b.toLowerCase())) || null;
   }
 
   const image = getProductImageSrc(wcProduct);
