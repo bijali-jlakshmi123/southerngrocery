@@ -4,19 +4,44 @@ import ProductClient from './ProductClient';
 // Mock data as fallback for development if WooCommerce is not fully connected
 const getMockProduct = (slug: string) => {
   let imageSrc = '/matta_rice_new.png';
-  if (slug === 'jeerakasala-rice') imageSrc = '/jeerakasala_rice.png';
-  if (slug === 'basmati-rice') imageSrc = '/basmati_rice.png';
-  if (slug === 'brown-rice') imageSrc = '/brown_rice.png';
+  let name = 'Kerala Matta Rice - Premium Double Horse (10kg)';
+  let price = 18.50;
+  let regular_price = '22.00';
+  let description = '<p>Authentic Kerala Matta Rice, also known as Rosematta rice, is locally grown in the Palakkad district of Kerala. This premium Double Horse variety is parboiled with the husk, making it more nutritious than white rice. It has a unique robust earthy flavor and a coarse texture that is perfect for traditional Kerala meals.</p>';
+  let short_description = 'Authentic Palakkad Variety, Rich in Minerals & Nutrients, Naturally Gluten-Free, Premium Double Horse Quality';
+
+  if (slug === 'jeerakasala-rice') {
+    imageSrc = '/jeerakasala_rice.png';
+    name = 'Double Horse Jeerakasala Rice';
+    price = 18.00;
+    regular_price = '20.00';
+    description = '<p>Premium quality Jeerakasala Rice, famous for its aroma and short grains. Perfect for making traditional Malabar Biriyani and Neychoru. Grown with care and processed to retain its natural fragrance.</p>';
+    short_description = 'Aromatic Short Grain, Perfect for Biriyani, Premium Quality';
+  } else if (slug === 'basmati-rice') {
+    imageSrc = '/basmati_rice.png';
+    name = 'India Gate Basmati Rice';
+    price = 22.50;
+    regular_price = '24.50';
+    description = '<p>India Gate Basmati Rice is known for its long grains and rich aroma. Aged to perfection, this rice offers a non-sticky texture and a delightful taste, making it ideal for everyday use as well as special occasions.</p>';
+    short_description = 'Long Grain, Aromatic, Aged to Perfection';
+  } else if (slug === 'brown-rice') {
+    imageSrc = '/brown_rice.png';
+    name = 'Pavizham Brown Rice';
+    price = 14.50;
+    regular_price = '17.00';
+    description = '<p>Pavizham Brown Rice offers the wholesome goodness of unpolished rice. Rich in fiber and essential nutrients, it is a healthier alternative for your daily meals, supporting a balanced diet and an active lifestyle.</p>';
+    short_description = 'Unpolished, High Fiber, Wholesome Goodness';
+  }
 
   return {
-    id: 101,
-    name: 'Kerala Matta Rice - Premium Double Horse (10kg)',
-    price: 18.50,
-    regular_price: '22.00',
+    id: slug === 'matta-rice' ? 101 : slug === 'jeerakasala-rice' ? 2 : slug === 'basmati-rice' ? 3 : 4,
+    name,
+    price,
+    regular_price,
     categories: [{ name: 'Rice & Grains', slug: 'rice', id: 1 }],
     images: [{ src: imageSrc }],
-    description: '<p>Authentic Kerala Matta Rice, also known as Rosematta rice, is locally grown in the Palakkad district of Kerala. This premium Double Horse variety is parboiled with the husk, making it more nutritious than white rice. It has a unique robust earthy flavor and a coarse texture that is perfect for traditional Kerala meals.</p>',
-    short_description: 'Authentic Palakkad Variety, Rich in Minerals & Nutrients, Naturally Gluten-Free, Premium Double Horse Quality',
+    description,
+    short_description,
     slug: slug,
     average_rating: '4.9',
     rating_count: 124,

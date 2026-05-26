@@ -158,7 +158,7 @@ export default async function CategoryPage({
       category: "Rice & Rice Products",
       subCategory: "Kaima Rice",
       brand: "Double Horse",
-      slug: "kaima-rice",
+      slug: "jeerakasala-rice",
     },
     {
       id: 15,
