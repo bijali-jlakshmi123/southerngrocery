@@ -11,7 +11,7 @@ const deals = [
     name: "Double Horse Matta Rice 5kg",
     price: 9.49,
     originalPrice: 12.99,
-    image: "/matta-rice.png",
+    image: "/matta_rice_new.png",
     category: "Rice",
     slug: "matta-rice",
   },

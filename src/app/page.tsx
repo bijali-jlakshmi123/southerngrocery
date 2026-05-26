@@ -12,7 +12,7 @@ const mockKeralaFavourites = [
     id: 101,
     name: "Premium Matta Rice 5kg",
     price: 9.99,
-    image: "/matta-rice.png",
+    image: "/matta_rice_new.png",
     category: "Rice",
     slug: "matta-rice",
   },
