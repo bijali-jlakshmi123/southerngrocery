@@ -1,5 +1,11 @@
 import { getProductBySlug, getProducts, getCategories } from '@/lib/woocommerce';
+import { getProductImageSrc, type ProductImageSource } from '@/lib/utils';
 import ProductClient from './ProductClient';
+
+type ProductWithImages = ProductImageSource & {
+  images?: ({ src?: string } & Record<string, unknown>)[];
+  [key: string]: unknown;
+};
 
 // Mock data as fallback for development if WooCommerce is not fully connected
 const getMockProduct = (slug: string) => {
@@ -56,6 +62,18 @@ const getMockRelated = () => [
   { id: 10, name: 'Homemade Mango Pickle', price: 4.50, images: [{ src: '/mango-pickle.png' }], categories: [{ name: 'Pickles' }], slug: 'mango-pickle' }
 ];
 
+const withResolvedProductImage = <T extends ProductWithImages | null>(product: T) => {
+  if (!product) return product;
+
+  const resolvedImage = getProductImageSrc(product);
+  const [firstImage = {}, ...otherImages] = product.images || [];
+
+  return {
+    ...product,
+    images: [{ ...firstImage, src: resolvedImage }, ...otherImages],
+  };
+};
+
 export default async function ProductDetailPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
   
@@ -69,7 +87,7 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
       getCategories({ hide_empty: true })
     ]);
     
-    product = fetchedProduct;
+    product = withResolvedProductImage(fetchedProduct);
     categories = fetchedCategories;
     
     if (product && product.categories && product.categories.length > 0) {
@@ -80,7 +98,7 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
         per_page: 4,
         exclude: [product.id]
       });
-      relatedProducts = related;
+      relatedProducts = related.map(withResolvedProductImage);
     }
   } catch (error) {
     console.error('Failed to fetch product or related products:', error);
@@ -88,8 +106,8 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
 
   // Fallback for development
   if (!product) {
-    product = getMockProduct(slug);
-    relatedProducts = getMockRelated();
+    product = withResolvedProductImage(getMockProduct(slug));
+    relatedProducts = getMockRelated().map(withResolvedProductImage);
   }
 
   return (

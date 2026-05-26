@@ -1,4 +1,42 @@
 
+const localRiceImages: Record<string, string> = {
+  "matta-rice": "/matta-rice.png",
+  "jeerakasala-rice": "/jeerakasala-rice.png",
+  "basmati-rice": "/basmati-rice.png",
+  "brown-rice": "/brown-rice.png",
+};
+
+export type ProductImageSource = {
+  name?: string;
+  slug?: string;
+  images?: { src?: string }[];
+};
+
+export function getProductImageSrc(wcProduct: ProductImageSource) {
+  const slug = wcProduct?.slug || "";
+  const name = (wcProduct?.name || "").toLowerCase();
+
+  if (localRiceImages[slug]) {
+    return localRiceImages[slug];
+  }
+
+  let image = "/placeholder.png";
+  const src = wcProduct?.images?.[0]?.src;
+
+  if (src && src !== "image" && src !== "") {
+    image = src;
+  }
+
+  if (image === "/placeholder.png" || image.includes("matta-rice.png")) {
+    if (name.includes("jeerakasala")) return "/jeerakasala-rice.png";
+    if (name.includes("basmati")) return "/basmati-rice.png";
+    if (name.includes("brown rice")) return "/brown-rice.png";
+    if (name.includes("matta rice")) return "/matta-rice.png";
+  }
+
+  return image;
+}
+
 export function mapWcProduct(wcProduct: any) {
   const categories = wcProduct.categories || [];
   const mainCategory = categories[0]?.name || "Uncategorized";
@@ -29,28 +67,7 @@ export function mapWcProduct(wcProduct: any) {
     brand = brands.find(b => name.toLowerCase().includes(b.toLowerCase())) || null;
   }
 
-  // Ensure image is a valid URL or fallback to placeholder
-  let image = "/placeholder.png";
-  if (wcProduct.images && wcProduct.images.length > 0) {
-    const src = wcProduct.images[0].src;
-    // Some systems export literal 'image' as a placeholder - ignore it
-    if (src && src !== 'image' && src !== '') {
-      image = src;
-    }
-  }
-
-  // Fallback to high-quality local images if missing from WooCommerce or using default placeholder
-  if (image === "/placeholder.png" || image.includes("matta-rice.png")) {
-    if (wcProduct.slug === "jeerakasala-rice" || (name && name.toLowerCase().includes("jeerakasala"))) {
-      image = "/jeerakasala-rice.png";
-    } else if (wcProduct.slug === "basmati-rice" || (name && name.toLowerCase().includes("basmati"))) {
-      image = "/basmati-rice.png";
-    } else if (wcProduct.slug === "brown-rice" || (name && name.toLowerCase().includes("brown rice"))) {
-      image = "/brown-rice.png";
-    } else if (wcProduct.slug === "matta-rice" || (name && name.toLowerCase().includes("matta rice"))) {
-      image = "/matta-rice.png";
-    }
-  }
+  const image = getProductImageSrc(wcProduct);
 
   return {
     id: wcProduct.id,
@@ -64,5 +81,3 @@ export function mapWcProduct(wcProduct: any) {
     slug: wcProduct.slug,
   };
 }
-
-
