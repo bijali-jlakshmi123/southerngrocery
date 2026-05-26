@@ -3,29 +3,29 @@ import ProductClient from './ProductClient';
 
 // Mock data as fallback for development if WooCommerce is not fully connected
 const getMockProduct = (slug: string) => {
-  let imageSrc = '/matta_rice_new.png';
-  let name = 'Kerala Matta Rice - Premium Double Horse (10kg)';
-  let price = 18.50;
-  let regular_price = '22.00';
+  let imageSrc = '/matta-rice.png';
+  let name = 'Double Horse Matta Rice 5kg';
+  let price = 9.49;
+  let regular_price = '12.99';
   let description = '<p>Authentic Kerala Matta Rice, also known as Rosematta rice, is locally grown in the Palakkad district of Kerala. This premium Double Horse variety is parboiled with the husk, making it more nutritious than white rice. It has a unique robust earthy flavor and a coarse texture that is perfect for traditional Kerala meals.</p>';
-  let short_description = 'Authentic Palakkad Variety, Rich in Minerals & Nutrients, Naturally Gluten-Free, Premium Double Horse Quality';
+  let short_description = 'Authentic Palakkad Variety, Rich in Minerals & Nutrients, Naturally Gluten-Free, Premium Double Horse Quality (5kg)';
 
   if (slug === 'jeerakasala-rice') {
-    imageSrc = '/jeerakasala_rice.png';
+    imageSrc = '/jeerakasala-rice.png';
     name = 'Double Horse Jeerakasala Rice';
     price = 18.00;
     regular_price = '20.00';
     description = '<p>Premium quality Jeerakasala Rice, famous for its aroma and short grains. Perfect for making traditional Malabar Biriyani and Neychoru. Grown with care and processed to retain its natural fragrance.</p>';
     short_description = 'Aromatic Short Grain, Perfect for Biriyani, Premium Quality';
   } else if (slug === 'basmati-rice') {
-    imageSrc = '/basmati_rice.png';
+    imageSrc = '/basmati-rice.png';
     name = 'India Gate Basmati Rice';
     price = 22.50;
     regular_price = '24.50';
     description = '<p>India Gate Basmati Rice is known for its long grains and rich aroma. Aged to perfection, this rice offers a non-sticky texture and a delightful taste, making it ideal for everyday use as well as special occasions.</p>';
     short_description = 'Long Grain, Aromatic, Aged to Perfection';
   } else if (slug === 'brown-rice') {
-    imageSrc = '/brown_rice.png';
+    imageSrc = '/brown-rice.png';
     name = 'Pavizham Brown Rice';
     price = 14.50;
     regular_price = '17.00';
@@ -50,9 +50,9 @@ const getMockProduct = (slug: string) => {
 };
 
 const getMockRelated = () => [
-  { id: 2, name: 'Double Horse Jeerakasala Rice', price: 18.00, regular_price: '20.00', images: [{ src: '/jeerakasala_rice.png' }], categories: [{ name: 'Rice & Grains' }], slug: 'jeerakasala-rice' },
-  { id: 3, name: 'India Gate Basmati Rice', price: 22.50, regular_price: '24.50', images: [{ src: '/basmati_rice.png' }], categories: [{ name: 'Rice & Grains' }], slug: 'basmati-rice' },
-  { id: 4, name: 'Pavizham Brown Rice', price: 14.50, regular_price: '17.00', images: [{ src: '/brown_rice.png' }], categories: [{ name: 'Rice & Grains' }], slug: 'brown-rice' },
+  { id: 2, name: 'Double Horse Jeerakasala Rice', price: 18.00, regular_price: '20.00', images: [{ src: '/jeerakasala-rice.png' }], categories: [{ name: 'Rice & Grains' }], slug: 'jeerakasala-rice' },
+  { id: 3, name: 'India Gate Basmati Rice', price: 22.50, regular_price: '24.50', images: [{ src: '/basmati-rice.png' }], categories: [{ name: 'Rice & Grains' }], slug: 'basmati-rice' },
+  { id: 4, name: 'Pavizham Brown Rice', price: 14.50, regular_price: '17.00', images: [{ src: '/brown-rice.png' }], categories: [{ name: 'Rice & Grains' }], slug: 'brown-rice' },
   { id: 10, name: 'Homemade Mango Pickle', price: 4.50, images: [{ src: '/mango-pickle.png' }], categories: [{ name: 'Pickles' }], slug: 'mango-pickle' }
 ];
 

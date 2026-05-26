@@ -39,6 +39,19 @@ export function mapWcProduct(wcProduct: any) {
     }
   }
 
+  // Fallback to high-quality local images if missing from WooCommerce or using default placeholder
+  if (image === "/placeholder.png" || image.includes("matta-rice.png")) {
+    if (wcProduct.slug === "jeerakasala-rice" || (name && name.toLowerCase().includes("jeerakasala"))) {
+      image = "/jeerakasala-rice.png";
+    } else if (wcProduct.slug === "basmati-rice" || (name && name.toLowerCase().includes("basmati"))) {
+      image = "/basmati-rice.png";
+    } else if (wcProduct.slug === "brown-rice" || (name && name.toLowerCase().includes("brown rice"))) {
+      image = "/brown-rice.png";
+    } else if (wcProduct.slug === "matta-rice" || (name && name.toLowerCase().includes("matta rice"))) {
+      image = "/matta-rice.png";
+    }
+  }
+
   return {
     id: wcProduct.id,
     name: name,

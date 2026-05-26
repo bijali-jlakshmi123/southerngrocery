@@ -10,9 +10,9 @@ import { mapWcProduct } from "@/lib/utils";
 const mockKeralaFavourites = [
   {
     id: 101,
-    name: "Premium Matta Rice 5kg",
+    name: "Double Horse Matta Rice 5kg",
     price: 9.99,
-    image: "/matta_rice_new.png",
+    image: "/matta-rice.png",
     category: "Rice",
     slug: "matta-rice",
   },
@@ -45,6 +45,16 @@ const mockKeralaFavourites = [
 export default async function Home() {
   const wcProducts = await getProducts({ per_page: 50 });
   const realProducts = wcProducts.map(mapWcProduct);
+  const mattaRiceFavourite = {
+    ...mockKeralaFavourites[0],
+    ...realProducts.find((product) => product.slug === "matta-rice"),
+    name: "Double Horse Matta Rice 5kg",
+    image: "/matta-rice.png",
+    slug: "matta-rice",
+  };
+  const realProductsWithoutMattaRice = realProducts.filter(
+    (product) => product.slug !== "matta-rice",
+  );
 
   // Fetch real categories for the category grid
   const { getCategories } = await import("@/lib/woocommerce");
@@ -55,9 +65,11 @@ export default async function Home() {
 
   // Split products into sections if we have them
   const favourites =
-    realProducts.length > 0 ? realProducts.slice(0, 4) : mockKeralaFavourites.slice(0, 4);
-  const arrivals = realProducts.length > 4 ? realProducts.slice(4, 8) : [];
-  const deals = realProducts.length > 8 ? realProducts.slice(8, 12) : [];
+    realProducts.length > 0
+      ? [mattaRiceFavourite, ...realProductsWithoutMattaRice].slice(0, 4)
+      : mockKeralaFavourites.slice(0, 4);
+  const arrivals = realProductsWithoutMattaRice.length > 4 ? realProductsWithoutMattaRice.slice(4, 8) : [];
+  const deals = realProductsWithoutMattaRice.length > 8 ? realProductsWithoutMattaRice.slice(8, 12) : [];
 
 
   return (
