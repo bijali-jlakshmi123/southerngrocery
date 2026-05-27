@@ -72,10 +72,8 @@ export default async function Home() {
     realProductsWithoutMattaRice.length > 4
       ? realProductsWithoutMattaRice.slice(4, 8)
       : [];
-  const deals =
-    realProductsWithoutMattaRice.length > 8
-      ? realProductsWithoutMattaRice.slice(8, 12)
-      : [];
+  const onSaleProducts = realProducts.filter((p) => p.originalPrice && p.originalPrice > p.price);
+  const weeklyDeals = onSaleProducts.length > 0 ? onSaleProducts.slice(0, 5) : [];
 
   return (
     <main className="min-h-screen">
@@ -83,7 +81,7 @@ export default async function Home() {
 
       <CategoryGrid categories={realCategories} />
 
-      <WeeklyDeals />
+      <WeeklyDeals deals={weeklyDeals} />
 
       <ShopByBrand />
 
@@ -104,17 +102,6 @@ export default async function Home() {
           products={arrivals}
           bgColor="bg-surface-muted"
           accentColor="text-secondary"
-        />
-      )}
-
-      {deals.length > 0 && (
-        <FeaturedProducts
-          title="Weekly Offers"
-          subtitle="Save big on your favorite authentic Indian brands Every Single Week."
-          category="offers"
-          products={deals}
-          bgColor="bg-white"
-          accentColor="text-success"
         />
       )}
 

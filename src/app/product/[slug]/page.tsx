@@ -44,10 +44,24 @@ const getMockProduct = (slug: string) => {
     regular_price = '15.00';
     description = '<p>100% Pure and Natural Coconut Oil, extracted from high-quality coconuts. Perfect for cooking, baking, and even skincare.</p>';
     short_description = 'Pure & Natural, Extracted from Premium Coconuts';
+  } else if (slug === 'kappa') {
+    imageSrc = '/kappa.png';
+    name = 'Boiled Kerala Kappa 1kg';
+    price = 2.99;
+    regular_price = '3.99';
+    description = '<p>Authentic boiled Kerala Tapioca (Kappa). Just heat and serve with your favorite spicy fish curry.</p>';
+    short_description = 'Authentic Kerala Tapioca, Ready to Eat';
+  } else if (slug === 'fresh-veg') {
+    imageSrc = '/fresh-veg.png';
+    name = 'Fresh Kerala Vegetables Tray';
+    price = 2.25;
+    regular_price = '3.49';
+    description = '<p>A curated tray of fresh, seasonal vegetables straight from Kerala. Perfect for authentic curries.</p>';
+    short_description = 'Fresh & Seasonal, Authentic Kerala Veggies';
   }
 
   return {
-    id: slug === 'matta-rice' ? 101 : slug === 'jeerakasala-rice' ? 2 : slug === 'basmati-rice' ? 3 : slug === 'coconut-oil' ? 5 : 4,
+    id: slug === 'matta-rice' ? 101 : slug === 'jeerakasala-rice' ? 2 : slug === 'basmati-rice' ? 3 : slug === 'coconut-oil' ? 5 : slug === 'kappa' ? 6 : slug === 'fresh-veg' ? 7 : 4,
     name,
     price,
     regular_price,

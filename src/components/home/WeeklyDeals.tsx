@@ -5,55 +5,13 @@ import { Tag, Timer, Sparkles } from "lucide-react";
 import { motion } from "framer-motion";
 import Link from "next/link";
 
-const deals = [
-  {
-    id: 1,
-    name: "Double Horse Matta Rice 5kg",
-    price: 9.49,
-    originalPrice: 12.99,
-    image: "/matta-rice.png",
-    category: "Rice",
-    slug: "matta-rice",
-  },
-  {
-    id: 2,
-    name: "Premium Coconut Oil 1L",
-    price: 3.49,
-    originalPrice: 5.5,
-    image: "/coconut-oil.png",
-    category: "Oils",
-    slug: "coconut-oil",
-  },
-  {
-    id: 3,
-    name: "Boiled Kerala Kappa 1kg",
-    price: 2.99,
-    originalPrice: 3.99,
-    image: "/kappa.png",
-    category: "Frozen",
-    slug: "kappa",
-  },
-  {
-    id: 4,
-    name: "Eastern Chicken Masala 100g",
-    price: 0.79,
-    originalPrice: 1.25,
-    image: "/spices-mix.png",
-    category: "Spices",
-    slug: "chicken-masala",
-  },
-  {
-    id: 5,
-    name: "Fresh Kerala Vegetables Tray",
-    price: 2.25,
-    originalPrice: 3.49,
-    image: "/fresh-veg.png",
-    category: "Vegetables",
-    slug: "fresh-veg",
-  },
-];
+interface WeeklyDealsProps {
+  deals: any[];
+}
 
-export default function WeeklyDeals() {
+export default function WeeklyDeals({ deals = [] }: WeeklyDealsProps) {
+  if (deals.length === 0) return null;
+
   return (
     <section className="py-[80px] bg-[#f8f8f8] border-t border-gray-100 relative overflow-hidden">
       <div className="max-w-8xl mx-auto px-6">
