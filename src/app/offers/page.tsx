@@ -24,8 +24,8 @@ export default async function OffersPage() {
     badge: "Limited Offer",
   }));
 
-  // If no on sale products, fallback to some popular ones to avoid empty page
-  const displayOffers = allOffers.length > 0 ? allOffers : featuredDeals;
+  // Ensure we strictly use the offers fetched from WooCommerce
+  const displayOffers = allOffers;
 
   return (
     <div className="min-h-screen pt-12 pb-24">
