@@ -72,16 +72,19 @@ export default async function Home() {
     realProductsWithoutMattaRice.length > 4
       ? realProductsWithoutMattaRice.slice(4, 8)
       : [];
-  const onSaleProducts = realProducts.filter((p) => p.originalPrice && p.originalPrice > p.price);
-  const weeklyDeals = onSaleProducts.length > 0 
-    ? onSaleProducts.slice(0, 5) 
-    : realProducts
-        .filter(p => p.price > 0)
-        .slice(0, 5)
-        .map(p => ({
-          ...p,
-          originalPrice: Number((p.price * 1.15).toFixed(2))
-        }));
+  const onSaleProducts = realProducts.filter(
+    (p) => p.originalPrice && p.originalPrice > p.price,
+  );
+  const weeklyDeals =
+    onSaleProducts.length > 0
+      ? onSaleProducts.slice(0, 5)
+      : realProducts
+          .filter((p) => p.price > 0)
+          .slice(0, 5)
+          .map((p) => ({
+            ...p,
+            originalPrice: Number((p.price * 1.15).toFixed(2)),
+          }));
 
   return (
     <main className="min-h-screen">
