@@ -46,7 +46,7 @@ async function woocommerceFetch(
         Accept: "application/json",
         Authorization: `Basic ${basicAuth}`,
       },
-      next: { revalidate: 3600 },
+      next: { revalidate: 0 },
     });
 
     const contentType = response.headers.get("content-type") || "";

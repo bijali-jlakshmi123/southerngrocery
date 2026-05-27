@@ -45,11 +45,12 @@ const mockKeralaFavourites = [
 export default async function Home() {
   const wcProducts = await getProducts({ per_page: 50 });
   const realProducts = wcProducts.map(mapWcProduct);
+  const mattaRiceProduct = realProducts.find((product) => product.slug === "matta-rice");
   const mattaRiceFavourite = {
     ...mockKeralaFavourites[0],
-    ...realProducts.find((product) => product.slug === "matta-rice"),
-    name: "Double Horse Matta Rice 5kg",
-    image: "/matta-rice.png",
+    ...mattaRiceProduct,
+    name: mattaRiceProduct?.name || "Double Horse Matta Rice 5kg",
+    image: mattaRiceProduct?.image && mattaRiceProduct.image !== "/placeholder.png" ? mattaRiceProduct.image : "/matta-rice.png",
     slug: "matta-rice",
   };
   const realProductsWithoutMattaRice = realProducts.filter(
