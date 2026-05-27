@@ -1,9 +1,4 @@
-const localRiceImages: Record<string, string> = {
-  "matta-rice": "/matta-rice.png",
-  "jeerakasala-rice": "/jeerakasala-rice.png",
-  "basmati-rice": "/basmati-rice.png",
-  "brown-rice": "/brown-rice.png",
-};
+// Local image mapping removed so WooCommerce images take precedence
 
 export type ProductImageSource = {
   name?: string;
@@ -12,25 +7,11 @@ export type ProductImageSource = {
 };
 
 export function getProductImageSrc(wcProduct: ProductImageSource) {
-  const slug = wcProduct?.slug || "";
-  const name = (wcProduct?.name || "").toLowerCase();
-
-  if (localRiceImages[slug]) {
-    return localRiceImages[slug];
-  }
-
   let image = "/placeholder.png";
   const src = wcProduct?.images?.[0]?.src;
 
   if (src && src !== "image" && src !== "") {
     image = src;
-  }
-
-  if (image === "/placeholder.png" || image.includes("matta-rice.png")) {
-    if (name.includes("jeerakasala")) return "/jeerakasala-rice.png";
-    if (name.includes("basmati")) return "/basmati-rice.png";
-    if (name.includes("brown rice")) return "/brown-rice.png";
-    if (name.includes("matta rice")) return "/matta-rice.png";
   }
 
   return image;
