@@ -97,9 +97,7 @@ export default function ProductCard({
 
   return (
     <Link href={`/product/${slug}`}>
-      <motion.div
-        className="group bg-white rounded-md p-[15px] hover:shadow-premium transition-all duration-300 border border-gray-100 flex flex-col h-full relative cursor-pointer"
-      >
+      <motion.div className="group bg-white rounded-md p-[15px] hover:shadow-premium transition-all duration-300 border border-gray-100 flex flex-col h-full relative cursor-pointer">
         <div className="relative aspect-square bg-[#f8f8f8] rounded-md overflow-hidden mb-4 flex items-center justify-center group/img">
           {discount > 0 && (
             <div className="absolute top-2 left-2 bg-primary text-white text-[10px] font-bold px-2 py-0.5 rounded z-10">
@@ -125,7 +123,7 @@ export default function ProductCard({
             className="w-full h-full relative"
           >
             <Image
-              src={(image && image !== 'image') ? image : "/placeholder.png"}
+              src={image && image !== "image" ? image : "/placeholder.png"}
               alt={name}
               fill
               priority={false}
@@ -154,7 +152,13 @@ export default function ProductCard({
             <div className="flex items-center gap-1">
               <div className="flex items-center gap-0.5">
                 {[...Array(5)].map((_, i) => (
-                  <Star key={i} size={10} className={i < 4 ? "fill-[#ffc107] text-[#ffc107]" : "text-gray-200"} />
+                  <Star
+                    key={i}
+                    size={10}
+                    className={
+                      i < 4 ? "fill-[#ffc107] text-[#ffc107]" : "text-gray-200"
+                    }
+                  />
                 ))}
               </div>
               <span className="text-[10px] text-gray-400">(4.8)</span>
