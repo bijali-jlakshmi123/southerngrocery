@@ -37,10 +37,17 @@ const getMockProduct = (slug: string) => {
     regular_price = '17.00';
     description = '<p>Pavizham Brown Rice offers the wholesome goodness of unpolished rice. Rich in fiber and essential nutrients, it is a healthier alternative for your daily meals, supporting a balanced diet and an active lifestyle.</p>';
     short_description = 'Unpolished, High Fiber, Wholesome Goodness';
+  } else if (slug === 'coconut-oil') {
+    imageSrc = 'https://www.keralataste.com/cdn/shop/products/Cocopure_800x.jpg';
+    name = 'Premium Coconut Oil';
+    price = 12.00;
+    regular_price = '15.00';
+    description = '<p>100% Pure and Natural Coconut Oil, extracted from high-quality coconuts. Perfect for cooking, baking, and even skincare.</p>';
+    short_description = 'Pure & Natural, Extracted from Premium Coconuts';
   }
 
   return {
-    id: slug === 'matta-rice' ? 101 : slug === 'jeerakasala-rice' ? 2 : slug === 'basmati-rice' ? 3 : 4,
+    id: slug === 'matta-rice' ? 101 : slug === 'jeerakasala-rice' ? 2 : slug === 'basmati-rice' ? 3 : slug === 'coconut-oil' ? 5 : 4,
     name,
     price,
     regular_price,
