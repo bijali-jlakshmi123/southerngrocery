@@ -127,7 +127,7 @@ export default function ProductCard({
               alt={name}
               fill
               priority={false}
-              className="object-cover transition-transform duration-300"
+              className="object-cover transition-transform duration-300 group-hover:scale-105"
             />
           </motion.div>
 
