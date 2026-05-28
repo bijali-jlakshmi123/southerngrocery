@@ -131,7 +131,7 @@ export default function ProductCard({
             />
           </motion.div>
 
-          <div className="absolute inset-x-2 bottom-2  opacity-0 group-hover:opacity-100 transition-all duration-300">
+          <div className="absolute inset-x-2 bottom-2 opacity-0 group-hover:opacity-100 transition-all duration-300">
             <button
               onClick={handleAddToCart}
               className="w-full bg-primary text-white py-2 rounded-md font-bold text-[12px] uppercase tracking-wider shadow-lg active:scale-95 transition-transform"
