@@ -75,7 +75,11 @@ export default async function OffersPage() {
                   <span className="text-3xl">HOT</span>
                   <span className="text-[10px] opacity-75">UK DELIVERY</span>
                 </div>
+                <img
+                  src={featuredDeals[0]?.image || "/matta-rice.png"}
                   className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
+                  alt="Flash Deal"
+                />
               </div>
             </div>
           </div>
