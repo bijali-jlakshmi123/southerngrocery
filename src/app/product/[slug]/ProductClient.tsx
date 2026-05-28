@@ -147,7 +147,7 @@ export default function ProductClient({
               }
               alt={product.name || "Southern Spices Product"}
               fill
-              className="object-contain group-hover:scale-110 transition-transform duration-700 p-8"
+              className="object-cover group-hover:scale-110 transition-transform duration-700"
             />
           </motion.div>
 
@@ -172,7 +172,7 @@ export default function ProductClient({
                     }
                     alt={`${product.name} thumbnail ${idx + 1}`}
                     fill
-                    className="object-contain p-2 bg-slate-50"
+                    className="object-cover"
                   />
                 </button>
               ))}

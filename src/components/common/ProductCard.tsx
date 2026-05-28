@@ -127,7 +127,7 @@ export default function ProductCard({
               alt={name}
               fill
               priority={false}
-              className="object-contain p-4"
+              className="object-cover transition-transform duration-300"
             />
           </motion.div>
 
