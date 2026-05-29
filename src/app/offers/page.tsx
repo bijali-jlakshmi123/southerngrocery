@@ -24,8 +24,8 @@ export default async function OffersPage() {
     badge: "Limited Offer",
   }));
 
-  // Ensure we strictly use the offers fetched from WooCommerce
-  const displayOffers = allOffers;
+  // If no on sale products, fallback to some popular ones to avoid empty page
+  const displayOffers = allOffers.length > 0 ? allOffers : featuredDeals;
 
   return (
     <div className="min-h-screen pt-12 pb-24">
@@ -77,7 +77,7 @@ export default async function OffersPage() {
                 </div>
                 <img
                   src={featuredDeals[0]?.image || "/matta-rice.png"}
-                  className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
+                  className="w-full h-full object-contain group-hover:scale-110 transition-transform duration-700"
                   alt="Flash Deal"
                 />
               </div>
