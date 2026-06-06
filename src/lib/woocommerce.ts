@@ -158,7 +158,10 @@ export const createOrder = async (orderData: any) => {
   return await api.post("orders", orderData);
 };
 
-export const getCustomerOrders = async (customerId: string) => {
+export const getCustomerOrders = async (customerId: string, email?: string) => {
+  if (email) {
+    return await api.get("orders", { search: email, t: Date.now() });
+  }
   return await api.get("orders", { customer: customerId, t: Date.now() });
 };
 

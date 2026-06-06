@@ -30,6 +30,7 @@ export default function DashboardPage() {
   const [orders, setOrders] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [profileData, setProfileData] = useState<any>(null);
+  const [selectedOrder, setSelectedOrder] = useState<any>(null);
 
   useEffect(() => {
     if (!user) {
@@ -40,7 +41,7 @@ export default function DashboardPage() {
     const fetchData = async () => {
       try {
         // Fetch Orders
-        const ordersRes = await fetch(`/api/orders/user/${user.id}?t=${Date.now()}`, { cache: "no-store" });
+        const ordersRes = await fetch(`/api/orders/user/${user.id}?email=${encodeURIComponent(user.email)}&t=${Date.now()}`, { cache: "no-store" });
         const ordersData = await ordersRes.json();
         if (ordersData.success) {
           setOrders(ordersData.data);
@@ -143,7 +144,7 @@ export default function DashboardPage() {
               />
               <NavButton 
                 active={activeTab === "orders"} 
-                onClick={() => setActiveTab("orders")}
+                onClick={() => { setActiveTab("orders"); setSelectedOrder(null); }}
                 icon={<ShoppingBag size={20} />}
                 label="Order History"
                 badge={orders.length > 0 ? orders.length : undefined}
@@ -214,7 +215,11 @@ export default function DashboardPage() {
                        ) : orders.length > 0 ? (
                          <div className="space-y-1">
                            {orders.slice(0, 3).map((order) => (
-                             <div key={order.id} className="p-6 hover:bg-slate-50 rounded-4xl transition-colors flex items-center justify-between group">
+                             <div 
+                               key={order.id} 
+                               onClick={() => { setActiveTab("orders"); setSelectedOrder(order); }}
+                               className="p-6 hover:bg-slate-50 rounded-4xl transition-colors flex items-center justify-between group cursor-pointer"
+                             >
                                <div className="flex items-center gap-6">
                                  <div className="w-14 h-14 bg-slate-50 rounded-2xl flex items-center justify-center text-slate-400 group-hover:bg-white transition-colors">
                                    <ShoppingBag size={24} />
@@ -261,14 +266,87 @@ export default function DashboardPage() {
                   className="space-y-8"
                 >
                   <div className="bg-white rounded-5xl border border-slate-100 shadow-sm overflow-hidden">
-                    <div className="p-8 border-b border-slate-50">
-                      <h3 className="text-xl font-heading font-black text-slate-900">Your Orders</h3>
-                      <p className="text-sm text-slate-500 font-medium mt-1">Track and manage all your past purchases.</p>
+                    <div className="p-8 border-b border-slate-50 flex justify-between items-center">
+                      <div>
+                        <h3 className="text-xl font-heading font-black text-slate-900">
+                          {selectedOrder ? `Order #${selectedOrder.id}` : "Your Orders"}
+                        </h3>
+                        <p className="text-sm text-slate-500 font-medium mt-1">
+                          {selectedOrder ? "Detailed view of your order." : "Track and manage all your past purchases."}
+                        </p>
+                      </div>
+                      {selectedOrder && (
+                        <button 
+                          onClick={() => setSelectedOrder(null)}
+                          className="btn-base btn-outline !py-2 px-6"
+                        >
+                          Back to Orders
+                        </button>
+                      )}
                     </div>
                     
                     <div className="p-4">
                       {isLoading ? (
                         <div className="p-20 text-center text-slate-400 font-bold">Loading your orders...</div>
+                      ) : selectedOrder ? (
+                        <div className="p-4 space-y-8">
+                          <div className="grid md:grid-cols-2 gap-6">
+                            <div className="bg-slate-50 p-6 rounded-3xl border border-slate-100 space-y-4">
+                              <h4 className="font-black text-slate-900 uppercase tracking-widest text-xs">Shipping Address</h4>
+                              <div className="text-slate-600 font-medium text-sm">
+                                {selectedOrder.shipping?.first_name} {selectedOrder.shipping?.last_name}<br/>
+                                {selectedOrder.shipping?.address_1}<br/>
+                                {selectedOrder.shipping?.city}, {selectedOrder.shipping?.postcode}<br/>
+                                {selectedOrder.shipping?.country}
+                              </div>
+                            </div>
+                            <div className="bg-slate-50 p-6 rounded-3xl border border-slate-100 space-y-4">
+                              <h4 className="font-black text-slate-900 uppercase tracking-widest text-xs">Order Summary</h4>
+                              <div className="space-y-2 text-sm font-medium">
+                                <div className="flex justify-between">
+                                  <span className="text-slate-500">Date</span>
+                                  <span className="text-slate-900">{new Date(selectedOrder.date_created).toLocaleDateString()}</span>
+                                </div>
+                                <div className="flex justify-between">
+                                  <span className="text-slate-500">Status</span>
+                                  <span className={`font-black uppercase ${getStatusColor(selectedOrder.status)}`}>{selectedOrder.status}</span>
+                                </div>
+                                <div className="flex justify-between">
+                                  <span className="text-slate-500">Payment</span>
+                                  <span className="text-slate-900">{selectedOrder.payment_method_title || "N/A"}</span>
+                                </div>
+                                <div className="flex justify-between border-t border-slate-200 pt-2 mt-2">
+                                  <span className="font-black text-slate-900">Total</span>
+                                  <span className="font-black text-primary italic">£{parseFloat(selectedOrder.total).toFixed(2)}</span>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+
+                          <div className="space-y-4">
+                            <h4 className="font-black text-slate-900 uppercase tracking-widest text-xs px-2">Items Ordered</h4>
+                            <div className="space-y-4">
+                              {selectedOrder.line_items.map((item: any) => (
+                                <div key={item.id} className="flex gap-4 p-4 border border-slate-100 rounded-3xl items-center">
+                                  <div className="w-16 h-16 bg-slate-50 rounded-2xl p-2 flex-shrink-0">
+                                    <img 
+                                      src={(item.image?.src && item.image.src !== 'image') ? item.image.src : "/placeholder.png"} 
+                                      alt={item.name}
+                                      className="w-full h-full object-contain"
+                                    />
+                                  </div>
+                                  <div className="flex-1 min-w-0">
+                                    <h5 className="font-black text-sm text-slate-900 truncate">{item.name}</h5>
+                                    <div className="text-xs font-bold text-slate-500 mt-1">Qty: {item.quantity}</div>
+                                  </div>
+                                  <div className="text-right font-black text-primary italic">
+                                    £{parseFloat(item.total).toFixed(2)}
+                                  </div>
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+                        </div>
                       ) : orders.length > 0 ? (
                         <div className="space-y-4">
                           {orders.map((order) => (
@@ -297,7 +375,7 @@ export default function DashboardPage() {
                                 
                                 <div className="flex flex-row md:flex-col justify-between md:items-end gap-2">
                                   <div className="text-3xl font-heading font-black text-primary italic">£{parseFloat(order.total).toFixed(2)}</div>
-                                  <button className="text-xs font-black text-slate-400 uppercase tracking-widest hover:text-primary transition-colors flex items-center gap-2 mt-2">
+                                  <button onClick={() => setSelectedOrder(order)} className="text-xs font-black text-slate-400 uppercase tracking-widest hover:text-primary transition-colors flex items-center gap-2 mt-2">
                                     View Details <ChevronRight size={14} />
                                   </button>
                                 </div>

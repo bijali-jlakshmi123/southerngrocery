@@ -9,7 +9,10 @@ export async function GET(
 ) {
   try {
     const { id: userId } = await params;
-    const response = await getCustomerOrders(userId);
+    const { searchParams } = new URL(request.url);
+    const email = searchParams.get("email") || undefined;
+    
+    const response = await getCustomerOrders(userId, email);
 
     if (response.data) {
       return NextResponse.json({
