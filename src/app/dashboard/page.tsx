@@ -40,14 +40,14 @@ export default function DashboardPage() {
     const fetchData = async () => {
       try {
         // Fetch Orders
-        const ordersRes = await fetch(`/api/orders/user/${user.id}`);
+        const ordersRes = await fetch(`/api/orders/user/${user.id}?t=${Date.now()}`, { cache: "no-store" });
         const ordersData = await ordersRes.json();
         if (ordersData.success) {
           setOrders(ordersData.data);
         }
 
         // Fetch Detailed Profile
-        const profileRes = await fetch(`/api/user/${user.id}`);
+        const profileRes = await fetch(`/api/user/${user.id}?t=${Date.now()}`, { cache: "no-store" });
         const profileData = await profileRes.json();
         if (profileData.success) {
           setProfileData(profileData.data);

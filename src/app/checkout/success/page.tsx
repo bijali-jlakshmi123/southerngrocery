@@ -13,11 +13,29 @@ function SuccessContent() {
   const router = useRouter();
   const orderId = searchParams.get("id");
   const [windowSize, setWindowSize] = useState({ width: 0, height: 0 });
+  const [orderDetails, setOrderDetails] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     setWindowSize({ width: window.innerWidth, height: window.innerHeight });
-    if (!orderId) {
-      // router.push("/"); // If no ID, redirect back
+    
+    if (orderId) {
+      const fetchOrderDetails = async () => {
+        try {
+          const res = await fetch(`/api/orders/${orderId}?t=${Date.now()}`, { cache: "no-store" });
+          const data = await res.json();
+          if (data.success) {
+            setOrderDetails(data.data);
+          }
+        } catch (err) {
+          console.error("Failed to fetch order details", err);
+        } finally {
+          setLoading(false);
+        }
+      };
+      fetchOrderDetails();
+    } else {
+      setLoading(false);
     }
   }, [orderId]);
 
@@ -47,23 +65,42 @@ function SuccessContent() {
           Thank you for your purchase. Your authentic Southern Spices are being prepared for delivery.
         </p>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-12 text-left">
-          <div className="bg-slate-50 p-6 rounded-3xl border border-slate-100">
-            <div className="flex items-center gap-3 text-primary mb-2">
-              <Package size={20} />
-              <span className="text-[10px] font-black uppercase tracking-widest">Order Number</span>
+        {loading ? (
+          <div className="text-slate-400 font-medium mb-12">Loading order details...</div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-12 text-left">
+            <div className="bg-slate-50 p-6 rounded-3xl border border-slate-100">
+              <div className="flex items-center gap-3 text-primary mb-2">
+                <Package size={20} />
+                <span className="text-[10px] font-black uppercase tracking-widest">Order Number</span>
+              </div>
+              <div className="text-2xl font-heading font-black text-slate-900 italic">#{orderId || "N/A"}</div>
             </div>
-            <div className="text-2xl font-heading font-black text-slate-900 italic">#{orderId || "N/A"}</div>
-          </div>
 
-          <div className="bg-slate-50 p-6 rounded-3xl border border-slate-100">
-            <div className="flex items-center gap-3 text-primary mb-2">
-              <Calendar size={20} />
-              <span className="text-[10px] font-black uppercase tracking-widest">Estimated Arrival</span>
+            <div className="bg-slate-50 p-6 rounded-3xl border border-slate-100">
+              <div className="flex items-center gap-3 text-primary mb-2">
+                <Calendar size={20} />
+                <span className="text-[10px] font-black uppercase tracking-widest">Estimated Arrival</span>
+              </div>
+              <div className="text-2xl font-heading font-black text-slate-900 italic">3-5 Days</div>
             </div>
-            <div className="text-2xl font-heading font-black text-slate-900 italic">3-5 Days</div>
+            
+            {orderDetails && (
+              <>
+                <div className="bg-slate-50 p-6 rounded-3xl border border-slate-100 md:col-span-2 flex flex-col md:flex-row justify-between items-center gap-4">
+                  <div>
+                    <span className="text-[10px] font-black uppercase tracking-widest text-primary block mb-1">Total Amount Paid</span>
+                    <div className="text-2xl font-heading font-black text-slate-900 italic">£{parseFloat(orderDetails.total).toFixed(2)}</div>
+                  </div>
+                  <div className="text-right">
+                    <span className="text-[10px] font-black uppercase tracking-widest text-primary block mb-1">Payment Method</span>
+                    <div className="font-bold text-slate-700">{orderDetails.payment_method_title || "Standard"}</div>
+                  </div>
+                </div>
+              </>
+            )}
           </div>
-        </div>
+        )}
 
         <div className="flex flex-col sm:flex-row gap-4 items-center justify-center">
           <Link href="/dashboard" className="btn-base btn-primary px-12 !py-4 w-full sm:w-auto shadow-glow group">

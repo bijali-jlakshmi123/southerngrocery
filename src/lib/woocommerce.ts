@@ -159,7 +159,11 @@ export const createOrder = async (orderData: any) => {
 };
 
 export const getCustomerOrders = async (customerId: string) => {
-  return await api.get("orders", { customer: customerId });
+  return await api.get("orders", { customer: customerId, t: Date.now() });
+};
+
+export const getOrder = async (orderId: string) => {
+  return await api.get(`orders/${orderId}`, { t: Date.now() });
 };
 
 export const updateCustomer = async (customerId: string, data: any) => {
@@ -167,7 +171,7 @@ export const updateCustomer = async (customerId: string, data: any) => {
 };
 
 export const getCustomer = async (customerId: string) => {
-  return await api.get(`customers/${customerId}`);
+  return await api.get(`customers/${customerId}`, { t: Date.now() });
 };
 
 export default api;
