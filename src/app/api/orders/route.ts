@@ -1,6 +1,5 @@
 import { NextResponse } from "next/server";
 import { createOrder } from "@/lib/woocommerce";
-import { sendOrderEmails } from "@/lib/email";
 
 export async function POST(request: Request) {
   try {
@@ -21,9 +20,9 @@ export async function POST(request: Request) {
     const response = await createOrder(orderData);
 
     if (response.data) {
-      // Send emails in the background so it doesn't block the API response
-      sendOrderEmails(orderData, response.data.id).catch(console.error);
-
+      // Let WooCommerce natively handle emails (New Order to admin, Processing to customer)
+      // because we create the order via API with set_paid: true.
+      
       return NextResponse.json({
         success: true,
         data: response.data,
