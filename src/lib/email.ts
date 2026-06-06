@@ -53,23 +53,34 @@ export async function sendOrderEmails(orderData: any, orderId: number) {
     </div>
   `;
 
-  // Send email to customer with a copy to the admin
-  const toEmail = customerEmail || adminEmail;
-  const bccEmail = customerEmail ? adminEmail : undefined;
-
+  // Send to Admin
   try {
     await transporter.sendMail({
       from: process.env.EMAIL_USER || "southernspicesmarketing@gmail.com",
-      to: toEmail,
-      bcc: bccEmail,
-      subject: `Your Order Confirmation - #${orderId} - Southern Spices`,
-      html: `
-        <p>Hi ${customerName},</p>
-        ${htmlContent}
-      `,
+      to: adminEmail,
+      subject: `New Order Received - #${orderId}`,
+      html: htmlContent,
     });
-    console.log("Order confirmation email sent to customer (and copy to admin)");
+    console.log("Admin alert email sent successfully");
   } catch (error) {
-    console.error("Failed to send order email:", error);
+    console.error("Failed to send admin email:", error);
+  }
+
+  // Send to Customer
+  if (customerEmail) {
+    try {
+      await transporter.sendMail({
+        from: process.env.EMAIL_USER || "southernspicesmarketing@gmail.com",
+        to: customerEmail,
+        subject: `Your Order Confirmation - #${orderId} - Southern Spices`,
+        html: `
+          <p>Hi ${customerName},</p>
+          ${htmlContent}
+        `,
+      });
+      console.log("Customer email sent successfully");
+    } catch (error) {
+      console.error("Failed to send customer email:", error);
+    }
   }
 }
