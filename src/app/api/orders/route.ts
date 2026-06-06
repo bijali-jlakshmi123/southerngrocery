@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { createOrder } from "@/lib/woocommerce";
+import { sendOrderEmails } from "@/lib/email";
 
 export async function POST(request: Request) {
   try {
@@ -20,6 +21,9 @@ export async function POST(request: Request) {
     const response = await createOrder(orderData);
 
     if (response.data) {
+      // Send emails in the background so it doesn't block the API response
+      sendOrderEmails(orderData, response.data.id).catch(console.error);
+
       return NextResponse.json({
         success: true,
         data: response.data,
